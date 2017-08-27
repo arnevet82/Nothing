@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:id="@+id/bottom_bar"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
+    android:layout_marginBottom="-7dp"
+    android:layout_centerHorizontal="true"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true">
+
+    <ImageButton
+        android:id="@+id/color"
+        android:paddingLeft="35dp"
+        android:paddingRight="35dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="18dp"
+        android:layout_marginLeft="-7dp"
+        android:layout_marginRight="-7dp"
+        android:layout_width="105dp"
+        android:layout_height="80dp"
+        android:src="@drawable/color_icon"
+        android:backgroundTint="@color/darkGray"
+        android:scaleType="fitXY" />
+    <ImageButton
+        android:id="@+id/topping"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:paddingTop="18dp"
+        android:paddingBottom="18dp"
+        android:layout_marginLeft="-7dp"
+        android:layout_marginRight="-7dp"
+        android:layout_width="105dp"
+        android:layout_height="80dp"
+        android:src="@drawable/topping_icon"
+        android:backgroundTint="@color/darkGray"
+        android:scaleType="fitXY" />
+    <ImageButton
+        android:id="@+id/punch"
+        android:paddingLeft="35dp"
+        android:paddingRight="35dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="18dp"
+        android:layout_marginLeft="-7dp"
+        android:layout_marginRight="-7dp"
+        android:layout_width="105dp"
+        android:layout_height="80dp"
+        android:src="@drawable/punch_icon"
+        android:backgroundTint="@color/darkGray"
+        android:scaleType="fitXY" />
+    <ImageButton
+        android:id="@+id/text"
+        android:paddingLeft="35dp"
+        android:paddingRight="40dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="18dp"
+        android:layout_marginLeft="-7dp"
+        android:layout_marginRight="-7dp"
+        android:layout_width="105dp"
+        android:layout_height="80dp"
+        android:src="@drawable/text_icon"
+        android:backgroundTint="@color/darkGray"
+        android:scaleType="fitXY" />
+
+</LinearLayout>
+</RelativeLayout>

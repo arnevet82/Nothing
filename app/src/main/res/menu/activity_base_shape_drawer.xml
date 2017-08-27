@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/creations"
+            android:title="My Creations" />
+        <item
+            android:id="@+id/branding"
+            android:title="Branding" />
+        <item
+            android:id="@+id/special_request"
+            android:title="Special Request" />
+        <item
+            android:id="@+id/printing_services"
+            android:title="3D Printing Services" />
+        <item
+            android:id="@+id/contact"
+            android:title="Contact Us" />
+        <item
+            android:id="@+id/about"
+            android:title="About Us" />
+    </group>
+
+    <!--<item android:title="Communicate">-->
+    <!--<menu>-->
+    <!--<item-->
+    <!--android:id="@+id/nav_share"-->
+    <!--android:icon="@drawable/ic_menu_share"-->
+    <!--android:title="Share" />-->
+    <!--<item-->
+    <!--android:id="@+id/nav_send"-->
+    <!--android:icon="@drawable/ic_menu_send"-->
+    <!--android:title="Send" />-->
+    <!--</menu>-->
+    <!--</item>-->
+
+</menu>

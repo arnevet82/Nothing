@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+
+    <android.support.design.widget.TabLayout
+    android:layout_above="@+id/scrollView"
+    android:background="@color/toppingBar"
+    android:id="@+id/topping_tabs"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+
+    <android.support.v4.widget.NestedScrollView
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="130dp"
+    android:layout_marginBottom="60dp"
+    android:layout_alignParentBottom="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+
+    <LinearLayout
+    android:layout_marginBottom="60dp"
+    android:id="@+id/tabs_wrapper"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+
+    <android.support.v4.view.ViewPager
+    android:layout_below="@+id/topping_tabs"
+    android:id="@+id/viewpager"
+    android:layout_width="match_parent"
+    android:layout_height="380dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+
+</RelativeLayout>

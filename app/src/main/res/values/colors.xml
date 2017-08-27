@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#7bdac4</color>
+    <color name="colorPrimaryDark">#28A0AA</color>
+    <color name="colorAccent">#28A0AA</color>
+    <color name="blue">#145AAF</color>
+    <color name="pink">#FF6973</color>
+    <color name="white">#FFFFFF</color>
+    <color name="orange">#ff8370</color>
+    <color name="darkYellow">#f5a125</color>
+    <color name="lightPrimary">#b3efe4</color>
+    <color name="darkBlue">#115aaf</color>
+    <color name="yellow">#f8e71c</color>
+    <color name="baseShapeFirstColor">#e8e7e5</color>
+
+
+
+
+    <color name="almostWhite">#f9f8f8</color>
+    <color name="background">#f2f2f2</color>
+    <color name="darkGray">#626066</color>
+    <color name="meduimGray">#c7c5c3</color>
+    <color name="buttonGray">#e3e3e3</color>
+    <color name="toppingBar">#ff8370</color>
+
+
+
+    <color name="editGrayBigShape">#7da4aab3</color>
+    <color name="editGraysmallShape">#7da4aab3</color>
+    <color name="transparent">#00ffffff</color>
+
+    <color name="tabsColor">#f5a125</color>
+
+
+
+
+    <color name="yellowBtn">#f8e81c</color>
+    <color name="orangeBtn">#f6a623</color>
+    <color name="redBtn">#d0011b</color>
+    <color name="pinkBtn">#ff68a0</color>
+    <color name="purpleBtn">#9012fe</color>
+    <color name="darkeBlueBtn">#145aaf</color>
+    <color name="blueBtn">#00abff</color>
+    <color name="greenBtn">#4ab722</color>
+    <color name="blackBtn">#000000</color>
+    <color name="grayBtn">#9b9b9b</color>
+    <color name="whiteBtn">#ffffff</color>
+    <color name="transBtn">#1A9b9b9b</color>
+
+
+
+</resources>

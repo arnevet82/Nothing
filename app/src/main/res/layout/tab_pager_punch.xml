@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_alignParentBottom="true"
+    android:layout_marginBottom="60dp"
+    android:id="@+id/punch_tab_pager"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.design.widget.TabLayout
+        android:layout_above="@+id/scrollView_punch"
+        android:background="@color/colorPrimary"
+        android:id="@+id/punch_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:android="http://schemas.android.com/apk/res/android" />
+
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scrollView_punch"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:layout_alignParentBottom="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+
+        <LinearLayout
+            android:id="@+id/tabs_wrapper_punch"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+
+            <android.support.v4.view.ViewPager
+                android:layout_below="@+id/punch_tabs"
+                android:id="@+id/punch_viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="380dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</RelativeLayout>
