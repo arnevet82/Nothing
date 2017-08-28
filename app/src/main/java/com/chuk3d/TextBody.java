@@ -2,6 +2,8 @@ package com.chuk3d;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.EmbossMaskFilter;
+import android.graphics.MaskFilter;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -24,12 +26,14 @@ public class TextBody {
     private float textPivotx;
     private float textPivoty;
     private TextPaint textPaint;
+    private String tag;
 
     int heightScreen;
     int widthScreen;
 
 
-    public TextBody(String text, Context context) {
+    public TextBody(String text, Context context, String tag) {
+        this.tag = tag;
         this.context = context;
 
         heightScreen = context.getResources().getDisplayMetrics().heightPixels;
@@ -37,17 +41,31 @@ public class TextBody {
 
 
         textPaint = new TextPaint();
-        if(DesignActivity.currentColor!= 0){
-            textPaint.setColor(context.getResources().getColor(DesignActivity.currentColor));
-        }else{
-            textPaint.setColor(context.getResources().getColor(R.color.baseShapeFirstColor));
+        switch (tag){
+            case "punch":
+                MaskFilter filter =
+                        new EmbossMaskFilter(new float[]{0f, 0f, 1f}, 0.5f, 18f, 1f);
+                textPaint.setMaskFilter(filter);
+
+                textPaint.setColor(context.getResources().getColor(R.color.background));
+
+                break;
+            case "topping":
+
+            if(DesignActivity.currentColor!= 0){
+                textPaint.setColor(context.getResources().getColor(DesignActivity.currentColor));
+            }else{
+                textPaint.setColor(context.getResources().getColor(R.color.baseShapeFirstColor));
+                textPaint.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
+            }
+                break;
+            default:
+                break;
         }
 
         textPaint.setAntiAlias(true);
         textPaint.setTextSize(80);
         Typeface tf = Typeface.createFromAsset(context.getAssets(), "Montserrat-ExtraBold.ttf");
-        textPaint.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
-
         textPaint.setTypeface(tf);
 
         sl = new StaticLayout(text, textPaint,300,
@@ -56,6 +74,14 @@ public class TextBody {
         textPivoty = sl.getHeight()/2;
         posX = widthScreen/5;
         posY = heightScreen/4;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTAG(String tag) {
+        this.tag = tag;
     }
 
     public Paint getTextPaint() {

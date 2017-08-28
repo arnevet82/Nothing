@@ -207,6 +207,8 @@ public class TouchView extends View {
                                     texts.get(CURRENT_TEXT).getTextPaint().setColor(getResources().getColor(R.color.almostWhite));
                                     DesignActivity.currentNumText.setText("T");
                                     DesignActivity.vButton.setVisibility(VISIBLE);
+                                    DesignActivity.fontsBar.setVisibility(VISIBLE);
+                                    DesignActivity.initFonts();
                                 }else{
                                     //do nothing
                                 }

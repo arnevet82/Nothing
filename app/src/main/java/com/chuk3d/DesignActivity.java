@@ -54,7 +54,9 @@ public class DesignActivity extends AppCompatActivity
     ToppingTabPager toppingTabPager;
     PunchTabPager punchTabPager;
     RelativeLayout colorBar, designContainer, gridScreen, textContainer;
-    LinearLayout textPunchToppingChoice, fontsBar, bottomBar;
+    LinearLayout textPunchToppingChoice;
+    static LinearLayout fontsBar;
+    LinearLayout bottomBar;
     NestedScrollView toppingTabs, punchTabs;
     ImageView mainImage;
     static ImageView colorImage;
@@ -68,8 +70,8 @@ public class DesignActivity extends AppCompatActivity
     ImageView rotateCircle, rotateRuler, rotateLine;
     RelativeLayout rotationBar;
     Button degrees0, degrees90, degrees180, degrees270, degrees360;
-    Button font1, font2, font3, font4, font5;
-    Typeface vampiro, montserrat, alef, baloo, pacifico;
+    public static Button font1, font2, font3, font4, font5;
+    public static Typeface vampiro, montserrat, alef, baloo, pacifico;
     public static Typeface currentFont;
 
 
@@ -90,7 +92,6 @@ public class DesignActivity extends AppCompatActivity
         initGridButton();
         touchView = new TouchView(this);
         designContainer.addView(touchView);
-
     }
 
     public void hideAllUIElements(){
@@ -151,23 +152,10 @@ public class DesignActivity extends AppCompatActivity
                                 public void onClick(View v) {
                                     switch (v.getId()){
                                         case R.id.text_topping:
-                                            editText.setVisibility(View.VISIBLE);
-                                            editText.requestFocus();
-                                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                                            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-                                            textPunchToppingChoice.setVisibility(View.INVISIBLE);
-                                            initFonts();
-                                            showButtons();
-                                            vText.setVisibility(View.VISIBLE);
-                                            onVTextClicked();
-                                            TouchView.CURRENT_TEXT++;
-                                            currentNumText.setText("T");
-
+                                            onTextButtonClicked("topping");
                                             break;
                                         case R.id.text_punch:
-                                            editText.setVisibility(View.VISIBLE);
-                                            textPunchToppingChoice.setVisibility(View.INVISIBLE);
-                                            fontsBar.setVisibility(View.VISIBLE);
+                                            onTextButtonClicked("punch");
                                             break;
                                     }
                                 }
@@ -182,7 +170,24 @@ public class DesignActivity extends AppCompatActivity
         }
     }
 
-    public void onVTextClicked(){
+    public void onTextButtonClicked(String tag){
+        editText.setVisibility(View.VISIBLE);
+        editText.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        textPunchToppingChoice.setVisibility(View.INVISIBLE);
+        initFonts();
+        showButtons();
+        vText.setVisibility(View.VISIBLE);
+        onVTextClicked(tag);
+        TouchView.CURRENT_TEXT++;
+        currentNumText.setText("T");
+    }
+
+    public void onVTextClicked(String tag){
+
+        final String mTag = tag;
+
         vText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -190,10 +195,11 @@ public class DesignActivity extends AppCompatActivity
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                 String text = editText.getText().toString();
-                TouchView.texts.add(new TextBody(text, getApplicationContext()));
+                TouchView.texts.add(new TextBody(text, getApplicationContext(), mTag));
                 if(currentFont != null){
                     TouchView.texts.getLast().getTextPaint().setTypeface(currentFont);
                 }
+
                 editText.setText("");
                 fontsBar.setVisibility(View.INVISIBLE);
                 cleanBarButtons();
@@ -204,30 +210,41 @@ public class DesignActivity extends AppCompatActivity
         });
     }
 
-    public void initFonts(){
+    public static void onFontButtonClicked(View v){
+        int [] buttonId = {R.id.font_1, R.id.font_2, R.id.font_3, R.id.font_4, R.id.font_5};
+        Typeface []typefaces ={vampiro, montserrat, alef, baloo, pacifico};
+
+        for(int i = 0; i < buttonId.length; i++){
+            if(v.getId() == buttonId[i]) {
+                changeFont(typefaces[i]);
+                currentFont = typefaces[i];
+                if(!TouchView.texts.isEmpty()){
+                    TouchView.texts.get(TouchView.CURRENT_TEXT).getTextPaint().setTypeface(currentFont);
+                }
+            }
+
+        }
+        touchView.invalidate();
+        fontsBar.setVisibility(View.INVISIBLE);
+    }
+
+    public static void initFonts(){
 
         fontsBar.setVisibility(View.VISIBLE);
         Button[]buttons={font1, font2, font3, font4, font5};
-        final Typeface []typefaces ={vampiro, montserrat, alef, baloo, pacifico};
         for(Button button: buttons){
             button.setOnClickListener(new View.OnClickListener() {
 
                 int [] buttonId = {R.id.font_1, R.id.font_2, R.id.font_3, R.id.font_4, R.id.font_5};
                 @Override
                 public void onClick(View v) {
-                    for(int i = 0; i < buttonId.length; i++){
-                        if(v.getId() == buttonId[i]) {
-                            changeFont(typefaces[i]);
-                            currentFont = typefaces[i];
-                        }
-
-                    }
+                    onFontButtonClicked(v);
                 }
             });
         }
     }
 
-    public void changeFont(Typeface typeface){
+    public static void changeFont(Typeface typeface){
         editText.setTypeface(typeface);
     }
 
@@ -257,28 +274,40 @@ public class DesignActivity extends AppCompatActivity
     }
 
     public void clearGrayColor(){
-        for(int i = 0; i < TouchView.shapesForColor.size(); i++){
-            Shape shape = TouchView.shapesForColor.get(i);
-            switch (shape.getTag()){
-                case "topping":
-                    shape.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
-                    break;
-                case "punch":
-                    shape.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.transparent),PorterDuff.Mode.SRC_IN);
-                    break;
-            }
-        }
 
-        if(currentColor == 0){
-            colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
-            if(!TouchView.texts.isEmpty()){
-                TouchView.texts.get(TouchView.CURRENT_TEXT).getTextPaint().setColor(getResources().getColor(R.color.baseShapeFirstColor));
-            }
+//        if(currentColor == 0){
 
-        }else {
+//            colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
+//
+//
+//            for(int i = 0; i < TouchView.shapesForColor.size(); i++){
+//                Shape shape = TouchView.shapesForColor.get(i);
+//                switch (shape.getTag()){
+//                    case "topping":
+//                        shape.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
+//                        break;
+//                    case "punch":
+//                        shape.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.transparent),PorterDuff.Mode.SRC_IN);
+//                        break;
+//                }
+//            }
+//
+//            for(int i = 0; i < TouchView.texts.size(); i++){
+//                TextBody textBody = TouchView.texts.get(i);
+//                switch (textBody.getTag()){
+//                    case "topping":
+//                        textBody.getTextPaint().setColor(getResources().getColor(R.color.baseShapeFirstColor));
+//                        break;
+//                    case "punch":
+//                        textBody.getTextPaint().setColor(getResources().getColor(R.color.background));
+//                        break;
+//                }
+//            }
+
+//        }else {
             ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), currentColor);
             colorCommand.execute();
-        }
+//        }
         touchView.invalidate();
     }
 
