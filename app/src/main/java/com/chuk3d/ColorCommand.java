@@ -24,28 +24,36 @@ public class ColorCommand extends Command {
     void execute() {
         currentColor = newColor;
         colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(newColor), PorterDuff.Mode.SRC_IN);
-        if (!TouchView.shapesForColor.isEmpty()) {
+        if (!TouchView.shapes.isEmpty()) {
             for (Shape shape : TouchView.shapesForColor) {
                 if (shape.getTag().equals("topping")) {
                     shape.getDrawable().mutate().setColorFilter(context.getResources().getColor(newColor), PorterDuff.Mode.SRC_IN);
                 }
             }
-
-            DesignActivity.touchView.invalidate();
         }
+        if (!TouchView.texts.isEmpty()) {
+            for (TextBody textBody : TouchView.texts) {
+                textBody.getTextPaint().setColor(context.getResources().getColor(newColor));
+            }
+        }
+        DesignActivity.touchView.invalidate();
     }
 
     @Override
     void undo() {
         colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(currentColor), PorterDuff.Mode.SRC_IN);
-        if (!TouchView.shapesForColor.isEmpty()) {
+        if (!TouchView.shapes.isEmpty()) {
             for (Shape shape : TouchView.shapesForColor) {
                 if (shape.getTag().equals("topping")) {
                     shape.getDrawable().mutate().setColorFilter(context.getResources().getColor(currentColor), PorterDuff.Mode.SRC_IN);
                 }
             }
-            DesignActivity.touchView.invalidate();
         }
-
+        if (!TouchView.texts.isEmpty()) {
+            for (TextBody textBody : TouchView.texts) {
+                textBody.getTextPaint().setColor(context.getResources().getColor(currentColor));
+            }
+        }
+        DesignActivity.touchView.invalidate();
     }
 }

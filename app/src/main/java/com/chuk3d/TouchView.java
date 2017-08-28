@@ -34,6 +34,9 @@ public class TouchView extends View {
     public static LinkedList<Shape> shapes = new LinkedList<>();
     public static LinkedList<Shape> shapesForColor = new LinkedList<>();
 
+    public static LinkedList<TextBody> texts = new LinkedList<>();
+
+
     private float mPosX;
     private float mPosY;
 
@@ -53,14 +56,11 @@ public class TouchView extends View {
     private float mScaleFactor = 1.f;
 
     public static int CURRENT_SHAPE = -1;
-    public static TextView textView;
-    public static StaticLayout sl;
-    public static TextPaint textPaint;
-    public static float angle;
-    private float textPivotx;
-    private float textPivoty;
-    private float textPosX;
-    private float textPosY;
+    public static int CURRENT_TEXT = -1;
+
+//    public static TextPaint textPaint;
+//    public static float angle;
+
     public static float textScaleFactor = 1.f;
     private ScaleGestureDetector textScaleDetector;
 
@@ -103,13 +103,16 @@ public class TouchView extends View {
             canvas.restore();
         }
 
-        canvas.save();
-        canvas.translate(textView.getX(), textView.getY());
-        canvas.scale(textScaleFactor, textScaleFactor, textPivotx, textPivoty);
-        canvas.rotate(angle, textPivotx, textPivoty);
-        sl.draw(canvas);
-        canvas.restore();
-          }
+        for(int i = 0; i < texts.size(); i++){
+            canvas.save();
+            canvas.translate(texts.get(i).getPosX(), texts.get(i).getPosY());
+            canvas.scale(texts.get(i).getScaleFactor(), texts.get(i).getScaleFactor(),texts.get(i).getTextPivotx(), texts.get(i).getTextPivoty());
+            canvas.rotate(texts.get(i).getAngle(),texts.get(i).getTextPivotx(), texts.get(i).getTextPivoty());
+            texts.get(i).getSl().draw(canvas);
+            canvas.restore();
+        }
+
+    }
 
     private boolean clickOnShape(Shape shape, MotionEvent event) {
 
@@ -135,15 +138,15 @@ public class TouchView extends View {
         return false;
     }
 
-    private boolean clickOnText(TextView textView, MotionEvent event) {
+    private boolean clickOnText(TextBody textBody, MotionEvent event) {
 
-        float xEnd = textView.getX() + textScaleFactor*200;
-        float yEnd = textView.getY() + textScaleFactor*100;
+        float xEnd = textBody.getPosX() + textScaleFactor*200;
+        float yEnd = textBody.getPosY() + textScaleFactor*100;
 
-        if ((event.getX() >= (textView.getX()) && event.getX() <= (xEnd))
-                && (event.getY() >= (textView.getY()) && event.getY() <= yEnd)) {
+        if ((event.getX() >= (textBody.getPosX()) && event.getX() <= (xEnd))
+                && (event.getY() >= (textBody.getPosY()) && event.getY() <= yEnd)) {
 
-            if (!(textView.getScaleX() == 0)) {
+            if (!(textBody.getScaleFactor() == 0)) {
                 return true;
             } else {
                 return false;
@@ -157,6 +160,8 @@ public class TouchView extends View {
     public boolean onTouchEvent(MotionEvent ev) {
 
         LinkedList<Integer>clickedShapes = new LinkedList<>();
+        LinkedList<Integer>clickedTexts = new LinkedList<>();
+
 
         mScaleDetector.onTouchEvent(ev);
         textScaleDetector.onTouchEvent(ev);
@@ -165,48 +170,60 @@ public class TouchView extends View {
 
         switch (action & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN: {
+                if(shapes.isEmpty()&& texts.isEmpty()){
+                    // do nothing
+                }else{
+                    switch (DesignActivity.vButton.getVisibility()){
+                        case VISIBLE:
+                            // do nothing
+                            break;
+                        case INVISIBLE:
 
-                if (CURRENT_SHAPE == -1 && !DesignActivity.currentNumText.getText().equals("T")) {
-                }else if(shapes.isEmpty() && DesignActivity.currentNumText.getText().equals("T")){
-                    onShapeOrTextTouhched("T", "#FFFFFF");
-                    final float x = ev.getX();
-                    final float y = ev.getY();
-                    mLastTouchX = x;
-                    mLastTouchY = y;
-                    mActivePointerId = ev.getPointerId(0);
+                            for(int i = 0; i < shapes.size(); i++){
+                                if(clickOnShape(shapes.get(i), ev)){
+                                    clickedShapes.add(i);
+                                }
+                            }
 
-                    break;
+                            if(!clickedShapes.isEmpty()){
+                                CURRENT_SHAPE = clickedShapes.getLast();
+                                fillColorShapes();
+                                if(shapesForColor.get(CURRENT_SHAPE).getTag().equals("punch")){
+                                    shapesForColor.get(CURRENT_SHAPE).getDrawable().mutate().setColorFilter(getResources().getColor(R.color.transparent),PorterDuff.Mode.SRC_IN);
+                                }else{
+                                    shapesForColor.get(CURRENT_SHAPE).getDrawable().mutate().setColorFilter(getResources().getColor(R.color.almostWhite),PorterDuff.Mode.SRC_IN);
+                                }
+                                DesignActivity.currentNumText.setText("S");
+                                DesignActivity.vButton.setVisibility(VISIBLE);
+                            }else{
+                                for(int i = 0; i < texts.size(); i++){
+                                    if(clickOnText(texts.get(i), ev)){
+                                        clickedTexts.add(i);
+                                    }
+                                }
+                                if(!clickedTexts.isEmpty()){
+                                    fillColorShapes();
+                                    CURRENT_TEXT = clickedTexts.getLast();
+                                    texts.get(CURRENT_TEXT).getTextPaint().setColor(getResources().getColor(R.color.almostWhite));
+                                    DesignActivity.currentNumText.setText("T");
+                                    DesignActivity.vButton.setVisibility(VISIBLE);
+                                }else{
+                                    //do nothing
+                                }
+                            }
 
-                } else{
-                    for (int i = 0; i < shapes.size(); i++) {
-                        if (clickOnShape(shapes.get(i), ev) && DesignActivity.vButton.getVisibility() == INVISIBLE) {
-                            clickedShapes.add(i);
-
-                        } else if (clickOnText(textView, ev) && DesignActivity.vButton.getVisibility() == INVISIBLE) {
-                            onShapeOrTextTouhched("T", "#FFFFFF");
-                            DesignActivity.vButton.setVisibility(VISIBLE);
-//                            fillColorShapes(R.color.editGraysmallShape, R.color.editGrayBigShape, "text");
-                        }
-                        try{
-                            CURRENT_SHAPE = clickedShapes.getLast();
-                            onShapeOrTextTouhched(String.valueOf(CURRENT_SHAPE + 1), "#cfd8dc");
-//                            fillColorShapes(R.color.editGraysmallShape, R.color.editGrayBigShape, "shape");
-                        }catch (NoSuchElementException e){
-
-                        }catch (NullPointerException e){
-
-                        }
+                            break;
+                        default:
+                            //do nothing
+                            break;
                     }
 
                     final float x = ev.getX();
                     final float y = ev.getY();
-
                     mLastTouchX = x;
                     mLastTouchY = y;
                     mActivePointerId = ev.getPointerId(0);
-
-                    break;
-
+                    invalidate();
                 }
             }
 
@@ -224,10 +241,10 @@ public class TouchView extends View {
                         final float dy = y - mLastTouchY;
 
                         if (DesignActivity.currentNumText.getText().equals("T")) {
-                            float xpos = textView.getX();
-                            float ypos = textView.getY();
-                            textView.setX(xpos += dx);
-                            textView.setY(ypos += dy);
+                            float xpos = texts.get(CURRENT_TEXT).getPosX();
+                            float ypos = texts.get(CURRENT_TEXT).getPosY();
+                            texts.get(CURRENT_TEXT).setPosX(xpos += dx);
+                            texts.get(CURRENT_TEXT).setPosY(ypos += dy);
 
                         } else {
                             try{
@@ -291,6 +308,7 @@ public class TouchView extends View {
                 textScaleFactor *= detector.getScaleFactor();
 
                 textScaleFactor = Math.max(0.1f, Math.min(textScaleFactor, 5.0f));
+                texts.get(CURRENT_TEXT).setScaleFactor(textScaleFactor);
             }else {
                 try{
                     mScaleFactor *= detector.getScaleFactor();
@@ -307,20 +325,18 @@ public class TouchView extends View {
         }
     }
 
-    public void onShapeOrTextTouhched(String currentTextNum, String textColor){
-        if(currentTextNum.equals("T")){
-            fillColorShapes(R.color.editGraysmallShape, R.color.editGrayBigShape, "text");
-
-        }else{
-            fillColorShapes(R.color.editGraysmallShape, R.color.editGrayBigShape, "shape");
-        }
-
+    public void fillColorShapes(){
         DesignActivity.vButton.setVisibility(VISIBLE);
-//        BaseActivity.delete.setVisibility(VISIBLE);
-//        BaseActivity.initDeleteButton();
-        DesignActivity.currentNumText.setText(currentTextNum);
-        textPaint.setColor(Color.parseColor(textColor));
+        DesignActivity.colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.editGrayBigShape),PorterDuff.Mode.SRC_IN);
+        for(Shape shape:shapesForColor){
+            shape.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.editGraysmallShape),PorterDuff.Mode.SRC_IN);
+        }
+        for(TextBody textBody: texts){
+            textBody.getTextPaint().setColor(getResources().getColor(R.color.background));
+        }
     }
+
+
 
     public void punch(int shapeToPunch, String type){
 
@@ -341,7 +357,7 @@ public class TouchView extends View {
                     drawable = getResources().getDrawable(toppingResources[shapeToPunch]);
                     colorDrawable = getResources().getDrawable(toppingResources[shapeToPunch]);
                     shapesForColor.add(new Shape(colorDrawable, mPosX, mPosY));
-                    shapesForColor.getLast().getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor), PorterDuff.Mode.SRC_IN);
+                    shapesForColor.getLast().getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
                     break;
             }
 
@@ -358,55 +374,11 @@ public class TouchView extends View {
             Toast.makeText(getContext(), "Unable to perform action", Toast.LENGTH_SHORT).show();
         }
 
+
         CURRENT_SHAPE = shapes.size()-1;
     }
 
-    public void fillColorShapes(int shapesColor, int frameColor, String tag){
-        DesignActivity.colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(frameColor),PorterDuff.Mode.SRC_IN);
 
-        for(int i = 0; i < shapesForColor.size(); i++){
-            Shape shape = shapesForColor.get(i);
-
-            if(i == CURRENT_SHAPE && tag.equals("shape")){
-                switch (shape.getTag()){
-                    case "punch":
-                        shape.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.transparent),PorterDuff.Mode.SRC_IN);
-
-                        break;
-                    case "topping":
-                        shape.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.background),PorterDuff.Mode.SRC_IN);
-                        break;
-                }
-
-
-            }else {
-                try{
-
-                    switch (shape.getTag()) {
-                        case "punch":
-                            shape.getDrawable().mutate().setColorFilter(getResources().getColor(shapesColor), PorterDuff.Mode.SRC_IN);
-                            break;
-                        case "topping":
-                            shape.getDrawable().mutate().setColorFilter(getResources().getColor(frameColor), PorterDuff.Mode.SRC_IN);
-                            break;
-                    }
-
-                    if(tag.equals("text")){
-                        textPaint.setColor(Color.parseColor("#FFFFFF"));
-                    }
-
-                }catch (Resources.NotFoundException e){
-
-                }catch (NullPointerException e){
-
-                }
-            }
-
-        }
-
-        invalidate();
-
-    }
 
     public void init(){
 
@@ -434,31 +406,21 @@ public class TouchView extends View {
         mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
         textScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
 
-        textPosX = widthScreen/5;
-        textPosY = heightScreen/4;
-        textView = new TextView(getContext());
-        textView.setX(textPosX);
-        textView.setY(textPosY);
-        textView.setWidth(DesignActivity.editText.getWidth());
-        Typeface tf;
-        textPaint = new TextPaint();
-        textPaint.setColor(Color.WHITE);
-        textPaint.setAntiAlias(true);
-        textPaint.setTextSize(80);
-//        if(BaseActivity.design.equals("doorSign")){
-//            tf =Typeface.createFromAsset(getContext().getAssets(),"Pacifico-Regular.ttf");
-//            textPaint.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
-//        }else {
-            tf = Typeface.createFromAsset(getContext().getAssets(), "Montserrat-ExtraBold.ttf");
-            textPaint.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
+//        Typeface tf;
+//        textPaint = new TextPaint();
+//        if(DesignActivity.currentColor!= 0){
+//            textPaint.setColor(getResources().getColor(DesignActivity.currentColor));
+//        }else{
+//            textPaint.setColor(getResources().getColor(R.color.baseShapeFirstColor));
 //        }
-
-        textPaint.setTypeface(tf);
-        sl=new StaticLayout("", textPaint,(int)widthScreen/2,
-                Layout.Alignment.ALIGN_CENTER, 1f,0f,false);
-
-        textPivotx = sl.getWidth()/2;
-        textPivoty = sl.getHeight()/2;
+//
+//        textPaint.setAntiAlias(true);
+//        textPaint.setTextSize(80);
+//        tf = Typeface.createFromAsset(getContext().getAssets(), "Montserrat-ExtraBold.ttf");
+//        textPaint.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
+//
+//
+//        textPaint.setTypeface(tf);
 
 
     }

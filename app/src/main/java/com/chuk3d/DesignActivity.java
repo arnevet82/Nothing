@@ -2,6 +2,7 @@ package com.chuk3d;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -18,10 +19,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
+import android.text.StaticLayout;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -54,7 +58,7 @@ public class DesignActivity extends AppCompatActivity
     NestedScrollView toppingTabs, punchTabs;
     ImageView mainImage;
     static ImageView colorImage;
-    ImageButton next, color, topping, punch, text, punchText, toppingText;
+    ImageButton next, color, topping, punch, text, punchText, toppingText, vText;
     Button color1, color2, color3, color4, color5, color6, color7, color8, color9, color10, color11, color12;
     public static int currentColor;
     public static TextView currentNumText;
@@ -66,6 +70,7 @@ public class DesignActivity extends AppCompatActivity
     Button degrees0, degrees90, degrees180, degrees270, degrees360;
     Button font1, font2, font3, font4, font5;
     Typeface vampiro, montserrat, alef, baloo, pacifico;
+    public static Typeface currentFont;
 
 
     public static EditText editText;
@@ -77,7 +82,6 @@ public class DesignActivity extends AppCompatActivity
 
         position = getIntent().getIntExtra(POSITION_KEY, 1);
         mainImageRotation = getIntent().getFloatExtra(MAIN_IMAGE_ROTATION, 0);
-        Log.e("image rotation", ""+mainImageRotation);
         init();
         setUpBaseShape(position);
         onBottomBarClicked();
@@ -141,14 +145,24 @@ public class DesignActivity extends AppCompatActivity
                         case R.id.text:
                             text.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.lightPrimary),PorterDuff.Mode.SRC_IN);
                             textContainer.setVisibility(View.VISIBLE);
+                            textPunchToppingChoice.setVisibility(View.VISIBLE);
                             View.OnClickListener textListener = new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     switch (v.getId()){
                                         case R.id.text_topping:
                                             editText.setVisibility(View.VISIBLE);
+                                            editText.requestFocus();
+                                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
                                             textPunchToppingChoice.setVisibility(View.INVISIBLE);
-                                            fontsBar.setVisibility(View.VISIBLE);
+                                            initFonts();
+                                            showButtons();
+                                            vText.setVisibility(View.VISIBLE);
+                                            onVTextClicked();
+                                            TouchView.CURRENT_TEXT++;
+                                            currentNumText.setText("T");
+
                                             break;
                                         case R.id.text_punch:
                                             editText.setVisibility(View.VISIBLE);
@@ -168,6 +182,55 @@ public class DesignActivity extends AppCompatActivity
         }
     }
 
+    public void onVTextClicked(){
+        vText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editText.setVisibility(View.INVISIBLE);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                String text = editText.getText().toString();
+                TouchView.texts.add(new TextBody(text, getApplicationContext()));
+                if(currentFont != null){
+                    TouchView.texts.getLast().getTextPaint().setTypeface(currentFont);
+                }
+                editText.setText("");
+                fontsBar.setVisibility(View.INVISIBLE);
+                cleanBarButtons();
+                touchView.invalidate();
+                vButton.setVisibility(View.VISIBLE);
+                vText.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    public void initFonts(){
+
+        fontsBar.setVisibility(View.VISIBLE);
+        Button[]buttons={font1, font2, font3, font4, font5};
+        final Typeface []typefaces ={vampiro, montserrat, alef, baloo, pacifico};
+        for(Button button: buttons){
+            button.setOnClickListener(new View.OnClickListener() {
+
+                int [] buttonId = {R.id.font_1, R.id.font_2, R.id.font_3, R.id.font_4, R.id.font_5};
+                @Override
+                public void onClick(View v) {
+                    for(int i = 0; i < buttonId.length; i++){
+                        if(v.getId() == buttonId[i]) {
+                            changeFont(typefaces[i]);
+                            currentFont = typefaces[i];
+                        }
+
+                    }
+                }
+            });
+        }
+    }
+
+    public void changeFont(Typeface typeface){
+        editText.setTypeface(typeface);
+    }
+
     public void initVButton() {
         vButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,10 +238,6 @@ public class DesignActivity extends AppCompatActivity
                 vButton.setVisibility(View.INVISIBLE);
                 clearGrayColor();
                 rotationBar.setVisibility(View.INVISIBLE);
-//                rotateLine.setVisibility(View.INVISIBLE);
-//                rotateRuler.setVisibility(View.INVISIBLE);
-//                rotateCircle.setVisibility(View.INVISIBLE);
-
             }
         });
     }
@@ -212,9 +271,13 @@ public class DesignActivity extends AppCompatActivity
 
         if(currentColor == 0){
             colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
+            if(!TouchView.texts.isEmpty()){
+                TouchView.texts.get(TouchView.CURRENT_TEXT).getTextPaint().setColor(getResources().getColor(R.color.baseShapeFirstColor));
+            }
 
         }else {
-            changeAllColors(currentColor);
+            ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), currentColor);
+            colorCommand.execute();
         }
         touchView.invalidate();
     }
@@ -238,31 +301,16 @@ public class DesignActivity extends AppCompatActivity
                         if(v.getId() == buttonId[i]){
                             colorBar.setVisibility(View.INVISIBLE);
                             color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.white),PorterDuff.Mode.SRC_IN);
-//                            changeAllColors(colors[i]);
+                            currentColor = colors[i];
                             ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), colors[i]);
                             colorCommand.execute();
+                            showButtons();
                         }
                     }
                 }
             });
         }
     }
-
-    public void changeAllColors(int color) {
-        colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(color), PorterDuff.Mode.SRC_IN);
-        currentColor = color;
-        if (!TouchView.shapesForColor.isEmpty()) {
-            for (Shape shape : TouchView.shapesForColor) {
-                if (shape.getTag().equals("topping")) {
-                    shape.getDrawable().mutate().setColorFilter(getResources().getColor(color), PorterDuff.Mode.SRC_IN);
-                }
-            }
-            touchView.invalidate();
-            showButtons();
-        }
-    }
-
-
 
 
 
@@ -335,11 +383,15 @@ public class DesignActivity extends AppCompatActivity
         for(pos = 0; pos < buttonId.length; pos++){
             if(view.getId() == buttonId[pos]){
                 touchView.punch(pos, "topping");
+                currentNumText.setText("S");
+
                 hideAllUIElements();
                 showButtons();
                 vButton.setVisibility(View.VISIBLE);
             }
         }
+        Log.e("current shape", String.valueOf(TouchView.CURRENT_SHAPE));
+
     }
 
     @Override
@@ -352,11 +404,15 @@ public class DesignActivity extends AppCompatActivity
         for (pos = 0; pos < buttonId.length; pos++) {
             if (view.getId() == buttonId[pos]) {
                 touchView.punch(pos, "punch");
+                currentNumText.setText("S");
+
                 hideAllUIElements();
                 showButtons();
                 vButton.setVisibility(View.VISIBLE);
             }
         }
+
+        Log.e("current shape", String.valueOf(TouchView.CURRENT_SHAPE));
     }
 
 
@@ -379,10 +435,8 @@ public class DesignActivity extends AppCompatActivity
                 } else {
                     if (!TouchView.shapes.isEmpty()) {
 
-                        Shape shape = new Shape(TouchView.shapes.get(TouchView.CURRENT_SHAPE).getDrawable(), TouchView.shapes.get(TouchView.CURRENT_SHAPE).getPosX(), TouchView.shapes.get(TouchView.CURRENT_SHAPE).getPosY());
 
                         TouchView.shapes.remove(TouchView.CURRENT_SHAPE);
-                        TouchView.shapesForColor.remove(TouchView.CURRENT_SHAPE);
                         if (TouchView.CURRENT_SHAPE == 0 && !TouchView.shapes.isEmpty()) {
                             TouchView.CURRENT_SHAPE++;
                         } else {
@@ -428,7 +482,7 @@ public class DesignActivity extends AppCompatActivity
                     for(int i = 0; i < buttonId.length; i++){
                         if(v.getId() == buttonId[i]){
                             if (currentNumText.getText().equals("T")) {
-                                TouchView.angle = degrees[i];
+                                TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle(degrees[i]);
                             } else if (!TouchView.shapes.isEmpty()) {
                                 TouchView.shapes.get(TouchView.CURRENT_SHAPE).setAngle(degrees[i]);
                             } else {
@@ -453,8 +507,8 @@ public class DesignActivity extends AppCompatActivity
                     case MotionEvent.ACTION_DOWN:
                         x = motionEvent.getX();
 
-                        if (currentNumText.getText().equals("T")) {
-                            delta = (x - TouchView.angle);
+                        if (currentNumText.getText().equals("T")&&!TouchView.texts.isEmpty()) {
+                            delta = (x - TouchView.texts.get(TouchView.CURRENT_TEXT).getAngle());
                         } else if (!TouchView.shapes.isEmpty()) {
                             delta = (x - TouchView.shapes.get(TouchView.CURRENT_SHAPE).getAngle());
                         } else {
@@ -464,8 +518,8 @@ public class DesignActivity extends AppCompatActivity
                     case MotionEvent.ACTION_MOVE:
                         x = motionEvent.getX();
 
-                        if (currentNumText.getText().equals("T")) {
-                            TouchView.angle = (x - delta) / 3;
+                        if (currentNumText.getText().equals("T")&&!TouchView.texts.isEmpty()) {
+                            TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle((x - delta) / 3);
                         } else if (!TouchView.shapes.isEmpty()) {
                             TouchView.shapes.get(TouchView.CURRENT_SHAPE).setAngle((x - delta) / 3);
                         } else {
@@ -474,8 +528,8 @@ public class DesignActivity extends AppCompatActivity
 
                         break;
                     case MotionEvent.ACTION_UP:
-                        if (currentNumText.getText().equals("T")) {
-                            TouchView.angle = (x - delta) / 3;
+                        if (currentNumText.getText().equals("T")&&!TouchView.texts.isEmpty()) {
+                            TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle((x - delta) / 3);
                         } else if (!TouchView.shapes.isEmpty()) {
                             TouchView.shapes.get(TouchView.CURRENT_SHAPE).setAngle((x - delta) / 3);
 
@@ -515,7 +569,6 @@ public class DesignActivity extends AppCompatActivity
                         case DialogInterface.BUTTON_POSITIVE:
                             while (!TouchView.shapes.isEmpty()) {
                                 TouchView.shapes.remove(0);
-                                TouchView.shapesForColor.remove(0);
                             }
                             TouchView.CURRENT_SHAPE = -1;
                             currentColor = 0;
@@ -556,6 +609,13 @@ public class DesignActivity extends AppCompatActivity
 
         editText = (EditText)findViewById(R.id.edit_text);
         editText.setVisibility(View.INVISIBLE);
+        montserrat = Typeface.createFromAsset(getAssets(), "Montserrat-ExtraBold.ttf");
+        editText.setTypeface(montserrat);
+        editText.setText("");
+        editText.setTextColor(getResources().getColor(R.color.baseShapeFirstColor));
+        editText.setTextSize(30);
+        editText.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
+
         textPunchToppingChoice = (LinearLayout)findViewById(R.id.text_punch_topping_choice);
         punchText = (ImageButton)findViewById(R.id.text_punch);
         toppingText = (ImageButton)findViewById(R.id.text_topping);
@@ -677,6 +737,8 @@ public class DesignActivity extends AppCompatActivity
             font4.setTypeface(baloo);
             font5.setTypeface(pacifico);
 
+            vText = (ImageButton)findViewById(R.id.v_text);
+            vText.setVisibility(View.INVISIBLE);
 
         }
 

@@ -67,6 +67,7 @@ public class BaseShapeActivity extends AppCompatActivity
                         if(v.getId() == buttonId[i]){
                             mainImage.setRotation(degrees[i]);
                             colorImage.setRotation(degrees[i]);
+                            imageRotation = degrees[i];
                         }
                     }
                 }

@@ -7,13 +7,7 @@
 
 
 
-    <!--<ImageView-->
-        <!--android:id="@+id/main_imageView"-->
-        <!--android:background="@drawable/g_base_shape_5"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:layout_marginTop="60dp"-->
-        <!--android:layout_width="266dp"-->
-        <!--android:layout_height="266dp" />-->
+
 
     <EditText
         android:id="@+id/edit_text"
@@ -22,12 +16,25 @@
         android:layout_width="230dp"
         android:layout_height="wrap_content" />
 
+    <ImageButton
+        android:layout_marginTop="70dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/v_text"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:tintMode="src_in"
+        android:backgroundTint="@color/redBtn"
+        android:background="@drawable/done"
+        android:scaleType="fitXY" />
+
+
     <LinearLayout
         android:id="@+id/fonts_bar"
         android:gravity="center_horizontal"
         android:layout_above="@+id/text_punch_topping_choice"
         android:layout_width="match_parent"
         android:layout_height="55dp">
+
 
         <Button
             android:id="@+id/font_1"
