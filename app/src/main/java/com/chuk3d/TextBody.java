@@ -44,7 +44,7 @@ public class TextBody {
         switch (tag){
             case "punch":
                 MaskFilter filter =
-                        new EmbossMaskFilter(new float[]{0f, 0f, 1f}, 0.5f, 18f, 1f);
+                        new EmbossMaskFilter(new float[]{0.0f, -1.0f, 0.5f}, 0.8f, 15f, 1f);
                 textPaint.setMaskFilter(filter);
 
                 textPaint.setColor(context.getResources().getColor(R.color.background));
@@ -56,8 +56,9 @@ public class TextBody {
                 textPaint.setColor(context.getResources().getColor(DesignActivity.currentColor));
             }else{
                 textPaint.setColor(context.getResources().getColor(R.color.baseShapeFirstColor));
-                textPaint.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
             }
+                textPaint.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
+
                 break;
             default:
                 break;

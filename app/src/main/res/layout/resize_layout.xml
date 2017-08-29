@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_alignParentBottom="true"
+    android:id="@+id/resize_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ImageView
+        android:id="@+id/resize_ruler"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="180dp"
+        android:layout_centerHorizontal="true"
+        android:layout_width="324dp"
+        android:layout_height="33dp"
+        android:background="@color/transparent"/>
+
+    <ImageView
+        android:layout_alignParentBottom="true"
+        android:id="@+id/line"
+        android:layout_marginBottom="180dp"
+        android:layout_centerHorizontal="true"
+        android:layout_width="324dp"
+        android:layout_height="33dp"
+        android:background="@drawable/slide_bar"/>
+
+    <TextView
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textColor="#626066"
+        android:letterSpacing="-0.01"
+        android:lineSpacingExtra="6sp"
+        android:text="Your keychain size: 5 cm"
+        android:layout_marginBottom="40dp"
+        android:layout_above="@+id/buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp" />
+
+
+    <LinearLayout
+        android:background="@color/background"
+        android:id="@+id/buttons"
+        android:layout_marginBottom="-7dp"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+
+        <Button
+            android:textSize="20sp"
+            android:textColor="#ffffff"
+            android:letterSpacing="0.06"
+            android:text="cm"
+            android:textAllCaps="false"
+            android:textStyle="italic"
+            android:id="@+id/cm"
+            android:layout_marginLeft="-3dp"
+            android:layout_marginRight="-3dp"
+            android:layout_width="193dp"
+            android:layout_height="80dp"
+            android:background="#d8d8d8" />
+        <Button
+            android:textSize="20sp"
+            android:textColor="#ffffff"
+            android:letterSpacing="0.06"
+            android:text="inch"
+            android:textAllCaps="false"
+            android:textStyle="italic"
+            android:id="@+id/inch"
+            android:layout_marginLeft="-3dp"
+            android:layout_marginRight="-3dp"
+            android:layout_width="193dp"
+            android:layout_height="80dp"
+            android:background="#d8d8d8" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

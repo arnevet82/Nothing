@@ -2,7 +2,10 @@ package com.chuk3d;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.EmbossMaskFilter;
+import android.graphics.MaskFilter;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -33,6 +36,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.util.LinkedList;
 
 import static java.security.AccessController.getContext;
 
@@ -68,13 +73,13 @@ public class DesignActivity extends AppCompatActivity
     Button grid, undo, delete, rotate;
     static TouchView touchView;
     ImageView rotateCircle, rotateRuler, rotateLine;
-    RelativeLayout rotationBar;
-    Button degrees0, degrees90, degrees180, degrees270, degrees360;
+    RelativeLayout rotationBar, resizeBar;
+    Button degrees0, degrees90, degrees180, degrees270, degrees360, cm, inch;
     public static Button font1, font2, font3, font4, font5;
     public static Typeface vampiro, montserrat, alef, baloo, pacifico;
     public static Typeface currentFont;
 
-
+    public static LinkedList<String> stack = new LinkedList<>();
     public static EditText editText;
 
     @Override
@@ -92,6 +97,58 @@ public class DesignActivity extends AppCompatActivity
         initGridButton();
         touchView = new TouchView(this);
         designContainer.addView(touchView);
+        undo();
+        onNextButtonClicked();
+    }
+
+    public void onNextButtonClicked() {
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideAllUIElements();
+                bottomBar.setVisibility(View.INVISIBLE);
+                resizeBar.setVisibility(View.VISIBLE);
+                title.setText("Drag for requested size ");
+                cm.setBackgroundColor(Color.parseColor("#626066"));
+            }
+        });
+    }
+
+    public void undo(){
+        undo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!stack.isEmpty()){
+                    switch (stack.getLast()){
+                        case "color":
+                            ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), currentColor);
+                            colorCommand.undo();
+                            break;
+                        case "punch":
+                            PunchCommand punchCommand = new PunchCommand(touchView, 0, "punch");
+                            punchCommand.undo();
+                            break;
+                        case "topping":
+                            punchCommand = new PunchCommand(touchView, 0, "topping");
+                            punchCommand.undo();
+                            break;
+                        case "text":
+                            TextCommand textCommand = new TextCommand(getApplicationContext(), "", "", touchView);
+                            textCommand.undo();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        });
+
+    }
+
+    public static void clearStack(int stackSize){
+        while(stack.size() > stackSize){
+            stack.removeFirst();
+        }
     }
 
     public void hideAllUIElements(){
@@ -110,6 +167,7 @@ public class DesignActivity extends AppCompatActivity
         delete.setVisibility(View.INVISIBLE);
         rotationBar.setVisibility(View.INVISIBLE);
     }
+
     public void cleanBarButtons(){
         text.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.white),PorterDuff.Mode.SRC_IN);
         color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.white),PorterDuff.Mode.SRC_IN);
@@ -153,9 +211,11 @@ public class DesignActivity extends AppCompatActivity
                                     switch (v.getId()){
                                         case R.id.text_topping:
                                             onTextButtonClicked("topping");
+                                            designEditText("topping");
                                             break;
                                         case R.id.text_punch:
                                             onTextButtonClicked("punch");
+                                            designEditText("punch");
                                             break;
                                     }
                                 }
@@ -170,8 +230,20 @@ public class DesignActivity extends AppCompatActivity
         }
     }
 
-    public void onTextButtonClicked(String tag){
+    public void designEditText(String tag){
+        switch (tag){
+            case "punch":
+                editText.setTextColor(getResources().getColor(R.color.almostWhite));
+                break;
+            case "topping":
+                editText.setTextColor(getResources().getColor(R.color.baseShapeFirstColor));
+                editText.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
+                break;
+        }
         editText.setVisibility(View.VISIBLE);
+    }
+
+    public void onTextButtonClicked(String tag){
         editText.requestFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -180,7 +252,6 @@ public class DesignActivity extends AppCompatActivity
         showButtons();
         vText.setVisibility(View.VISIBLE);
         onVTextClicked(tag);
-        TouchView.CURRENT_TEXT++;
         currentNumText.setText("T");
     }
 
@@ -191,17 +262,9 @@ public class DesignActivity extends AppCompatActivity
         vText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editText.setVisibility(View.INVISIBLE);
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                 String text = editText.getText().toString();
-                TouchView.texts.add(new TextBody(text, getApplicationContext(), mTag));
-                if(currentFont != null){
-                    TouchView.texts.getLast().getTextPaint().setTypeface(currentFont);
-                }
-
-                editText.setText("");
-                fontsBar.setVisibility(View.INVISIBLE);
+                TextCommand textCommand = new TextCommand(getApplicationContext(), text, mTag, touchView);
+                textCommand.execute();
                 cleanBarButtons();
                 touchView.invalidate();
                 vButton.setVisibility(View.VISIBLE);
@@ -225,7 +288,7 @@ public class DesignActivity extends AppCompatActivity
 
         }
         touchView.invalidate();
-        fontsBar.setVisibility(View.INVISIBLE);
+
     }
 
     public static void initFonts(){
@@ -255,6 +318,7 @@ public class DesignActivity extends AppCompatActivity
                 vButton.setVisibility(View.INVISIBLE);
                 clearGrayColor();
                 rotationBar.setVisibility(View.INVISIBLE);
+                fontsBar.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -275,39 +339,9 @@ public class DesignActivity extends AppCompatActivity
 
     public void clearGrayColor(){
 
-//        if(currentColor == 0){
+        ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), currentColor);
+        colorCommand.execute();
 
-//            colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
-//
-//
-//            for(int i = 0; i < TouchView.shapesForColor.size(); i++){
-//                Shape shape = TouchView.shapesForColor.get(i);
-//                switch (shape.getTag()){
-//                    case "topping":
-//                        shape.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
-//                        break;
-//                    case "punch":
-//                        shape.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.transparent),PorterDuff.Mode.SRC_IN);
-//                        break;
-//                }
-//            }
-//
-//            for(int i = 0; i < TouchView.texts.size(); i++){
-//                TextBody textBody = TouchView.texts.get(i);
-//                switch (textBody.getTag()){
-//                    case "topping":
-//                        textBody.getTextPaint().setColor(getResources().getColor(R.color.baseShapeFirstColor));
-//                        break;
-//                    case "punch":
-//                        textBody.getTextPaint().setColor(getResources().getColor(R.color.background));
-//                        break;
-//                }
-//            }
-
-//        }else {
-            ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), currentColor);
-            colorCommand.execute();
-//        }
         touchView.invalidate();
     }
 
@@ -319,7 +353,8 @@ public class DesignActivity extends AppCompatActivity
 
     public void changeColor(){
         final Button[]buttons = {color1, color2, color3, color4, color5, color6, color7, color8, color9, color10, color11, color12};
-        for(Button button:buttons){
+        for(final Button button:buttons){
+            button.setVisibility(View.VISIBLE);
             button.setOnClickListener(new View.OnClickListener() {
                 int[]buttonId = {R.id.color1, R.id.color2, R.id.color3, R.id.color4, R.id.color5, R.id.color6, R.id.color7, R.id.color8, R.id.color9, R.id.color10, R.id.color11, R.id.color12};
                 int[]colors={R.color.yellowBtn, R.color.orangeBtn, R.color.redBtn, R.color.pinkBtn, R.color.purpleBtn, R.color.darkeBlueBtn,
@@ -329,6 +364,7 @@ public class DesignActivity extends AppCompatActivity
                     for(int i = 0; i < buttons.length; i++){
                         if(v.getId() == buttonId[i]){
                             colorBar.setVisibility(View.INVISIBLE);
+                            buttons[i].setVisibility(View.INVISIBLE);
                             color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.white),PorterDuff.Mode.SRC_IN);
                             currentColor = colors[i];
                             ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), colors[i]);
@@ -341,8 +377,6 @@ public class DesignActivity extends AppCompatActivity
         }
     }
 
-
-
     public void setUpBaseShape(int pos){
 
         int[]baseShapes = {R.drawable.g_base_shape_1, R.drawable.g_base_shape_2, R.drawable.g_base_shape_3,R.drawable.g_base_shape_4, R.drawable.g_base_shape_5, R.drawable.g_base_shape_6, R.drawable.g_base_shape_7, R.drawable.g_base_shape_8, R.drawable.g_base_shap_9, R.drawable.g_base_shape_10, R.drawable.g_base_shape_11, R.drawable.g_base_shape_12, R.drawable.g_base_shape_13, R.drawable.g_base_shape_14, R.drawable.g_base_shape_15, R.drawable.g_base_shape_16, R.drawable.g_base_shape_17, R.drawable.g_base_shape_18, R.drawable.g_base_shape_19, R.drawable.g_base_shape_20, R.drawable.g_base_shape_21, R.drawable.g_base_shape_22, R.drawable.g_base_shape_23, R.drawable.g_base_shape_24, R.drawable.g_base_shape_25, R.drawable.g_base_shape_26, R.drawable.g_base_shape_27, R.drawable.g_base_shape_28, R.drawable.g_base_shape_29, R.drawable.g_base_shape_30, R.drawable.g_base_shape_31, R.drawable.g_base_shape_32, R.drawable.g_base_shape_33, R.drawable.g_base_shape_34, R.drawable.g_base_shape_35, R.drawable.g_base_shape_36};
@@ -354,7 +388,6 @@ public class DesignActivity extends AppCompatActivity
         colorImage.setRotation(mainImageRotation);
 
     }
-
 
     public void initDrawerAndNavigationView(){
 
@@ -401,7 +434,6 @@ public class DesignActivity extends AppCompatActivity
         return true;
     }
 
-
     @Override
     public void onToppingButtonClicked(View view) {
         toppingTabs.setVisibility(View.VISIBLE);
@@ -411,9 +443,8 @@ public class DesignActivity extends AppCompatActivity
         int pos = 0;
         for(pos = 0; pos < buttonId.length; pos++){
             if(view.getId() == buttonId[pos]){
-                touchView.punch(pos, "topping");
-                currentNumText.setText("S");
-
+                PunchCommand punchCommand = new PunchCommand(touchView, pos, "topping");
+                punchCommand.execute();
                 hideAllUIElements();
                 showButtons();
                 vButton.setVisibility(View.VISIBLE);
@@ -432,9 +463,8 @@ public class DesignActivity extends AppCompatActivity
         int pos = 0;
         for (pos = 0; pos < buttonId.length; pos++) {
             if (view.getId() == buttonId[pos]) {
-                touchView.punch(pos, "punch");
-                currentNumText.setText("S");
-
+                PunchCommand punchCommand = new PunchCommand(touchView, pos, "punch");
+                punchCommand.execute();
                 hideAllUIElements();
                 showButtons();
                 vButton.setVisibility(View.VISIBLE);
@@ -450,40 +480,12 @@ public class DesignActivity extends AppCompatActivity
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if (currentNumText.getText().equals("T")) {
-
-//                    textString = "";
-//                    editText.setText("");
-//                    TouchView.sl = new StaticLayout(textString, TouchView.textPaint, 1000 / 2,
-//                            Layout.Alignment.ALIGN_CENTER, 1f, 0f, false);
-//                    vButton.setVisibility(View.INVISIBLE);
-//                    touchView.clearGrayColor();
-//                    touchView.invalidate();
-//                    currentNumText.setText(textString);
-                } else {
-                    if (!TouchView.shapes.isEmpty()) {
-
-
-                        TouchView.shapes.remove(TouchView.CURRENT_SHAPE);
-                        if (TouchView.CURRENT_SHAPE == 0 && !TouchView.shapes.isEmpty()) {
-                            TouchView.CURRENT_SHAPE++;
-                        } else {
-                            TouchView.CURRENT_SHAPE--;
-                            currentNumText.setText("T");
-                        }
-
-                        vButton.setVisibility(View.INVISIBLE);
-                        clearGrayColor();
-                        touchView.invalidate();
-
-                    }
-                }
+                DeleteCommand deleteCommand = new DeleteCommand(touchView);
+                deleteCommand.execute();
+                clearGrayColor();
             }
         });
     }
-
-
 
     public void setRotationRuler() {
 
@@ -491,6 +493,7 @@ public class DesignActivity extends AppCompatActivity
         rotate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                fontsBar.setVisibility(View.INVISIBLE);
                 rotationBar.setVisibility(View.VISIBLE);
                 rotateLine.setVisibility(View.VISIBLE);
                 rotateCircle.setVisibility(View.VISIBLE);
@@ -574,7 +577,6 @@ public class DesignActivity extends AppCompatActivity
         });
     }
 
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -598,8 +600,13 @@ public class DesignActivity extends AppCompatActivity
                         case DialogInterface.BUTTON_POSITIVE:
                             while (!TouchView.shapes.isEmpty()) {
                                 TouchView.shapes.remove(0);
+                                TouchView.shapesForColor.remove(0);
                             }
                             TouchView.CURRENT_SHAPE = -1;
+                            while (!TouchView.texts.isEmpty()) {
+                                TouchView.texts.remove(0);
+                            }
+                            TouchView.CURRENT_TEXT = -1;
                             currentColor = 0;
                             DesignActivity.super.onBackPressed();
                             break;
@@ -641,9 +648,7 @@ public class DesignActivity extends AppCompatActivity
         montserrat = Typeface.createFromAsset(getAssets(), "Montserrat-ExtraBold.ttf");
         editText.setTypeface(montserrat);
         editText.setText("");
-        editText.setTextColor(getResources().getColor(R.color.baseShapeFirstColor));
         editText.setTextSize(30);
-        editText.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
 
         textPunchToppingChoice = (LinearLayout)findViewById(R.id.text_punch_topping_choice);
         punchText = (ImageButton)findViewById(R.id.text_punch);
@@ -768,6 +773,13 @@ public class DesignActivity extends AppCompatActivity
 
             vText = (ImageButton)findViewById(R.id.v_text);
             vText.setVisibility(View.INVISIBLE);
+
+            next = (ImageButton)findViewById(R.id.next);
+            resizeBar = (RelativeLayout)findViewById(R.id.resize_container);
+            resizeBar.setVisibility(View.INVISIBLE);
+
+            cm = (Button)findViewById(R.id.cm);
+            inch = (Button)findViewById(R.id.inch);
 
         }
 

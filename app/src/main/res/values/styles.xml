@@ -32,9 +32,9 @@
     </style>
 
     <style name="NavigationDrawerStyle">
-        <item name="android:textSize">40sp</item><!-- text size in menu-->
+        <item name="android:textSize">20sp</item><!-- text size in menu-->
         <item name="android:textStyle">italic</item>
-        <item name="android:listPreferredItemHeightSmall">60dp</item><!-- item size in menu-->
+        <item name="android:listPreferredItemHeightSmall">50dp</item><!-- item size in menu-->
     </style>
 
 </resources>

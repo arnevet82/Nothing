@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 public class Shape {
 
     private Drawable drawable;
-    private Drawable colorDrawable;
     private float posX, posY;
     private float scaleFactor = 1.f;
     private float angle;
@@ -28,14 +27,7 @@ public class Shape {
     }
 
     public void setDrawable(Drawable drawable) {
-        this.colorDrawable = drawable;
-    }
-    public Drawable getColorDrawable() {
-        return colorDrawable;
-    }
-
-    public void setColorDrawable(Drawable colorDrawable) {
-        this.colorDrawable = colorDrawable;
+        this.drawable = drawable;
     }
 
     public float getPosX() {

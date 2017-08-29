@@ -8,10 +8,12 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.support.v4.view.MotionEventCompat;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -57,9 +59,6 @@ public class TouchView extends View {
 
     public static int CURRENT_SHAPE = -1;
     public static int CURRENT_TEXT = -1;
-
-//    public static TextPaint textPaint;
-//    public static float angle;
 
     public static float textScaleFactor = 1.f;
     private ScaleGestureDetector textScaleDetector;
@@ -156,8 +155,11 @@ public class TouchView extends View {
 
     }
 
+
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+
 
         LinkedList<Integer>clickedShapes = new LinkedList<>();
         LinkedList<Integer>clickedTexts = new LinkedList<>();
@@ -234,40 +236,46 @@ public class TouchView extends View {
 
                 } else {
                     final int pointerIndex = ev.findPointerIndex(mActivePointerId);
-                    final float x = ev.getX(pointerIndex);
-                    final float y = ev.getY(pointerIndex);
+                    if (pointerIndex >= 0) {
 
-                    if (!mScaleDetector.isInProgress()) {
+                        final float x = ev.getX(pointerIndex);
+                        final float y = ev.getY(pointerIndex);
 
-                        final float dx = x - mLastTouchX;
-                        final float dy = y - mLastTouchY;
+                        if (!mScaleDetector.isInProgress()) {
 
-                        if (DesignActivity.currentNumText.getText().equals("T")) {
-                            float xpos = texts.get(CURRENT_TEXT).getPosX();
-                            float ypos = texts.get(CURRENT_TEXT).getPosY();
-                            texts.get(CURRENT_TEXT).setPosX(xpos += dx);
-                            texts.get(CURRENT_TEXT).setPosY(ypos += dy);
+                            final float dx = x - mLastTouchX;
+                            final float dy = y - mLastTouchY;
 
-                        } else {
                             try{
-                                float xpos = shapes.get(CURRENT_SHAPE).getPosX();
-                                float ypos = shapes.get(CURRENT_SHAPE).getPosY();
-                                shapes.get(CURRENT_SHAPE).setPosX(xpos += dx);
-                                shapes.get(CURRENT_SHAPE).setPosY(ypos += dy);
+
+                                if (DesignActivity.currentNumText.getText().equals("T")) {
+                                    float xpos = texts.get(CURRENT_TEXT).getPosX();
+                                    float ypos = texts.get(CURRENT_TEXT).getPosY();
+                                    texts.get(CURRENT_TEXT).setPosX(xpos += dx);
+                                    texts.get(CURRENT_TEXT).setPosY(ypos += dy);
+
+                                } else {
+                                    float xpos = shapes.get(CURRENT_SHAPE).getPosX();
+                                    float ypos = shapes.get(CURRENT_SHAPE).getPosY();
+                                    shapes.get(CURRENT_SHAPE).setPosX(xpos += dx);
+                                    shapes.get(CURRENT_SHAPE).setPosY(ypos += dy);
+
+                                }
 
                             }catch (IndexOutOfBoundsException e){
 
                             }catch (NoSuchElementException e){
 
                             }
+
+                            invalidate();
+
                         }
-                        invalidate();
+                        mLastTouchX = x;
+                        mLastTouchY = y;
 
+                        break;
                     }
-                    mLastTouchX = x;
-                    mLastTouchY = y;
-
-                    break;
                 }
             }
 
@@ -278,22 +286,31 @@ public class TouchView extends View {
 
             case MotionEvent.ACTION_CANCEL: {
                 mActivePointerId = INVALID_POINTER_ID;
+
+                final int pointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
+
+                if (pointerIndex < 0) {
+                    Log.e("ash", "Got ACTION_UP event but have an invalid active pointer id.");
+                    return false;
+                }
+
                 break;
             }
 
             case MotionEvent.ACTION_POINTER_UP: {
-                final int pointerIndex = (ev.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK)
-                        >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
-
-                final int pointerId = ev.getPointerId(pointerIndex);
-                if (pointerId == mActivePointerId) {
-
-                    final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-                    mLastTouchX = ev.getX(newPointerIndex);
-                    mLastTouchY = ev.getY(newPointerIndex);
-                    mActivePointerId = ev.getPointerId(newPointerIndex);
-
-                }
+                onSecondaryPointerUp(ev);
+//                final int pointerIndex = (ev.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK)
+//                        >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+//
+//                final int pointerId = ev.getPointerId(pointerIndex);
+//                if (pointerId == mActivePointerId) {
+//
+//                    final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
+//                    mLastTouchX = ev.getX(newPointerIndex);
+//                    mLastTouchY = ev.getY(newPointerIndex);
+//                    mActivePointerId = ev.getPointerId(newPointerIndex);
+//
+//                }
                 break;
             }
         }
@@ -302,6 +319,18 @@ public class TouchView extends View {
         return true;
     }
 
+    private void onSecondaryPointerUp(MotionEvent ev) {
+        final int pointerIndex = MotionEventCompat.getActionIndex(ev);
+        final int pointerId = MotionEventCompat.getPointerId(ev, pointerIndex);
+        if (pointerId == mActivePointerId) {
+            // This was our active pointer going up. Choose a new
+            // active pointer and adjust accordingly.
+            final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
+            mLastTouchX = ev.getX(newPointerIndex);
+            mLastTouchY = ev.getY(newPointerIndex);
+            mActivePointerId = MotionEventCompat.getPointerId(ev, newPointerIndex);
+        }
+    }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
@@ -359,7 +388,11 @@ public class TouchView extends View {
                     drawable = getResources().getDrawable(toppingResources[shapeToPunch]);
                     colorDrawable = getResources().getDrawable(toppingResources[shapeToPunch]);
                     shapesForColor.add(new Shape(colorDrawable, mPosX, mPosY));
-                    shapesForColor.getLast().getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
+                    if(DesignActivity.currentColor == 0){
+                        shapesForColor.getLast().getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
+                    }else{
+                        shapesForColor.getLast().getDrawable().mutate().setColorFilter(getResources().getColor(DesignActivity.currentColor),PorterDuff.Mode.SRC_IN);
+                    }
                     break;
             }
 
@@ -407,23 +440,6 @@ public class TouchView extends View {
 
         mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
         textScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
-
-//        Typeface tf;
-//        textPaint = new TextPaint();
-//        if(DesignActivity.currentColor!= 0){
-//            textPaint.setColor(getResources().getColor(DesignActivity.currentColor));
-//        }else{
-//            textPaint.setColor(getResources().getColor(R.color.baseShapeFirstColor));
-//        }
-//
-//        textPaint.setAntiAlias(true);
-//        textPaint.setTextSize(80);
-//        tf = Typeface.createFromAsset(getContext().getAssets(), "Montserrat-ExtraBold.ttf");
-//        textPaint.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
-//
-//
-//        textPaint.setTypeface(tf);
-
 
     }
 
