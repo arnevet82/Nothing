@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/before_payment"
+    android:orientation="vertical"
+    android:background="@color/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <TextView
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:typeface="sans"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:textSize="19sp"
+        android:textColor="@color/darkGray"
+        android:lineSpacingExtra="4.7sp"
+        android:text="3D printing in process..."
+        />
+
+
+    <TextView
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="280dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="@color/darkGray"
+        android:lineSpacingExtra="4.8sp"
+        android:text="Your creation will\narrive to you soon!"
+        />
+
+    <ImageView
+        android:backgroundTint="#28a0aa"
+        android:tintMode="src_atop"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="140dp"
+        android:background="@drawable/shape"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+
+
+
+    <Button
+        android:textSize="13sp"
+        android:textStyle="italic"
+        android:id="@+id/Lets_chuk_again"
+        android:layout_marginTop="410dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        android:background="@drawable/continue_for_payment"
+        android:text="Let's chuk again"
+        android:layout_width="150dp"
+        android:layout_height="100dp" />
+
+</RelativeLayout>

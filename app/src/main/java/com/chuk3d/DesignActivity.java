@@ -1,19 +1,31 @@
 package com.chuk3d;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.EmbossMaskFilter;
 import android.graphics.MaskFilter;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -36,11 +48,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
+import static android.R.attr.textColor;
 import static java.security.AccessController.getContext;
 
 /**
@@ -49,6 +70,8 @@ import static java.security.AccessController.getContext;
 
 public class DesignActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ToppingFragment.ToppinfFragmentItemClickCallback, PunchFragment.PunchFragmentItemClickCallback{
+
+    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 99;
 
     public static final String POSITION_KEY = "POSITION";
     public static int position;
@@ -60,7 +83,7 @@ public class DesignActivity extends AppCompatActivity
     ViewPager toppingViewPager, punchViewPager;
     ToppingTabPager toppingTabPager;
     PunchTabPager punchTabPager;
-    RelativeLayout colorBar, designContainer, gridScreen, textContainer, bottomBar;
+    RelativeLayout colorBar, designContainer, gridScreen, textContainer, bottomBar, bPaymentScreen;
     LinearLayout textPunchToppingChoice;
     static LinearLayout fontsBar;
     NestedScrollView toppingTabs, punchTabs;
@@ -75,7 +98,7 @@ public class DesignActivity extends AppCompatActivity
     static TouchView touchView;
     ImageView rotateCircle, rotateRuler, rotateLine;
     RelativeLayout rotationBar, resizeBar;
-    Button degrees0, degrees90, degrees180, degrees270, degrees360, cm, inch;
+    Button degrees0, degrees90, degrees180, degrees270, degrees360, cm, inch, letsChukAgain;
     public static Button font1, font2, font3, font4, font5;
     public static Typeface vampiro, montserrat, alef, baloo, pacifico;
     public static Typeface currentFont;
@@ -84,6 +107,9 @@ public class DesignActivity extends AppCompatActivity
     public static EditText editText;
     public static boolean isInches;
     public static String sizeTerm = "cm";
+
+    File imageFile, galleryImageFile;
+    public static String fileName, galleryFileName, formattedSize;
 
 
     @Override
@@ -109,17 +135,46 @@ public class DesignActivity extends AppCompatActivity
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideAllUIElements();
-                bottomBar.setVisibility(View.INVISIBLE);
-                resizeBar.setVisibility(View.VISIBLE);
-                title.setText("Drag for requested size ");
-                cm.setBackgroundColor(Color.parseColor("#626066"));
-                inch.setBackgroundColor(Color.parseColor("#d8d8d8"));
-                sizeTerm = "cm";
-                initSizeBtns();
-                resize();
+                if(resizeBar.getVisibility() == View.INVISIBLE && bPaymentScreen.getVisibility() == View.INVISIBLE){
+                    hideAllUIElements();
+                    bottomBar.setVisibility(View.INVISIBLE);
+                    setResizeScreen();
+                }else if(resizeBar.getVisibility() == View.VISIBLE){
+                    setUpBeforePayment();
+                }else if(bPaymentScreen.getVisibility() == View.VISIBLE){
+                    if (checkPermissionREAD_EXTERNAL_STORAGE(getApplicationContext())) {
+                        takeScreenshot();
+                        takeScreenshotForGallery();                }
+                }
+
             }
         });
+    }
+
+    public void setUpBeforePayment(){
+        resizeBar.setVisibility(View.INVISIBLE);
+        designContainer.setVisibility(View.INVISIBLE);
+        bPaymentScreen.setVisibility(View.VISIBLE);
+        title.setText("Confirm");
+
+        letsChukAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetDesign();
+                Intent intent = new Intent(getApplication(), BaseShapeActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void setResizeScreen(){
+        resizeBar.setVisibility(View.VISIBLE);
+        title.setText("Drag for requested size ");
+        cm.setBackgroundColor(Color.parseColor("#626066"));
+        inch.setBackgroundColor(Color.parseColor("#d8d8d8"));
+        sizeTerm = "cm";
+        initSizeBtns();
+        resize();
     }
 
     public void initSizeBtns(){
@@ -167,7 +222,6 @@ public class DesignActivity extends AppCompatActivity
                 float sizeInSm = designContainer.getScaleX() * 5.73f;
                 float sizeInInch = designContainer.getScaleX()*2.2559f;
 
-                String formattedSize;
                 if(isInches){
                     formattedSize = String.format("%.1f", sizeInInch );
                 }else{
@@ -663,6 +717,194 @@ public class DesignActivity extends AppCompatActivity
         });
     }
 
+    public boolean checkPermissionREAD_EXTERNAL_STORAGE(
+            final Context context) {
+        int currentAPIVersion = Build.VERSION.SDK_INT;
+        if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(context,
+                    Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(
+                        this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    showDialog("External storage", context,
+                            Manifest.permission.READ_EXTERNAL_STORAGE);
+
+                } else {
+                    ActivityCompat
+                            .requestPermissions(
+                                    this,
+                                    new String[] { Manifest.permission.READ_EXTERNAL_STORAGE },
+                                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                }
+                return false;
+            } else {
+                return true;
+            }
+
+        } else {
+            return true;
+        }
+    }
+
+    public void showDialog(final String msg, final Context context,
+                           final String permission) {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+        alertBuilder.setCancelable(true);
+        alertBuilder.setTitle("Permission necessary");
+        alertBuilder.setMessage(msg + " permission is necessary");
+        alertBuilder.setPositiveButton(android.R.string.yes,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions((Activity) context,
+                                new String[] { permission },
+                                MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                    }
+                });
+        AlertDialog alert = alertBuilder.create();
+        alert.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // do your stuff
+                } else {
+                    Toast.makeText(this, "GET_ACCOUNTS Denied",
+                            Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions,
+                        grantResults);
+        }
+    }
+
+    private void takeScreenshotForGallery() {
+        designContainer.setBackgroundColor(Color.parseColor("#e7f7ff"));
+        Date now = new Date();
+        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
+
+        try {
+/////////////// directory
+            File dir = getExternalFilesDir("Chuk");
+//////////////path
+            String mPath = "ChukGallery"+now+".jpg";
+
+            View v1 = getWindow().getDecorView().findViewById(R.id.design_container);
+            v1.setDrawingCacheEnabled(true);
+            Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
+            v1.setDrawingCacheEnabled(false);
+
+//////////// file with directory and path
+            galleryImageFile = new File(dir, mPath);
+
+            FileOutputStream outputStream = new FileOutputStream(galleryImageFile);
+            int quality = 100;
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+        } catch (Throwable e) {
+            Log.e("couldnt send email", "");
+            e.printStackTrace();
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, "Title");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "Description");
+        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis ());
+        values.put(MediaStore.Images.ImageColumns.BUCKET_ID, galleryImageFile.toString().toLowerCase(Locale.US).hashCode());
+        values.put(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME, galleryImageFile.getName().toLowerCase(Locale.US));
+        values.put("_data", galleryImageFile.getAbsolutePath());
+
+        ContentResolver cr = getContentResolver();
+        cr.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+
+        Uri uri= Uri.fromFile(galleryImageFile);
+        try {
+            galleryFileName = PathUtil.getPath(getApplicationContext(), uri);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        designContainer.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    private void takeScreenshot() {
+
+        designContainer.setBackgroundColor(Color.WHITE);
+//        changeMainImageColor(R.color.darkBlack, R.color.realGray, "#616161");
+//        touchView.textPaint.setColor(Color.parseColor("#616161"));
+        touchView.invalidate();
+
+        Date now = new Date();
+        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
+
+        try {
+/////////////// directory
+            File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+//////////////path
+            String mPath = "Chuk"+now+".jpg";
+
+            View v1 = getWindow().getDecorView().findViewById(R.id.design_container);
+            v1.setDrawingCacheEnabled(true);
+            Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
+            v1.setDrawingCacheEnabled(false);
+
+//////////// file with directory and path
+            imageFile = new File(dir, mPath);
+
+            FileOutputStream outputStream = new FileOutputStream(imageFile);
+            int quality = 100;
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+        } catch (Throwable e) {
+            Log.e("couldnt send email", "");
+            e.printStackTrace();
+        }
+
+//        changeMainImageColor(currentColor, currentColor, textColor);
+        designContainer.setBackgroundColor(Color.TRANSPARENT);
+//        touchView.fillColorShapes(R.color.halfTransparentWhite, currentColor, null);
+//        touchView.textPaint.setColor(Color.parseColor(textColor));
+        touchView.invalidate();
+
+
+        try {
+            Uri uri= Uri.fromFile(imageFile);
+            fileName = PathUtil.getPath(getApplicationContext(), uri);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
+        Log.i("SendMailActivity", "Send Button Clicked.");
+
+        String fromEmail = "chuk3d@gmail.com";
+
+        String fromPassword = "ChukChukChuk";
+
+        String toEmails = "nataliestarr82@gmail.com";
+
+        List toEmailList = Arrays.asList(toEmails
+                .split("\\s*,\\s*"));
+        Log.i("SendMailActivity", "To List: " + toEmailList);
+        String emailSubject = "My creation";
+        String emailBody = "design size: " + formattedSize + ", color: " + textColor;
+        new SendMailTask(DesignActivity.this).execute(fromEmail,
+                fromPassword, toEmailList, emailSubject, "", fileName, emailBody);
+
+    }
+
+
+
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -687,22 +929,17 @@ public class DesignActivity extends AppCompatActivity
             designContainer.setScaleX(1);
             designContainer.setScaleY(1);
             title.setText("Create your design");
+        }else if(bPaymentScreen.getVisibility()==View.VISIBLE) {
+            bPaymentScreen.setVisibility(View.INVISIBLE);
+            designContainer.setVisibility(View.VISIBLE);
+            setResizeScreen();
         } else {
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which){
                         case DialogInterface.BUTTON_POSITIVE:
-                            while (!TouchView.shapes.isEmpty()) {
-                                TouchView.shapes.remove(0);
-                                TouchView.shapesForColor.remove(0);
-                            }
-                            TouchView.CURRENT_SHAPE = -1;
-                            while (!TouchView.texts.isEmpty()) {
-                                TouchView.texts.remove(0);
-                            }
-                            TouchView.CURRENT_TEXT = -1;
-                            currentColor = 0;
+                            resetDesign();
                             DesignActivity.super.onBackPressed();
                             break;
 
@@ -717,6 +954,19 @@ public class DesignActivity extends AppCompatActivity
             builder.setMessage("Exit?").setPositiveButton("Yes", dialogClickListener)
                     .setNegativeButton("No", dialogClickListener).show();
         }
+    }
+
+    public void resetDesign(){
+        while (!TouchView.shapes.isEmpty()) {
+            TouchView.shapes.remove(0);
+            TouchView.shapesForColor.remove(0);
+        }
+        TouchView.CURRENT_SHAPE = -1;
+        while (!TouchView.texts.isEmpty()) {
+            TouchView.texts.remove(0);
+        }
+        TouchView.CURRENT_TEXT = -1;
+        currentColor = 0;
     }
 
     public void init(){
@@ -875,6 +1125,11 @@ public class DesignActivity extends AppCompatActivity
 
             cm = (Button)findViewById(R.id.cm);
             inch = (Button)findViewById(R.id.inch);
+
+            bPaymentScreen = (RelativeLayout)findViewById(R.id.before_payment);
+            bPaymentScreen.setVisibility(View.INVISIBLE);
+
+            letsChukAgain = (Button)findViewById(R.id.Lets_chuk_again);
 
         }
 

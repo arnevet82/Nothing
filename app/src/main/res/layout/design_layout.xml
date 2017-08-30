@@ -8,6 +8,8 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/app_bar_design">
 
+    <include layout="@layout/before_payment_layout" />
+
     <RelativeLayout
         android:id="@+id/design_container"
         android:layout_width="match_parent"
@@ -204,5 +206,6 @@
 
     <include layout="@layout/bottom_bar" />
     <include layout="@layout/resize_layout" />
+
     <include layout="@layout/color_bar" />
 </RelativeLayout>
