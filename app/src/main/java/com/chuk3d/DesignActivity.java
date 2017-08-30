@@ -37,6 +37,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.LinkedList;
 
 import static java.security.AccessController.getContext;
@@ -58,10 +60,9 @@ public class DesignActivity extends AppCompatActivity
     ViewPager toppingViewPager, punchViewPager;
     ToppingTabPager toppingTabPager;
     PunchTabPager punchTabPager;
-    RelativeLayout colorBar, designContainer, gridScreen, textContainer;
+    RelativeLayout colorBar, designContainer, gridScreen, textContainer, bottomBar;
     LinearLayout textPunchToppingChoice;
     static LinearLayout fontsBar;
-    LinearLayout bottomBar;
     NestedScrollView toppingTabs, punchTabs;
     ImageView mainImage;
     static ImageView colorImage;
@@ -81,6 +82,9 @@ public class DesignActivity extends AppCompatActivity
 
     public static LinkedList<String> stack = new LinkedList<>();
     public static EditText editText;
+    public static boolean isInches;
+    public static String sizeTerm = "cm";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +114,87 @@ public class DesignActivity extends AppCompatActivity
                 resizeBar.setVisibility(View.VISIBLE);
                 title.setText("Drag for requested size ");
                 cm.setBackgroundColor(Color.parseColor("#626066"));
+                inch.setBackgroundColor(Color.parseColor("#d8d8d8"));
+                sizeTerm = "cm";
+                initSizeBtns();
+                resize();
+            }
+        });
+    }
+
+    public void initSizeBtns(){
+        View.OnClickListener sizeListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSizeBtnClicked(v);
+            }
+        };
+        cm.setOnClickListener(sizeListener);
+        inch.setOnClickListener(sizeListener);
+    }
+
+    public void onSizeBtnClicked(View v){
+
+        switch (v.getId()){
+            case R.id.cm:
+                cm.setBackgroundColor(Color.parseColor("#626066"));
+                inch.setBackgroundColor(Color.parseColor("#d8d8d8"));
+                isInches = false;
+                sizeTerm = "cm";
+                break;
+            case R.id.inch:
+                cm.setBackgroundColor(Color.parseColor("#d8d8d8"));
+                inch.setBackgroundColor(Color.parseColor("#626066"));
+                isInches = true;
+                sizeTerm = "inch";
+                break;
+        }
+    }
+
+    public void resize(){
+
+        resizeBar.setOnTouchListener(new View.OnTouchListener() {
+            TextView sizeText = (TextView)findViewById(R.id.size_text);
+            ImageView resizeBall = (ImageView)findViewById(R.id.resize_circle);
+
+            float x;
+            float y;
+            float newSize;
+            float maxSize;
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                float sizeInSm = designContainer.getScaleX() * 5.73f;
+                float sizeInInch = designContainer.getScaleX()*2.2559f;
+
+                String formattedSize;
+                if(isInches){
+                    formattedSize = String.format("%.1f", sizeInInch );
+                }else{
+                    formattedSize = String.format("%.0f", sizeInSm + 0.5);
+                }
+                newSize = sizeInSm + 0.5f;
+                maxSize = 8;
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    x = event.getX();
+                    y = event.getY();
+
+                    resizeBall.setX(x);
+
+                    float scaleFactor = x*0.0014f;
+                    scaleFactor = Math.max(0.25f, Math.min(scaleFactor, 1.25f));
+
+                    designContainer.setScaleX(scaleFactor);
+                    designContainer.setScaleY(scaleFactor);
+
+                    if (newSize > maxSize) {
+                        sizeText.setText("");
+                    } else {
+                        sizeText.setText("Your keychain size: " + formattedSize + " " + sizeTerm);
+                    }
+                }
+
+                    return true;
             }
         });
     }
@@ -160,6 +245,7 @@ public class DesignActivity extends AppCompatActivity
         toppingTabLayout.setVisibility(View.INVISIBLE);
         punchViewPager.setVisibility(View.INVISIBLE);
         punchTabLayout.setVisibility(View.INVISIBLE);
+        textContainer.setVisibility(View.INVISIBLE);
         vButton.setVisibility(View.INVISIBLE);
         rotate.setVisibility(View.INVISIBLE);
         grid.setVisibility(View.INVISIBLE);
@@ -588,10 +674,19 @@ public class DesignActivity extends AppCompatActivity
             toppingTabs.setVisibility(View.INVISIBLE);
             toppingTabLayout.setVisibility(View.INVISIBLE);
             toppingViewPager.setVisibility(View.INVISIBLE);
-        }else if(punchTabs.getVisibility()==View.VISIBLE){
+        }else if(punchTabs.getVisibility()==View.VISIBLE) {
             punchTabs.setVisibility(View.INVISIBLE);
             punchTabLayout.setVisibility(View.INVISIBLE);
             punchViewPager.setVisibility(View.INVISIBLE);
+        }else if(textContainer.getVisibility()==View.VISIBLE) {
+            textContainer.setVisibility(View.INVISIBLE);
+        }else if(resizeBar.getVisibility()==View.VISIBLE){
+            resizeBar.setVisibility(View.INVISIBLE);
+            bottomBar.setVisibility(View.VISIBLE);
+            showButtons();
+            designContainer.setScaleX(1);
+            designContainer.setScaleY(1);
+            title.setText("Create your design");
         } else {
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                 @Override
@@ -635,7 +730,7 @@ public class DesignActivity extends AppCompatActivity
         colorImage.setScaleX(1.6f);
         colorImage.setScaleY(1.6f);
 
-        bottomBar = (LinearLayout) findViewById(R.id.bottom_bar);
+        bottomBar = (RelativeLayout) findViewById(R.id.bottom_bar);
 
         colorBar = (RelativeLayout)findViewById(R.id.color_bar);
         colorBar.setVisibility(View.INVISIBLE);
