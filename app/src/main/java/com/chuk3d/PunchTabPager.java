@@ -36,21 +36,21 @@ public class PunchTabPager extends TabPager {
         public Fragment getItem(int position) {
             switch (position){
                 case 0:
-                    return new PunchFragment();
+                    return new GPunchFragment();
                 case 1:
-                    return new PunchFragment();
+                    return new OtherPunchFragment();
                 case 2:
-                    return new PunchFragment();
+                    return new GPunchFragment();
                 case 3:
-                    return new PunchFragment();
+                    return new GPunchFragment();
                 case 4:
-                    return new PunchFragment();
+                    return new GPunchFragment();
                 case 5:
-                    return new PunchFragment();
+                    return new GPunchFragment();
                 case 6:
-                    return new PunchFragment();
+                    return new GPunchFragment();
                 case 7:
-                    return new PunchFragment();
+                    return new GPunchFragment();
             }
             return null;
         }

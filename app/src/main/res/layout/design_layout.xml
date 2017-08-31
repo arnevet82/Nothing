@@ -149,6 +149,13 @@
 
     </RelativeLayout>
 
+    <include layout="@layout/tab_pager_topping" />
+    <include layout="@layout/tab_pager_punch" />
+
+
+    <include layout="@layout/bottom_bar" />
+    <include layout="@layout/resize_layout" />
+
 
     <Button
         android:layout_centerHorizontal="true"
@@ -199,13 +206,10 @@
         android:layout_width="42dp"
         android:layout_height="61dp" />
 
-
-    <include layout="@layout/tab_pager_topping" />
-    <include layout="@layout/tab_pager_punch" />
+    <include layout="@layout/color_bar" />
     <include layout="@layout/text_layout" />
 
-    <include layout="@layout/bottom_bar" />
-    <include layout="@layout/resize_layout" />
 
-    <include layout="@layout/color_bar" />
+
+
 </RelativeLayout>

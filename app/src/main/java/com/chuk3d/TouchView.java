@@ -209,8 +209,8 @@ public class TouchView extends View {
                                     texts.get(CURRENT_TEXT).getTextPaint().setColor(getResources().getColor(R.color.almostWhite));
                                     DesignActivity.currentNumText.setText("T");
                                     DesignActivity.vButton.setVisibility(VISIBLE);
+                                    DesignActivity.initFonts(texts.get(CURRENT_TEXT).getTag());
                                     DesignActivity.fontsBar.setVisibility(VISIBLE);
-                                    DesignActivity.initFonts();
                                 }else{
                                     //do nothing
                                 }
@@ -369,24 +369,22 @@ public class TouchView extends View {
 
 
 
-    public void punch(int shapeToPunch, String type){
+    public void punch(int shapeToPunch, String type, int[]resources){
 
         try{
-            int[]punchResources = {R.drawable.g_punch_shape_1, R.drawable.g_punch_shape_2, R.drawable.g_punch_shape_3,R.drawable.g_punch_shape_4, R.drawable.g_punch_shape_5, R.drawable.g_punch_shape_6, R.drawable.g_punch_shape_7, R.drawable.g_punch_shape_8, R.drawable.g_punch_shap_9, R.drawable.g_punch_shape_10, R.drawable.g_punch_shape_11, R.drawable.g_punch_shape_12, R.drawable.g_punch_shape_13, R.drawable.g_punch_shape_14, R.drawable.g_punch_shape_15, R.drawable.g_punch_shape_16, R.drawable.g_punch_shape_17, R.drawable.g_punch_shape_18, R.drawable.g_punch_shape_19, R.drawable.g_punch_shape_20, R.drawable.g_punch_shape_21, R.drawable.g_punch_shape_22, R.drawable.g_punch_shape_23, R.drawable.g_punch_shape_24, R.drawable.g_punch_shape_25, R.drawable.g_punch_shape_26, R.drawable.g_punch_shape_27, R.drawable.g_punch_shape_28, R.drawable.g_punch_shape_29, R.drawable.g_punch_shape_30, R.drawable.g_punch_shape_31, R.drawable.g_punch_shape_32, R.drawable.g_punch_shape_33, R.drawable.g_punch_shape_34, R.drawable.g_punch_shape_35, R.drawable.g_punch_shape_36};
-            int[]toppingResources = {R.drawable.g_topping_shape_1, R.drawable.g_topping_shape_2, R.drawable.g_topping_shape_3,R.drawable.g_topping_shape_4, R.drawable.g_topping_shape_5, R.drawable.g_topping_shape_6, R.drawable.g_topping_shape_7, R.drawable.g_topping_shape_8, R.drawable.g_topping_shap_9, R.drawable.g_topping_shape_10, R.drawable.g_topping_shape_11, R.drawable.g_topping_shape_12, R.drawable.g_topping_shape_13, R.drawable.g_topping_shape_14, R.drawable.g_topping_shape_15, R.drawable.g_topping_shape_16, R.drawable.g_topping_shape_17, R.drawable.g_topping_shape_18, R.drawable.g_topping_shape_19, R.drawable.g_topping_shape_20, R.drawable.g_topping_shape_21, R.drawable.g_topping_shape_22, R.drawable.g_topping_shape_23, R.drawable.g_topping_shape_24, R.drawable.g_topping_shape_25, R.drawable.g_topping_shape_26, R.drawable.g_topping_shape_27, R.drawable.g_topping_shape_28, R.drawable.g_topping_shape_29, R.drawable.g_topping_shape_30, R.drawable.g_topping_shape_31, R.drawable.g_topping_shape_32, R.drawable.g_topping_shape_33, R.drawable.g_topping_shape_34, R.drawable.g_topping_shape_35, R.drawable.g_topping_shape_36};
 
             Drawable drawable = null, colorDrawable = null;
             switch (type){
                 case "punch":
-                    drawable = getResources().getDrawable(punchResources[shapeToPunch]);
-                    colorDrawable = getResources().getDrawable(punchResources[shapeToPunch]);
+                    drawable = getResources().getDrawable(resources[shapeToPunch]);
+                    colorDrawable = getResources().getDrawable(resources[shapeToPunch]);
                     shapesForColor.add(new Shape(colorDrawable, mPosX, mPosY));
                     shapesForColor.getLast().getDrawable().mutate().setColorFilter(getResources().getColor(R.color.transparent), PorterDuff.Mode.SRC_IN);
 
                     break;
                 case "topping":
-                    drawable = getResources().getDrawable(toppingResources[shapeToPunch]);
-                    colorDrawable = getResources().getDrawable(toppingResources[shapeToPunch]);
+                    drawable = getResources().getDrawable(resources[shapeToPunch]);
+                    colorDrawable = getResources().getDrawable(resources[shapeToPunch]);
                     shapesForColor.add(new Shape(colorDrawable, mPosX, mPosY));
                     if(DesignActivity.currentColor == 0){
                         shapesForColor.getLast().getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);

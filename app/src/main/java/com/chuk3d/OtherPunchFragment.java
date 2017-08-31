@@ -13,7 +13,7 @@ import android.widget.ImageButton;
  * Created by Admin on 21/08/2017.
  */
 
-public class PunchFragment extends Fragment {
+public class OtherPunchFragment extends Fragment {
     ImageButton punch1, punch2, punch3, punch4, punch5, punch6, punch7, punch8, punch9, punch10, punch11, punch12, punch13, punch14, punch15, punch16, punch17, punch18, punch19, punch20, punch21, punch22, punch23, punch24, punch25, punch26, punch27, punch28, punch29, punch30, punch31, punch32, punch33, punch34, punch35, punch36;
     private PunchFragmentItemClickCallback callback;
 
@@ -21,7 +21,7 @@ public class PunchFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.frag_punch, container, false);
+        View rootView = inflater.inflate(R.layout.other_frag_punch, container, false);
         init(rootView);
 
         return rootView;
@@ -72,7 +72,7 @@ public class PunchFragment extends Fragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onPunchButtonClicked(v);
+                    callback.onOtherPunchButtonClicked(v);
 
                 }
             });
@@ -93,6 +93,6 @@ public class PunchFragment extends Fragment {
 
     public interface PunchFragmentItemClickCallback {
 
-        void onPunchButtonClicked(View view);
+        void onOtherPunchButtonClicked(View view);
     }
 }

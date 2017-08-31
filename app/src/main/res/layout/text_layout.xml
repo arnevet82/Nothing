@@ -29,7 +29,8 @@
 
     <LinearLayout
         android:id="@+id/fonts_bar"
-        android:gravity="center_horizontal"
+        android:gravity="left"
+        android:layout_marginLeft="30dp"
         android:layout_above="@+id/text_punch_topping_choice"
         android:layout_width="match_parent"
         android:layout_height="55dp">
@@ -115,8 +116,38 @@
             android:layout_height="wrap_content"
             style="?android:attr/borderlessButtonStyle"
             android:backgroundTint="@color/transparent"/>
+        <Button
+            android:id="@+id/font_6"
+            android:paddingLeft="-7dp"
+            android:paddingRight="-7dp"
+            android:textSize="18sp"
+            android:textColor="#626066"
+            android:letterSpacing="0.06"
+            android:gravity="center_horizontal"
+            android:textAllCaps="false"
+            android:text="abc"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            style="?android:attr/borderlessButtonStyle"
+            android:backgroundTint="@color/transparent"/>
+        <Button
+            android:id="@+id/font_7"
+            android:paddingLeft="-7dp"
+            android:paddingRight="-7dp"
+            android:textSize="18sp"
+            android:textColor="#626066"
+            android:letterSpacing="0.06"
+            android:gravity="center_horizontal"
+            android:textAllCaps="false"
+            android:text="abc"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            style="?android:attr/borderlessButtonStyle"
+            android:backgroundTint="@color/transparent"/>
+
 
     </LinearLayout>
+
 
 
 

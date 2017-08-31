@@ -13,7 +13,7 @@ import android.widget.ImageButton;
  * Created by Admin on 21/08/2017.
  */
 
-public class ToppingFragment extends Fragment {
+public class OtherToppingFragment extends Fragment {
     ImageButton topping1, topping2, topping3, topping4, topping5, topping6, topping7, topping8, topping9, topping10, topping11, topping12, topping13, topping14, topping15, topping16, topping17, topping18, topping19, topping20, topping21, topping22, topping23, topping24, topping25, topping26, topping27, topping28, topping29, topping30, topping31, topping32, topping33, topping34, topping35, topping36;
     private ToppinfFragmentItemClickCallback callback;
 
@@ -21,7 +21,7 @@ public class ToppingFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.frag_topping, container, false);
+        View rootView = inflater.inflate(R.layout.other_frag_topping, container, false);
         init(rootView);
 
         return rootView;
@@ -72,7 +72,7 @@ public class ToppingFragment extends Fragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onToppingButtonClicked(v);
+                    callback.onOtherToppingButtonClicked(v);
 
                 }
             });
@@ -93,6 +93,6 @@ public class ToppingFragment extends Fragment {
 
     public interface ToppinfFragmentItemClickCallback {
 
-        void onToppingButtonClicked(View view);
+        void onOtherToppingButtonClicked(View view);
     }
 }

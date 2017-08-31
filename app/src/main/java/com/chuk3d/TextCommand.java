@@ -32,8 +32,10 @@ public class TextCommand extends Command {
         TouchView.texts.add(new TextBody(text, context, tag));
         TouchView.CURRENT_TEXT++;
 
-        if(DesignActivity.currentFont != null){
-            TouchView.texts.getLast().getTextPaint().setTypeface(DesignActivity.currentFont);
+        if(DesignActivity.TcurrentFont != null && TouchView.texts.getLast().getTag().equals("topping")){
+            TouchView.texts.getLast().getTextPaint().setTypeface(DesignActivity.TcurrentFont);
+        }else if(DesignActivity.PcurrentFont != null && TouchView.texts.getLast().getTag().equals("punch")){
+            TouchView.texts.getLast().getTextPaint().setTypeface(DesignActivity.PcurrentFont);
         }
 
         DesignActivity.editText.setText("");

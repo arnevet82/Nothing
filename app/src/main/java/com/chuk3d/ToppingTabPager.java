@@ -36,21 +36,21 @@ public class ToppingTabPager extends TabPager {
         public Fragment getItem(int position) {
             switch (position){
                 case 0:
-                    return new ToppingFragment();
+                    return new GToppingFragment();
                 case 1:
-                    return new ToppingFragment();
+                    return new OtherToppingFragment();
                 case 2:
-                    return new ToppingFragment();
+                    return new GToppingFragment();
                 case 3:
-                    return new ToppingFragment();
+                    return new GToppingFragment();
                 case 4:
-                    return new ToppingFragment();
+                    return new GToppingFragment();
                 case 5:
-                    return new ToppingFragment();
+                    return new GToppingFragment();
                 case 6:
-                    return new ToppingFragment();
+                    return new GToppingFragment();
                 case 7:
-                    return new ToppingFragment();
+                    return new GToppingFragment();
             }
             return null;
         }

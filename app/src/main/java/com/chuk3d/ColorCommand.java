@@ -61,6 +61,29 @@ public class ColorCommand extends Command {
         }
     }
 
+
+    void colorBeforeScreenShot(){
+        colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.blackBtn), PorterDuff.Mode.SRC_IN);
+        if (!TouchView.shapes.isEmpty()) {
+            for (Shape shape : TouchView.shapesForColor) {
+                if (shape.getTag().equals("topping")) {
+                    shape.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.grayBtn), PorterDuff.Mode.SRC_IN);
+                }else{
+                    shape.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
+                }
+            }
+        }
+        if (!TouchView.texts.isEmpty()) {
+            for (TextBody textBody : TouchView.texts) {
+                if (textBody.getTag().equals("topping")) {
+                    textBody.getTextPaint().setColor(context.getResources().getColor(R.color.grayBtn));
+                }
+            }
+        }
+        DesignActivity.touchView.invalidate();
+    }
+
+
     @Override
     void undo() {
         try{

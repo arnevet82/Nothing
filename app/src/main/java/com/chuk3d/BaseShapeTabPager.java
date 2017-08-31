@@ -1,18 +1,11 @@
 package com.chuk3d;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
-import java.util.List;
 
 /**
  * Created by Admin on 22/08/2017.
@@ -43,21 +36,21 @@ public class BaseShapeTabPager extends TabPager {
         public Fragment getItem(int position) {
             switch (position){
                 case 0:
-                    return new BaseFragment();
+                    return new GeometricShapeFragment();
                 case 1:
-                    return new BaseFragment();
+                    return new OtherShapeFragment();
                 case 2:
-                    return new BaseFragment();
+                    return new GeometricShapeFragment();
                 case 3:
-                    return new BaseFragment();
+                    return new GeometricShapeFragment();
                 case 4:
-                    return new BaseFragment();
+                    return new GeometricShapeFragment();
                 case 5:
-                    return new BaseFragment();
+                    return new GeometricShapeFragment();
                 case 6:
-                    return new BaseFragment();
+                    return new GeometricShapeFragment();
                 case 7:
-                    return new BaseFragment();
+                    return new GeometricShapeFragment();
             }
             return null;
         }

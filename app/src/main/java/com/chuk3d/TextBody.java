@@ -47,7 +47,7 @@ public class TextBody {
                         new EmbossMaskFilter(new float[]{0.0f, -1.0f, 0.5f}, 0.8f, 15f, 1f);
                 textPaint.setMaskFilter(filter);
 
-                textPaint.setColor(context.getResources().getColor(R.color.background));
+                textPaint.setColor(context.getResources().getColor(R.color.almostWhite));
 
                 break;
             case "topping":
@@ -69,7 +69,7 @@ public class TextBody {
         Typeface tf = Typeface.createFromAsset(context.getAssets(), "Montserrat-ExtraBold.ttf");
         textPaint.setTypeface(tf);
 
-        sl = new StaticLayout(text, textPaint,300,
+        sl = new StaticLayout(text, textPaint,800,
                 Layout.Alignment.ALIGN_CENTER, 1f,0f,false);
         textPivotx = sl.getWidth()/2;
         textPivoty = sl.getHeight()/2;
