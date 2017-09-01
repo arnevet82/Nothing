@@ -151,7 +151,7 @@ public class BaseShapeActivity extends AppCompatActivity
 
     public int setUpBaseShape(View view, int[]buttonId, int[]baseShapes){
 
-        int pos;
+        int pos = 0;
         for(pos = 0; pos < buttonId.length; pos++){
             if(view.getId() == buttonId[pos]){
                 mainImage.setImageDrawable(getResources().getDrawable(baseShapes[pos]));
@@ -228,6 +228,8 @@ public class BaseShapeActivity extends AppCompatActivity
     public void init(){
 
         initDrawerAndNavigationView();
+        baseShapes = new int[]{R.drawable.g_base_shape_1, R.drawable.g_base_shape_2, R.drawable.g_base_shape_3, R.drawable.g_base_shape_4, R.drawable.g_base_shape_5, R.drawable.g_base_shape_6, R.drawable.g_base_shape_7, R.drawable.g_base_shape_8, R.drawable.g_base_shap_9, R.drawable.g_base_shape_10, R.drawable.g_base_shape_11, R.drawable.g_base_shape_12, R.drawable.g_base_shape_13, R.drawable.g_base_shape_14, R.drawable.g_base_shape_15, R.drawable.g_base_shape_16, R.drawable.g_base_shape_17, R.drawable.g_base_shape_18, R.drawable.g_base_shape_19, R.drawable.g_base_shape_20, R.drawable.g_base_shape_21, R.drawable.g_base_shape_22, R.drawable.g_base_shape_23, R.drawable.g_base_shape_24, R.drawable.g_base_shape_25, R.drawable.g_base_shape_26, R.drawable.g_base_shape_27, R.drawable.g_base_shape_28, R.drawable.g_base_shape_29, R.drawable.g_base_shape_30, R.drawable.g_base_shape_31, R.drawable.g_base_shape_32, R.drawable.g_base_shape_33, R.drawable.g_base_shape_34, R.drawable.g_base_shape_35, R.drawable.g_base_shape_36};
+
 
         mainImage = (ImageView)findViewById(R.id.main_imageView);
         mainImage.setImageDrawable(getResources().getDrawable(R.drawable.g_base_shape_1));

@@ -73,8 +73,10 @@ public class TextBody {
                 Layout.Alignment.ALIGN_CENTER, 1f,0f,false);
         textPivotx = sl.getWidth()/2;
         textPivoty = sl.getHeight()/2;
-        posX = widthScreen/5;
-        posY = heightScreen/4;
+        posX = widthScreen / 6.5f;
+        posY = heightScreen / 5.3f;
+//        posX = widthScreen/5;
+//        posY = heightScreen/4;
     }
 
     public String getTag() {

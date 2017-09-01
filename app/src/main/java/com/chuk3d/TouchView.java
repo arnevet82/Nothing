@@ -426,7 +426,7 @@ public class TouchView extends View {
             mPosX = widthScreen / 2.945f;
             mPosY = heightScreen / 5f;
         }else{
-            mPosX = widthScreen / 3.35f;
+            mPosX = widthScreen / 2.5f;
             mPosY = heightScreen / 5.3f;
         }
 

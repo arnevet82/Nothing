@@ -36,7 +36,12 @@ public class ColorCommand extends Command {
             colors.add(currentColor);
             currentColor = newColor;
 
-            colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(newColor), PorterDuff.Mode.SRC_IN);
+            try {
+                colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(newColor), PorterDuff.Mode.SRC_IN);
+
+            }catch (Exception e){
+
+            }
             if (!TouchView.shapes.isEmpty()) {
                 for (Shape shape : TouchView.shapesForColor) {
                     if (shape.getTag().equals("topping")) {
@@ -63,7 +68,12 @@ public class ColorCommand extends Command {
 
 
     void colorBeforeScreenShot(){
-        colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.blackBtn), PorterDuff.Mode.SRC_IN);
+        try{
+            colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.blackBtn), PorterDuff.Mode.SRC_IN);
+
+        }catch (Exception e){
+
+        }
         if (!TouchView.shapes.isEmpty()) {
             for (Shape shape : TouchView.shapesForColor) {
                 if (shape.getTag().equals("topping")) {
@@ -91,7 +101,12 @@ public class ColorCommand extends Command {
             currentColor = colors.getLast();
             DesignActivity.currentColor = currentColor;
 
-            colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(currentColor), PorterDuff.Mode.SRC_IN);
+            try{
+                colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(currentColor), PorterDuff.Mode.SRC_IN);
+
+            }catch (Exception e){
+
+            }
             if (!TouchView.shapes.isEmpty()) {
                 for (Shape shape : TouchView.shapesForColor) {
                     if (shape.getTag().equals("topping")) {
@@ -122,7 +137,12 @@ public class ColorCommand extends Command {
 
 
     void changeToBackgroundColor(){
-        colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
+        try{
+            colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
+
+        }catch (Exception e){
+
+        }
 
 
         for(int i = 0; i < TouchView.shapesForColor.size(); i++){

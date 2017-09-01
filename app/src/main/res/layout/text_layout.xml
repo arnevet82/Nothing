@@ -39,7 +39,7 @@
         <Button
             android:id="@+id/font_1"
             android:layout_marginRight="5dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="25dp"
             android:paddingLeft="-7dp"
             android:paddingRight="-7dp"
             android:textSize="18sp"

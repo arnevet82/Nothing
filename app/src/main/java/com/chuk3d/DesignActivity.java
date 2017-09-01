@@ -66,7 +66,7 @@ public class DesignActivity extends AppCompatActivity
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 99;
 
     public static final String POSITION_KEY = "POSITION";
-    public static int position;
+    public static int position = 0;
     public static final String MAIN_IMAGE_ROTATION = "ROTATION";
     public static float mainImageRotation;
     public static final String BASE_SHAPE_ARRAY_KEY = "BASE_SHAPE";
@@ -111,7 +111,7 @@ public class DesignActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_design);
 
-        position = getIntent().getIntExtra(POSITION_KEY, 1);
+        position = getIntent().getIntExtra(POSITION_KEY, 0);
         mainImageRotation = getIntent().getFloatExtra(MAIN_IMAGE_ROTATION, 0);
         baseShapes = getIntent().getIntArrayExtra(BASE_SHAPE_ARRAY_KEY);
 
@@ -229,7 +229,9 @@ public class DesignActivity extends AppCompatActivity
                     x = event.getX();
                     y = event.getY();
 
-                    resizeBall.setX(x);
+                    if(event.getX() < 1200 && event.getX() > 150){
+                        resizeBall.setX(x);
+                    }
 
                     float scaleFactor = x*0.0014f;
                     scaleFactor = Math.max(0.25f, Math.min(scaleFactor, 1.25f));
@@ -417,7 +419,7 @@ public class DesignActivity extends AppCompatActivity
         });
     }
 
-    public static void onFontButtonClicked(View v){
+    public static void onFontButtonClicked(View v)    {
         int [] buttonId = {R.id.font_1, R.id.font_2, R.id.font_3, R.id.font_4, R.id.font_5, R.id.font_6, R.id.font_7};
         Typeface []typefaces ={hiraKaku, montserratItalic, baloo, alef, athelas, pacifico, vampiro};
 
@@ -554,11 +556,17 @@ public class DesignActivity extends AppCompatActivity
 
     public void setUpBaseShape(int pos){
 
-        mainImage.setImageDrawable(getResources().getDrawable(baseShapes[pos]));
-        colorImage.setImageDrawable(getResources().getDrawable(baseShapes[pos]));
-        colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
-        mainImage.setRotation(mainImageRotation);
-        colorImage.setRotation(mainImageRotation);
+        if(baseShapes[pos] == R.drawable.g_base_shape_31){
+            mainImage.setImageDrawable(null);
+            colorImage.setImageDrawable(null);
+        }else{
+            mainImage.setImageDrawable(getResources().getDrawable(baseShapes[pos]));
+            colorImage.setImageDrawable(getResources().getDrawable(baseShapes[pos]));
+            colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
+            mainImage.setRotation(mainImageRotation);
+            colorImage.setRotation(mainImageRotation);
+
+        }
 
     }
 

@@ -39,7 +39,7 @@ public class TextCommand extends Command {
         }
 
         DesignActivity.editText.setText("");
-        DesignActivity.fontsBar.setVisibility(View.INVISIBLE);
+        DesignActivity.fontsBar.setVisibility(View.VISIBLE);
 
         DesignActivity.stack.add("text");
         DesignActivity.clearStack(3);
