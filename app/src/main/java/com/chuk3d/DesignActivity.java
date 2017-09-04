@@ -96,6 +96,8 @@ public class DesignActivity extends AppCompatActivity
     public static Button font1, font2, font3, font4, font5, font6, font7;
     public static Typeface vampiro, montserrat, alef, hiraKaku, athelas, montserratItalic, baloo, pacifico;
     public static Typeface PcurrentFont, TcurrentFont;
+    NestedScrollView punchScrollView, toppingScrollView;
+
 
     public static LinkedList<String> stack = new LinkedList<>();
     public static EditText editText;
@@ -349,11 +351,9 @@ public class DesignActivity extends AppCompatActivity
                                     switch (v.getId()){
                                         case R.id.text_topping:
                                             onTextButtonClicked("topping");
-                                            designEditText("topping");
                                             break;
                                         case R.id.text_punch:
                                             onTextButtonClicked("punch");
-                                            designEditText("punch");
                                             break;
                                     }
                                 }
@@ -373,15 +373,19 @@ public class DesignActivity extends AppCompatActivity
             case "punch":
                 editText.setTextColor(getResources().getColor(R.color.almostWhite));
                 editText.setShadowLayer(1, 1, 1, Color.parseColor("#80000000"));
-                if(DesignActivity.PcurrentFont != null){
-                    editText.setTypeface(DesignActivity.PcurrentFont);
+                if(PcurrentFont != null){
+                    editText.setTypeface(PcurrentFont);
+                }else {
+                    editText.setTypeface(baloo);
                 }
                 break;
             case "topping":
                 editText.setTextColor(getResources().getColor(R.color.baseShapeFirstColor));
                 editText.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
-                if(DesignActivity.TcurrentFont != null){
-                    editText.setTypeface(DesignActivity.TcurrentFont);
+                if(TcurrentFont != null){
+                    editText.setTypeface(TcurrentFont);
+                }else{
+                    editText.setTypeface(pacifico);
                 }
                 break;
         }
@@ -390,11 +394,11 @@ public class DesignActivity extends AppCompatActivity
     }
 
     public void onTextButtonClicked(String tag){
+        designEditText(tag);
         editText.requestFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         textPunchToppingChoice.setVisibility(View.INVISIBLE);
-        initFonts(tag);
         showButtons();
         vText.setVisibility(View.VISIBLE);
         onVTextClicked(tag);
@@ -415,6 +419,7 @@ public class DesignActivity extends AppCompatActivity
                 touchView.invalidate();
                 vButton.setVisibility(View.VISIBLE);
                 vText.setVisibility(View.INVISIBLE);
+                initFonts(mTag);
             }
         });
     }
@@ -617,23 +622,31 @@ public class DesignActivity extends AppCompatActivity
 
     @Override
     public void onToppingButtonClicked(View view) {
+        toppingScrollView.scrollTo(0,0);
+
         int[]toppingResources = {R.drawable.g_topping_shape_1, R.drawable.g_topping_shape_2, R.drawable.g_topping_shape_3,R.drawable.g_topping_shape_4, R.drawable.g_topping_shape_5, R.drawable.g_topping_shape_6, R.drawable.g_topping_shape_7, R.drawable.g_topping_shape_8, R.drawable.g_topping_shap_9, R.drawable.g_topping_shape_10, R.drawable.g_topping_shape_11, R.drawable.g_topping_shape_12, R.drawable.g_topping_shape_13, R.drawable.g_topping_shape_14, R.drawable.g_topping_shape_15, R.drawable.g_topping_shape_16, R.drawable.g_topping_shape_17, R.drawable.g_topping_shape_18, R.drawable.g_topping_shape_19, R.drawable.g_topping_shape_20, R.drawable.g_topping_shape_21, R.drawable.g_topping_shape_22, R.drawable.g_topping_shape_23, R.drawable.g_topping_shape_24, R.drawable.g_topping_shape_25, R.drawable.g_topping_shape_26, R.drawable.g_topping_shape_27, R.drawable.g_topping_shape_28, R.drawable.g_topping_shape_29, R.drawable.g_topping_shape_30, R.drawable.g_topping_shape_31, R.drawable.g_topping_shape_32, R.drawable.g_topping_shape_33, R.drawable.g_topping_shape_34, R.drawable.g_topping_shape_35, R.drawable.g_topping_shape_36};
         addTopping(view, toppingResources);
     }
 
     @Override
     public void onOtherToppingButtonClicked(View view) {
+        toppingScrollView.scrollTo(0,0);
+
         int[]toppingResources = {R.drawable.other_topping_shape_1, R.drawable.other_topping_shape_2, R.drawable.other_topping_shape_3,R.drawable.other_topping_shape_4, R.drawable.other_topping_shape_5, R.drawable.other_topping_shape_6, R.drawable.other_topping_shape_7, R.drawable.other_topping_shape_8, R.drawable.other_topping_shape_9, R.drawable.other_topping_shape_10, R.drawable.other_topping_shape_11, R.drawable.other_topping_shape_12, R.drawable.other_topping_shape_13, R.drawable.other_topping_shape_14, R.drawable.other_topping_shape_15, R.drawable.other_topping_shape_16, R.drawable.other_topping_shape_17, R.drawable.other_topping_shape_18, R.drawable.other_topping_shape_19, R.drawable.other_topping_shape_20, R.drawable.other_topping_shape_21, R.drawable.other_topping_shape_22, R.drawable.other_topping_shape_23, R.drawable.other_topping_shape_24, R.drawable.other_topping_shape_25, R.drawable.other_topping_shape_26, R.drawable.other_topping_shape_27, R.drawable.other_topping_shape_28, R.drawable.other_topping_shape_29, R.drawable.other_topping_shape_30, R.drawable.other_topping_shape_31, R.drawable.other_topping_shape_32, R.drawable.other_topping_shape_33, R.drawable.other_topping_shape_34, R.drawable.other_topping_shape_35, R.drawable.other_topping_shape_36};
         addTopping(view, toppingResources);
     }
     @Override
     public void onPunchButtonClicked(View view) {
+        punchScrollView.scrollTo(0,0);
+
         int[]punchResources = {R.drawable.g_punch_shape_1, R.drawable.g_punch_shape_2, R.drawable.g_punch_shape_3,R.drawable.g_punch_shape_4, R.drawable.g_punch_shape_5, R.drawable.g_punch_shape_6, R.drawable.g_punch_shape_7, R.drawable.g_punch_shape_8, R.drawable.g_punch_shap_9, R.drawable.g_punch_shape_10, R.drawable.g_punch_shape_11, R.drawable.g_punch_shape_12, R.drawable.g_punch_shape_13, R.drawable.g_punch_shape_14, R.drawable.g_punch_shape_15, R.drawable.g_punch_shape_16, R.drawable.g_punch_shape_17, R.drawable.g_punch_shape_18, R.drawable.g_punch_shape_19, R.drawable.g_punch_shape_20, R.drawable.g_punch_shape_21, R.drawable.g_punch_shape_22, R.drawable.g_punch_shape_23, R.drawable.g_punch_shape_24, R.drawable.g_punch_shape_25, R.drawable.g_punch_shape_26, R.drawable.g_punch_shape_27, R.drawable.g_punch_shape_28, R.drawable.g_punch_shape_29, R.drawable.g_punch_shape_30, R.drawable.g_punch_shape_31, R.drawable.g_punch_shape_32, R.drawable.g_punch_shape_33, R.drawable.g_punch_shape_34, R.drawable.g_punch_shape_35, R.drawable.g_punch_shape_36};
         punch(view, punchResources);
     }
 
     @Override
     public void onOtherPunchButtonClicked(View view) {
+        punchScrollView.scrollTo(0,0);
+
         int[]punchResources = {R.drawable.other_punch_shape_1, R.drawable.other_punch_shape_2, R.drawable.other_punch_shape_3,R.drawable.other_punch_shape_4, R.drawable.other_punch_shape_5, R.drawable.other_punch_shape_6, R.drawable.other_punch_shape_7, R.drawable.other_punch_shape_8, R.drawable.other_punch_shape_9, R.drawable.other_punch_shape_10, R.drawable.other_punch_shape_11, R.drawable.other_punch_shape_12, R.drawable.other_punch_shape_13, R.drawable.other_punch_shape_14, R.drawable.other_punch_shape_15, R.drawable.other_punch_shape_16, R.drawable.other_punch_shape_17, R.drawable.other_punch_shape_18, R.drawable.other_punch_shape_19, R.drawable.other_punch_shape_20, R.drawable.other_punch_shape_21, R.drawable.other_punch_shape_22, R.drawable.other_punch_shape_23, R.drawable.other_punch_shape_24, R.drawable.other_punch_shape_25, R.drawable.other_punch_shape_26, R.drawable.other_punch_shape_27, R.drawable.other_punch_shape_28, R.drawable.other_punch_shape_29, R.drawable.other_punch_shape_30, R.drawable.other_punch_shape_31, R.drawable.other_punch_shape_32, R.drawable.other_punch_shape_33, R.drawable.other_punch_shape_34, R.drawable.other_punch_shape_35, R.drawable.other_punch_shape_36};
         punch(view, punchResources);
     }
@@ -1044,11 +1057,11 @@ public class DesignActivity extends AppCompatActivity
         designContainer = (RelativeLayout)findViewById(R.id.design_container);
 
         mainImage = (ImageView)findViewById(R.id.main_imageView);
-        mainImage.setScaleX(1.6f);
-        mainImage.setScaleY(1.6f);
+        mainImage.setScaleX(1.55f);
+        mainImage.setScaleY(1.55f);
         colorImage = (ImageView)findViewById(R.id.color_imageView);
-        colorImage.setScaleX(1.6f);
-        colorImage.setScaleY(1.6f);
+        colorImage.setScaleX(1.55f);
+        colorImage.setScaleY(1.55f);
 
         bottomBar = (RelativeLayout) findViewById(R.id.bottom_bar);
 
@@ -1207,6 +1220,10 @@ public class DesignActivity extends AppCompatActivity
             bPaymentScreen.setVisibility(View.INVISIBLE);
 
             letsChukAgain = (Button)findViewById(R.id.Lets_chuk_again);
+
+            punchScrollView = (NestedScrollView)findViewById(R.id.scrollView_punch);
+            toppingScrollView = (NestedScrollView)findViewById(R.id.topping_scrollView);
+
 
         }
 

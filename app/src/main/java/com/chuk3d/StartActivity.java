@@ -36,7 +36,7 @@ public class StartActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplication(), BaseShapeActivity.class);
                 startActivity(intent);
             }
-        }, 500);
+        }, 1500);
 
     }
 

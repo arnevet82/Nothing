@@ -48,7 +48,7 @@
         android:textSize="13sp"
         android:textStyle="italic"
         android:id="@+id/Lets_chuk_again"
-        android:layout_marginTop="410dp"
+        android:layout_marginTop="@dimen/lets_chuk_again_margin"
         android:layout_centerHorizontal="true"
         android:textColor="@color/white"
         android:background="@drawable/continue_for_payment"

@@ -210,7 +210,7 @@ public class TouchView extends View {
                                     DesignActivity.currentNumText.setText("T");
                                     DesignActivity.vButton.setVisibility(VISIBLE);
                                     DesignActivity.initFonts(texts.get(CURRENT_TEXT).getTag());
-                                    DesignActivity.fontsBar.setVisibility(VISIBLE);
+
                                 }else{
                                     //do nothing
                                 }
@@ -358,7 +358,9 @@ public class TouchView extends View {
 
     public void fillColorShapes(){
         DesignActivity.vButton.setVisibility(VISIBLE);
-        DesignActivity.colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.editGrayBigShape),PorterDuff.Mode.SRC_IN);
+        if(DesignActivity.baseShapes[DesignActivity.position] != R.drawable.g_base_shape_31){
+            DesignActivity.colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.editGrayBigShape),PorterDuff.Mode.SRC_IN);
+        }
         for(Shape shape:shapesForColor){
             shape.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.editGraysmallShape),PorterDuff.Mode.SRC_IN);
         }

@@ -48,7 +48,8 @@ public class TextBody {
                 textPaint.setMaskFilter(filter);
 
                 textPaint.setColor(context.getResources().getColor(R.color.almostWhite));
-
+                Typeface punchTf = Typeface.createFromAsset(context.getAssets(), "BalooBhaijaan-Regular.ttf");
+                textPaint.setTypeface(punchTf);
                 break;
             case "topping":
 
@@ -58,25 +59,22 @@ public class TextBody {
                 textPaint.setColor(context.getResources().getColor(R.color.baseShapeFirstColor));
             }
                 textPaint.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
-
+                Typeface toppingTf = Typeface.createFromAsset(context.getAssets(), "Pacifico-Regular.ttf");
+                textPaint.setTypeface(toppingTf);
                 break;
             default:
                 break;
         }
 
         textPaint.setAntiAlias(true);
-        textPaint.setTextSize(80);
-        Typeface tf = Typeface.createFromAsset(context.getAssets(), "Montserrat-ExtraBold.ttf");
-        textPaint.setTypeface(tf);
-
+        textPaint.setTextSize(100);
         sl = new StaticLayout(text, textPaint,800,
                 Layout.Alignment.ALIGN_CENTER, 1f,0f,false);
         textPivotx = sl.getWidth()/2;
         textPivoty = sl.getHeight()/2;
         posX = widthScreen / 6.5f;
         posY = heightScreen / 5.3f;
-//        posX = widthScreen/5;
-//        posY = heightScreen/4;
+
     }
 
     public String getTag() {

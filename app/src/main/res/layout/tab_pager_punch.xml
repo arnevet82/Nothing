@@ -20,7 +20,7 @@
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/scrollView_punch"
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="@dimen/scroll_height"
         android:layout_alignParentBottom="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         xmlns:android="http://schemas.android.com/apk/res/android"

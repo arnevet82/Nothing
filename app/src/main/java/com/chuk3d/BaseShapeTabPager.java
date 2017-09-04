@@ -6,6 +6,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.GridView;
+
+import static com.chuk3d.BaseShapeActivity.*;
 
 /**
  * Created by Admin on 22/08/2017.
@@ -13,6 +19,7 @@ import android.support.v4.view.ViewPager;
 
 public class BaseShapeTabPager extends TabPager {
     Context context;
+
 
     public BaseShapeTabPager(ViewPager viewPager, TabLayout tabLayout, Context context, FragmentManager fm) {
         super(viewPager, tabLayout, context, fm);
@@ -26,11 +33,14 @@ public class BaseShapeTabPager extends TabPager {
 
 
     static class Adapter extends FragmentPagerAdapter {
+
+
         private String fragments [] = {"", "", "", "", "", "", "", ""};
 
         public Adapter(FragmentManager fm, Context ctx) {
             super(fm);
         }
+
 
         @Override
         public Fragment getItem(int position) {
@@ -64,6 +74,8 @@ public class BaseShapeTabPager extends TabPager {
         public CharSequence getPageTitle(int position) {
             return fragments[position];
         }
+
+
     }
 
 

@@ -36,11 +36,8 @@ public class ColorCommand extends Command {
             colors.add(currentColor);
             currentColor = newColor;
 
-            try {
+            if(DesignActivity.baseShapes[DesignActivity.position] != R.drawable.g_base_shape_31) {
                 colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(newColor), PorterDuff.Mode.SRC_IN);
-
-            }catch (Exception e){
-
             }
             if (!TouchView.shapes.isEmpty()) {
                 for (Shape shape : TouchView.shapesForColor) {
@@ -68,11 +65,8 @@ public class ColorCommand extends Command {
 
 
     void colorBeforeScreenShot(){
-        try{
+        if(DesignActivity.baseShapes[DesignActivity.position] != R.drawable.g_base_shape_31){
             colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.blackBtn), PorterDuff.Mode.SRC_IN);
-
-        }catch (Exception e){
-
         }
         if (!TouchView.shapes.isEmpty()) {
             for (Shape shape : TouchView.shapesForColor) {
@@ -101,11 +95,8 @@ public class ColorCommand extends Command {
             currentColor = colors.getLast();
             DesignActivity.currentColor = currentColor;
 
-            try{
+            if(DesignActivity.baseShapes[DesignActivity.position] != R.drawable.g_base_shape_31){
                 colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(currentColor), PorterDuff.Mode.SRC_IN);
-
-            }catch (Exception e){
-
             }
             if (!TouchView.shapes.isEmpty()) {
                 for (Shape shape : TouchView.shapesForColor) {
@@ -137,13 +128,9 @@ public class ColorCommand extends Command {
 
 
     void changeToBackgroundColor(){
-        try{
+        if(DesignActivity.baseShapes[DesignActivity.position] != R.drawable.g_base_shape_31){
             colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
-
-        }catch (Exception e){
-
         }
-
 
         for(int i = 0; i < TouchView.shapesForColor.size(); i++){
             Shape shape = TouchView.shapesForColor.get(i);

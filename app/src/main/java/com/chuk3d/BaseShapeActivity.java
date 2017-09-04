@@ -5,16 +5,22 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -22,6 +28,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.Arrays;
+import java.util.concurrent.RunnableFuture;
 
 public class BaseShapeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GeometricShapeFragment.FragmentItemClickCallback,
@@ -36,6 +43,8 @@ public class BaseShapeActivity extends AppCompatActivity
     ImageView rotateCircle, rotateRuler, rotateLine;
     RelativeLayout rotationBar;
     Button degrees0, degrees90, degrees180, degrees270, degrees360;
+    NestedScrollView scrollView;
+
 
     public static int imagePosition;
     public static float imageRotation;
@@ -49,6 +58,7 @@ public class BaseShapeActivity extends AppCompatActivity
         init();
         setRotationRuler();
         onNextButtonClicked();
+
     }
 
 
@@ -105,6 +115,7 @@ public class BaseShapeActivity extends AppCompatActivity
                 return true;
             }
         });
+
     }
 
 
@@ -126,8 +137,13 @@ public class BaseShapeActivity extends AppCompatActivity
         });
     }
 
+
+
+
+
     @Override
     public int onBaseButtonClicked(View view) {
+
         int[]buttonId = {R.id.base1, R.id.base2, R.id.base3, R.id.base4, R.id.base5, R.id.base6, R.id.base7, R.id.base8, R.id.base9, R.id.base10, R.id.base11, R.id.base12, R.id.base13, R.id.base14, R.id.base15, R.id.base16, R.id.base17, R.id.base18, R.id.base19, R.id.base20, R.id.base21, R.id.base22, R.id.base23, R.id.base24, R.id.base25, R.id.base26, R.id.base27, R.id.base28, R.id.base29, R.id.base30, R.id.base31, R.id.base32, R.id.base33, R.id.base34, R.id.base35, R.id.base36};
         int[]geometricBaseShapes = {R.drawable.g_base_shape_1, R.drawable.g_base_shape_2, R.drawable.g_base_shape_3,R.drawable.g_base_shape_4, R.drawable.g_base_shape_5, R.drawable.g_base_shape_6, R.drawable.g_base_shape_7, R.drawable.g_base_shape_8, R.drawable.g_base_shap_9, R.drawable.g_base_shape_10, R.drawable.g_base_shape_11, R.drawable.g_base_shape_12, R.drawable.g_base_shape_13, R.drawable.g_base_shape_14, R.drawable.g_base_shape_15, R.drawable.g_base_shape_16, R.drawable.g_base_shape_17, R.drawable.g_base_shape_18, R.drawable.g_base_shape_19, R.drawable.g_base_shape_20, R.drawable.g_base_shape_21, R.drawable.g_base_shape_22, R.drawable.g_base_shape_23, R.drawable.g_base_shape_24, R.drawable.g_base_shape_25, R.drawable.g_base_shape_26, R.drawable.g_base_shape_27, R.drawable.g_base_shape_28, R.drawable.g_base_shape_29, R.drawable.g_base_shape_30, R.drawable.g_base_shape_31, R.drawable.g_base_shape_32, R.drawable.g_base_shape_33, R.drawable.g_base_shape_34, R.drawable.g_base_shape_35, R.drawable.g_base_shape_36};
 
@@ -149,6 +165,7 @@ public class BaseShapeActivity extends AppCompatActivity
         return setUpBaseShape(view, buttonId, otherBaseShapes);
     }
 
+
     public int setUpBaseShape(View view, int[]buttonId, int[]baseShapes){
 
         int pos = 0;
@@ -160,12 +177,15 @@ public class BaseShapeActivity extends AppCompatActivity
                 mainImage.setRotation(0);
                 colorImage.setRotation(0);
                 imageRotation = 0;
-                rotateCircle.setX(getResources().getDimension(R.dimen.circle_margin));
                 imagePosition = pos;
             }
         }
         return pos;
+
+
     }
+
+
 
 
     public void initDrawerAndNavigationView(){
@@ -198,6 +218,7 @@ public class BaseShapeActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
 
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -233,13 +254,13 @@ public class BaseShapeActivity extends AppCompatActivity
 
         mainImage = (ImageView)findViewById(R.id.main_imageView);
         mainImage.setImageDrawable(getResources().getDrawable(R.drawable.g_base_shape_1));
-        mainImage.setScaleX(1.2f);
-        mainImage.setScaleY(1.2f);
+        mainImage.setScaleX(1.1f);
+        mainImage.setScaleY(1.1f);
         colorImage = (ImageView)findViewById(R.id.color_imageView);
         colorImage.setImageDrawable(getResources().getDrawable(R.drawable.g_base_shape_1));
         colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
-        colorImage.setScaleX(1.2f);
-        colorImage.setScaleY(1.2f);
+        colorImage.setScaleX(1.1f);
+        colorImage.setScaleY(1.1f);
 
         next = (ImageButton) findViewById(R.id.next);
 
@@ -249,6 +270,9 @@ public class BaseShapeActivity extends AppCompatActivity
         rotateCircle = (ImageView)findViewById(R.id.rotate_circle);
         rotateLine = (ImageView)findViewById(R.id.line);
         rotationBar = (RelativeLayout)findViewById(R.id.rotation_kit);
+
+
+        scrollView = (NestedScrollView)findViewById(R.id.scrollView);
 
         degrees0 = (Button)findViewById(R.id.degrees_zero);
         degrees90 = (Button)findViewById(R.id.degrees_ninty);
@@ -269,6 +293,25 @@ public class BaseShapeActivity extends AppCompatActivity
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             tabLayout.getTabAt(i).setIcon(icons[i]);
         }
+
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                scrollView.scrollTo(0,0);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                scrollView.scrollTo(0,0);
+            }
+        });
+
     }
 
 

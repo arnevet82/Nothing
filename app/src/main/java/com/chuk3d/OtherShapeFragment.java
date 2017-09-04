@@ -4,9 +4,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.ImageButton;
 
 /**
@@ -16,6 +18,7 @@ import android.widget.ImageButton;
 public class OtherShapeFragment extends Fragment {
     ImageButton baseButton1, baseButton2, baseButton3, baseButton4, baseButton5, baseButton6, baseButton7, baseButton8, baseButton9, baseButton10, baseButton11, baseButton12, baseButton13, baseButton14, baseButton15, baseButton16, baseButton17, baseButton18, baseButton19, baseButton20, baseButton21, baseButton22, baseButton23, baseButton24, baseButton25, baseButton26, baseButton27, baseButton28, baseButton29, baseButton30, baseButton31, baseButton32, baseButton33, baseButton34, baseButton35, baseButton36;
     private FragmentItemClickCallback callback;
+    GridLayout gridLayout;
 
 
     @Nullable
@@ -23,11 +26,12 @@ public class OtherShapeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.other_base_shape, container, false);
         init(rootView);
-
         return rootView;
     }
 
     public void init(View view){
+        gridLayout = (GridLayout)view.findViewById(R.id.grid);
+        gridLayout.setFocusable(false);
 
         baseButton1 = (ImageButton) view.findViewById(R.id.base1);
         baseButton2 = (ImageButton) view.findViewById(R.id.base2);
@@ -94,5 +98,7 @@ public class OtherShapeFragment extends Fragment {
     public interface FragmentItemClickCallback {
 
         int onOtherBaseButtonClicked(View view);
-    }
+}
+
+
 }

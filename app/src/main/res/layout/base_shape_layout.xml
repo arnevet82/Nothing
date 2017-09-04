@@ -15,13 +15,13 @@
         <ImageView
             android:id="@+id/main_imageView"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="40dp"
             android:layout_width="166dp"
             android:layout_height="167dp" />
         <ImageView
             android:id="@+id/color_imageView"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="40dp"
             android:layout_width="166dp"
             android:layout_height="167dp" />
     </RelativeLayout>
@@ -135,7 +135,7 @@
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="185dp"
+        android:layout_height="@dimen/base_scroll_height"
         android:layout_alignParentBottom="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         xmlns:android="http://schemas.android.com/apk/res/android"
