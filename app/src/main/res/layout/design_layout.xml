@@ -19,13 +19,13 @@
         <ImageView
             android:id="@+id/main_imageView"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="95dp"
+            android:layout_marginTop="@dimen/canvas_marginTop"
             android:layout_width="166dp"
             android:layout_height="167dp" />
         <ImageView
             android:id="@+id/color_imageView"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="95dp"
+            android:layout_marginTop="@dimen/canvas_marginTop"
             android:layout_width="166dp"
             android:layout_height="167dp" />
     </RelativeLayout>
@@ -170,11 +170,17 @@
     <LinearLayout
         android:id="@+id/fonts_bar"
         android:gravity="left"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="@dimen/font_margin"
         android:layout_above="@+id/v"
         android:layout_width="match_parent"
         android:layout_height="55dp">
-
+        <Button
+            android:textColor="#626066"
+            android:id="@+id/edit_text_body"
+            android:layout_marginRight="@dimen/edit_textbody_margin_right"
+            android:background="@drawable/edit"
+            android:layout_width="44dp"
+            android:layout_height="44dp" />
 
         <Button
             android:id="@+id/font_1"
@@ -189,7 +195,7 @@
             android:layout_width="@dimen/font_button_width"
             android:layout_height="wrap_content"
             style="?android:attr/borderlessButtonStyle"
-            android:backgroundTint="@color/transparent"/>
+            android:background="@color/transparent"/>
         <Button
             android:id="@+id/font_2"
             android:paddingLeft="-7dp"
@@ -203,7 +209,7 @@
             android:layout_width="@dimen/font_button_width"
             android:layout_height="wrap_content"
             style="?android:attr/borderlessButtonStyle"
-            android:backgroundTint="@color/transparent"/>
+            android:background="@color/transparent"/>
         <Button
             android:id="@+id/font_3"
             android:paddingLeft="-7dp"
@@ -217,7 +223,7 @@
             android:layout_width="@dimen/font_button_width"
             android:layout_height="wrap_content"
             style="?android:attr/borderlessButtonStyle"
-            android:backgroundTint="@color/transparent"/>
+            android:background="@color/transparent"/>
         <Button
             android:id="@+id/font_4"
             android:paddingLeft="-7dp"
@@ -231,7 +237,7 @@
             android:layout_width="@dimen/font_button_width"
             android:layout_height="wrap_content"
             style="?android:attr/borderlessButtonStyle"
-            android:backgroundTint="@color/transparent"/>
+            android:background="@color/transparent"/>
         <Button
             android:id="@+id/font_5"
             android:paddingLeft="-7dp"
@@ -245,7 +251,7 @@
             android:layout_width="@dimen/font_button_width"
             android:layout_height="wrap_content"
             style="?android:attr/borderlessButtonStyle"
-            android:backgroundTint="@color/transparent"/>
+            android:background="@color/transparent"/>
         <Button
             android:id="@+id/font_6"
             android:paddingLeft="-7dp"
@@ -259,7 +265,7 @@
             android:layout_width="@dimen/font_button_width"
             android:layout_height="wrap_content"
             style="?android:attr/borderlessButtonStyle"
-            android:backgroundTint="@color/transparent"/>
+            android:background="@color/transparent"/>
         <Button
             android:id="@+id/font_7"
             android:paddingLeft="-7dp"
@@ -273,7 +279,7 @@
             android:layout_width="@dimen/font_button_width"
             android:layout_height="wrap_content"
             style="?android:attr/borderlessButtonStyle"
-            android:backgroundTint="@color/transparent"/>
+            android:background="@color/transparent"/>
 
 
     </LinearLayout>

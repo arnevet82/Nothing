@@ -45,6 +45,34 @@ public class TextCommand extends Command {
         DesignActivity.clearStack(3);
     }
 
+
+    void edit(){
+        TextBody previousText = TouchView.texts.get(TouchView.CURRENT_TEXT);
+        float angle = previousText.getAngle();
+        float xPos = previousText.getPosX();
+        float yPos = previousText.getPosY();
+        float scaleFactor = previousText.getScaleFactor();
+
+        TextBody newTextBody = new TextBody(text, context, tag);
+        newTextBody.setAngle(angle);
+        newTextBody.setPosX(xPos);
+        newTextBody.setPosY(yPos);
+        newTextBody.setScaleFactor(scaleFactor);
+        TouchView.texts.set(TouchView.CURRENT_TEXT, newTextBody);
+
+        if(DesignActivity.TcurrentFont != null && TouchView.texts.getLast().getTag().equals("topping")){
+            TouchView.texts.getLast().getTextPaint().setTypeface(DesignActivity.TcurrentFont);
+        }else if(DesignActivity.PcurrentFont != null && TouchView.texts.getLast().getTag().equals("punch")){
+            TouchView.texts.getLast().getTextPaint().setTypeface(DesignActivity.PcurrentFont);
+        }
+        DesignActivity.editText.setText("");
+        DesignActivity.editText.setVisibility(View.INVISIBLE);
+        DesignActivity.fontsBar.setVisibility(View.INVISIBLE);
+        DesignActivity.vButton.setVisibility(View.INVISIBLE);
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(DesignActivity.editText.getWindowToken(), 0);
+    }
+
     @Override
     void undo() {
         if(!TouchView.texts.isEmpty()){

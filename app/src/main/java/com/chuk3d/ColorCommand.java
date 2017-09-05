@@ -2,7 +2,10 @@ package com.chuk3d;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.EmbossMaskFilter;
+import android.graphics.MaskFilter;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.widget.ImageView;
 
 import java.util.LinkedList;
@@ -56,6 +59,13 @@ public class ColorCommand extends Command {
                         }else{
                             textBody.getTextPaint().setColor(context.getResources().getColor(newColor));
                         }
+                    }else{
+
+                        MaskFilter filter =
+                                new EmbossMaskFilter(new float[]{0.0f, -1.0f, 0.5f}, 0.8f, 15f, 1f);
+                        textBody.getTextPaint().setMaskFilter(filter);
+
+                        textBody.getTextPaint().setColor(context.getResources().getColor(R.color.almostWhite));
                     }
                 }
             }
@@ -86,6 +96,29 @@ public class ColorCommand extends Command {
         }
         DesignActivity.touchView.invalidate();
     }
+
+    void fillColorShapes(){
+        if(DesignActivity.baseShapes[DesignActivity.position] != R.drawable.g_base_shape_31){
+            colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.editGrayBigShape), PorterDuff.Mode.SRC_IN);
+        }
+        if (!TouchView.shapes.isEmpty()) {
+            for (Shape shape : TouchView.shapesForColor) {
+                shape.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.editGraysmallShape), PorterDuff.Mode.SRC_IN);
+
+            }
+        }
+        if (!TouchView.texts.isEmpty()) {
+            for (TextBody textBody : TouchView.texts) {
+
+                textBody.getTextPaint().setColor(context.getResources().getColor(R.color.buttonGray));
+
+            }
+        }
+
+        TouchView.texts.get(TouchView.CURRENT_TEXT).getTextPaint().setColor(context.getResources().getColor(R.color.almostWhite));
+        DesignActivity.touchView.invalidate();
+    }
+
 
 
     @Override

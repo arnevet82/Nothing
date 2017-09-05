@@ -41,7 +41,7 @@
                 android:layout_below="@+id/topping_tabs"
                 android:id="@+id/topping_viewpager"
                 android:layout_width="match_parent"
-                android:layout_height="380dp"
+                android:layout_height="@dimen/base_viewPager_height"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         </LinearLayout>

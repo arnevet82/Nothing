@@ -139,8 +139,8 @@ public class TouchView extends View {
 
     private boolean clickOnText(TextBody textBody, MotionEvent event) {
 
-        float xEnd = textBody.getPosX() + textScaleFactor*200;
-        float yEnd = textBody.getPosY() + textScaleFactor*100;
+        float xEnd = textBody.getPosX() + textScaleFactor*250;
+        float yEnd = textBody.getPosY() + textScaleFactor*150;
 
         if ((event.getX() >= (textBody.getPosX()) && event.getX() <= (xEnd))
                 && (event.getY() >= (textBody.getPosY()) && event.getY() <= yEnd)) {
@@ -204,10 +204,11 @@ public class TouchView extends View {
                                     }
                                 }
                                 if(!clickedTexts.isEmpty()){
-                                    fillColorShapes();
+
                                     CURRENT_TEXT = clickedTexts.getLast();
-                                    texts.get(CURRENT_TEXT).getTextPaint().setColor(getResources().getColor(R.color.almostWhite));
+                                    fillColorShapes();
                                     DesignActivity.currentNumText.setText("T");
+                                    DesignActivity.isTextEdited = true;
                                     DesignActivity.vButton.setVisibility(VISIBLE);
                                     DesignActivity.initFonts(texts.get(CURRENT_TEXT).getTag());
 
@@ -358,15 +359,8 @@ public class TouchView extends View {
 
     public void fillColorShapes(){
         DesignActivity.vButton.setVisibility(VISIBLE);
-        if(DesignActivity.baseShapes[DesignActivity.position] != R.drawable.g_base_shape_31){
-            DesignActivity.colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.editGrayBigShape),PorterDuff.Mode.SRC_IN);
-        }
-        for(Shape shape:shapesForColor){
-            shape.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.editGraysmallShape),PorterDuff.Mode.SRC_IN);
-        }
-        for(TextBody textBody: texts){
-            textBody.getTextPaint().setColor(getResources().getColor(R.color.background));
-        }
+        ColorCommand colorCommand = new ColorCommand(DesignActivity.colorImage, getContext(), 0);
+        colorCommand.fillColorShapes();
     }
 
 

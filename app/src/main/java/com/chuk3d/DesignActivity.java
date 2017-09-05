@@ -30,6 +30,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -93,7 +96,7 @@ public class DesignActivity extends AppCompatActivity
     ImageView rotateCircle, rotateRuler, rotateLine;
     RelativeLayout rotationBar, resizeBar;
     Button degrees0, degrees90, degrees180, degrees270, degrees360, cm, inch, letsChukAgain;
-    public static Button font1, font2, font3, font4, font5, font6, font7;
+    public static Button font1, font2, font3, font4, font5, font6, font7, editTextBody;
     public static Typeface vampiro, montserrat, alef, hiraKaku, athelas, montserratItalic, baloo, pacifico;
     public static Typeface PcurrentFont, TcurrentFont;
     NestedScrollView punchScrollView, toppingScrollView;
@@ -102,10 +105,11 @@ public class DesignActivity extends AppCompatActivity
     public static LinkedList<String> stack = new LinkedList<>();
     public static EditText editText;
     public static boolean isInches;
+    public static boolean isTextEdited;
     public static String sizeTerm = "cm";
 
-    File imageFile, galleryImageFile, shapeFile;
-    public static String fileName, shapeFileName, galleryFileName, formattedSize;
+    File imageFile, galleryImageFile;
+    public static String fileName, galleryFileName, formattedSize;
 
 
     @Override
@@ -136,6 +140,11 @@ public class DesignActivity extends AppCompatActivity
                 if(resizeBar.getVisibility() == View.INVISIBLE && bPaymentScreen.getVisibility() == View.INVISIBLE){
                     hideAllUIElements();
                     bottomBar.setVisibility(View.INVISIBLE);
+                    vButton.setVisibility(View.INVISIBLE);
+                    clearGrayColor();
+                    rotationBar.setVisibility(View.INVISIBLE);
+                    fontsBar.setVisibility(View.INVISIBLE);
+                    textPunchToppingChoice.setVisibility(View.INVISIBLE);
                     setResizeScreen();
                 }else if(resizeBar.getVisibility() == View.VISIBLE){
                     setUpBeforePayment();
@@ -360,12 +369,34 @@ public class DesignActivity extends AppCompatActivity
                             };
                             punchText.setOnClickListener(textListener);
                             toppingText.setOnClickListener(textListener);
-
+                            initEditTextBody();
                             break;
                     }
                 }
             });
         }
+    }
+
+    public void initEditTextBody(){
+        editTextBody.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editText.setVisibility(View.VISIBLE);
+                TextBody textBody = TouchView.texts.get(TouchView.CURRENT_TEXT);
+                editText.setText(textBody.getSl().getText());
+                textBody.setSl(new StaticLayout("", new TextPaint(),800,
+                        Layout.Alignment.ALIGN_CENTER, 1f,0f,false));
+                touchView.invalidate();
+                designEditText(textBody.getTag());
+                editText.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                vText.setVisibility(View.VISIBLE);
+                currentNumText.setText("T");
+
+                onVTextClicked(textBody.getTag(), "edit");
+            }
+        });
     }
 
     public void designEditText(String tag){
@@ -401,25 +432,41 @@ public class DesignActivity extends AppCompatActivity
         textPunchToppingChoice.setVisibility(View.INVISIBLE);
         showButtons();
         vText.setVisibility(View.VISIBLE);
-        onVTextClicked(tag);
+        onVTextClicked(tag, "normal");
         currentNumText.setText("T");
     }
 
-    public void onVTextClicked(String tag){
+    public void onVTextClicked(String tag, String state){
 
         final String mTag = tag;
+        final String mState = state;
+        Log.e("state", mState);
 
         vText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String text = editText.getText().toString();
-                TextCommand textCommand = new TextCommand(getApplicationContext(), text, mTag, touchView);
-                textCommand.execute();
-                cleanBarButtons();
-                touchView.invalidate();
-                vButton.setVisibility(View.VISIBLE);
                 vText.setVisibility(View.INVISIBLE);
+
+                switch (mState){
+                    case "normal":
+                        TextCommand textCommand = new TextCommand(getApplicationContext(), text, mTag, touchView);
+                        textCommand.execute();
+                        cleanBarButtons();
+                        break;
+                    case "edit":
+                        TextCommand textCommand1 = new TextCommand(getApplicationContext(), text, mTag, touchView);
+                        textCommand1.edit();
+                        if(isTextEdited){
+                            ColorCommand colorCommand = new ColorCommand(colorImage, getApplicationContext(), 0);
+                            colorCommand.fillColorShapes();
+                        }
+                        break;
+                }
+                vButton.setVisibility(View.VISIBLE);
                 initFonts(mTag);
+                touchView.invalidate();
             }
         });
     }
@@ -501,6 +548,7 @@ public class DesignActivity extends AppCompatActivity
                 clearGrayColor();
                 rotationBar.setVisibility(View.INVISIBLE);
                 fontsBar.setVisibility(View.INVISIBLE);
+                textPunchToppingChoice.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -552,6 +600,7 @@ public class DesignActivity extends AppCompatActivity
                             ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), colors[i]);
                             colorCommand.execute();
                             showButtons();
+                            fontsBar.setVisibility(View.INVISIBLE);
                         }
                     }
                 }
@@ -1057,11 +1106,11 @@ public class DesignActivity extends AppCompatActivity
         designContainer = (RelativeLayout)findViewById(R.id.design_container);
 
         mainImage = (ImageView)findViewById(R.id.main_imageView);
-        mainImage.setScaleX(1.55f);
-        mainImage.setScaleY(1.55f);
+        mainImage.setScaleX(1.62f);
+        mainImage.setScaleY(1.62f);
         colorImage = (ImageView)findViewById(R.id.color_imageView);
-        colorImage.setScaleX(1.55f);
-        colorImage.setScaleY(1.55f);
+        colorImage.setScaleX(1.62f);
+        colorImage.setScaleY(1.62f);
 
         bottomBar = (RelativeLayout) findViewById(R.id.bottom_bar);
 
@@ -1188,6 +1237,7 @@ public class DesignActivity extends AppCompatActivity
             font5 = (Button)findViewById(R.id.font_5);
             font6 = (Button)findViewById(R.id.font_6);
             font7 = (Button)findViewById(R.id.font_7);
+            editTextBody = (Button)findViewById(R.id.edit_text_body);
 
             vampiro = Typeface.createFromAsset(getAssets(), "VampiroOne-Regular.ttf");
             montserratItalic = Typeface.createFromAsset(getAssets(), "Montserrat-Italic.ttf");
@@ -1225,6 +1275,39 @@ public class DesignActivity extends AppCompatActivity
             toppingScrollView = (NestedScrollView)findViewById(R.id.topping_scrollView);
 
 
+            toppingTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    toppingScrollView.scrollTo(0,0);
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+                    toppingScrollView.scrollTo(0,0);
+                }
+            });
+
+            punchTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    punchScrollView.scrollTo(0,0);
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+                    punchScrollView.scrollTo(0,0);
+                }
+            });
         }
 
 }

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <ImageButton
-            android:layout_marginTop="-7dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:layout_column="0"
             android:layout_row="0"
             android:id="@+id/punch1"
@@ -28,7 +28,7 @@
             android:backgroundTint="@color/buttonGray"
             android:scaleType="fitXY" />
         <ImageButton
-            android:layout_marginTop="-7dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:layout_column="1"
             android:layout_row="0"
             android:id="@+id/punch2"
@@ -43,7 +43,7 @@
             android:backgroundTint="@color/buttonGray"
             android:scaleType="fitXY" />
         <ImageButton
-            android:layout_marginTop="-7dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:layout_column="2"
             android:layout_row="0"
             android:id="@+id/punch3"
@@ -58,7 +58,7 @@
             android:backgroundTint="@color/buttonGray"
             android:scaleType="fitXY" />
         <ImageButton
-            android:layout_marginTop="-7dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:layout_column="3"
             android:layout_row="0"
             android:id="@+id/punch4"
@@ -73,7 +73,7 @@
             android:backgroundTint="@color/buttonGray"
             android:scaleType="fitXY" />
         <ImageButton
-            android:layout_marginTop="-7dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:layout_column="4"
             android:layout_row="0"
             android:id="@+id/punch5"
@@ -88,7 +88,7 @@
             android:backgroundTint="@color/buttonGray"
             android:scaleType="fitXY" />
         <ImageButton
-            android:layout_marginTop="-7dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:layout_column="5"
             android:layout_row="0"
             android:id="@+id/punch6"
@@ -106,7 +106,7 @@
         <ImageButton
             android:layout_column="0"
             android:layout_row="1"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch7"
             android:paddingLeft="15dp"
             android:paddingRight="13dp"
@@ -123,7 +123,7 @@
         <ImageButton
             android:layout_column="1"
             android:layout_row="1"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch8"
             android:paddingLeft="18dp"
             android:paddingRight="18dp"
@@ -138,7 +138,7 @@
         <ImageButton
             android:layout_column="2"
             android:layout_row="1"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch9"
             android:paddingLeft="13dp"
             android:paddingRight="13dp"
@@ -153,7 +153,7 @@
         <ImageButton
             android:layout_column="3"
             android:layout_row="1"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch10"
             android:paddingLeft="14dp"
             android:paddingRight="14dp"
@@ -168,7 +168,7 @@
         <ImageButton
             android:layout_column="4"
             android:layout_row="1"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch11"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -183,7 +183,7 @@
         <ImageButton
             android:layout_column="5"
             android:layout_row="1"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch12"
             android:paddingLeft="22dp"
             android:paddingRight="22dp"
@@ -198,7 +198,7 @@
         <ImageButton
             android:layout_column="0"
             android:layout_row="2"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch13"
             android:paddingLeft="13dp"
             android:paddingRight="13dp"
@@ -214,7 +214,7 @@
         <ImageButton
             android:layout_column="1"
             android:layout_row="2"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch14"
             android:paddingLeft="11dp"
             android:paddingRight="11dp"
@@ -229,7 +229,7 @@
         <ImageButton
             android:layout_column="2"
             android:layout_row="2"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch15"
             android:paddingLeft="29dp"
             android:paddingRight="29dp"
@@ -244,7 +244,7 @@
         <ImageButton
             android:layout_column="3"
             android:layout_row="2"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch16"
             android:paddingLeft="13dp"
             android:paddingRight="13dp"
@@ -259,7 +259,7 @@
         <ImageButton
             android:layout_column="4"
             android:layout_row="2"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch17"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -274,7 +274,7 @@
         <ImageButton
             android:layout_column="5"
             android:layout_row="2"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch18"
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
@@ -288,7 +288,7 @@
             android:scaleType="fitXY" />
 
         <ImageButton
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:layout_column="0"
             android:layout_row="3"
             android:id="@+id/punch19"
@@ -306,7 +306,7 @@
         <ImageButton
             android:layout_column="1"
             android:layout_row="3"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch20"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -321,7 +321,7 @@
         <ImageButton
             android:layout_column="2"
             android:layout_row="3"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch21"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -336,7 +336,7 @@
         <ImageButton
             android:layout_column="3"
             android:layout_row="3"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch22"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -351,7 +351,7 @@
         <ImageButton
             android:layout_column="4"
             android:layout_row="3"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch23"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -366,7 +366,7 @@
         <ImageButton
             android:layout_column="5"
             android:layout_row="3"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch24"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -381,7 +381,7 @@
 
 
         <ImageButton
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:layout_column="0"
             android:layout_row="4"
             android:id="@+id/punch25"
@@ -399,7 +399,7 @@
         <ImageButton
             android:layout_column="1"
             android:layout_row="4"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch26"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -414,7 +414,7 @@
         <ImageButton
             android:layout_column="2"
             android:layout_row="4"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch27"
             android:paddingLeft="15dp"
             android:paddingRight="25dp"
@@ -429,7 +429,7 @@
         <ImageButton
             android:layout_column="3"
             android:layout_row="4"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch28"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -444,7 +444,7 @@
         <ImageButton
             android:layout_column="4"
             android:layout_row="4"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch29"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -459,7 +459,7 @@
         <ImageButton
             android:layout_column="5"
             android:layout_row="4"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch30"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -473,7 +473,7 @@
             android:scaleType="fitXY" />
 
         <ImageButton
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:layout_column="0"
             android:layout_row="5"
             android:id="@+id/punch31"
@@ -491,7 +491,7 @@
         <ImageButton
             android:layout_column="1"
             android:layout_row="5"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch32"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -506,7 +506,7 @@
         <ImageButton
             android:layout_column="2"
             android:layout_row="5"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch33"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -521,7 +521,7 @@
         <ImageButton
             android:layout_column="3"
             android:layout_row="5"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch34"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -536,7 +536,7 @@
         <ImageButton
             android:layout_column="4"
             android:layout_row="5"
-            android:layout_marginTop="-10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch35"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -551,8 +551,7 @@
         <ImageButton
             android:layout_column="5"
             android:layout_row="5"
-            android:layout_marginTop="-10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="@dimen/button_marginTop"
             android:id="@+id/punch36"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"

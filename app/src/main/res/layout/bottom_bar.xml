@@ -52,8 +52,8 @@
         android:scaleType="fitXY" />
     <ImageButton
         android:id="@+id/text"
-        android:paddingLeft="35dp"
-        android:paddingRight="40dp"
+        android:paddingLeft="@dimen/bottom_bar_text_padd_left"
+        android:paddingRight="@dimen/bottom_bar_text_padd_right"
         android:paddingTop="10dp"
         android:paddingBottom="18dp"
         android:layout_marginLeft="-7dp"
