@@ -1,17 +1,10 @@
 package com.chuk3d;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.MotionEventCompat;
-import android.text.Layout;
-import android.text.StaticLayout;
-import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -19,7 +12,6 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.LinkedList;
@@ -60,6 +52,9 @@ public class TouchView extends View {
     public static int CURRENT_SHAPE = -1;
     public static int CURRENT_TEXT = -1;
 
+
+//    public static int DO_NOT_MOVE = 99;
+
     public static float textScaleFactor = 1.f;
     private ScaleGestureDetector textScaleDetector;
 
@@ -93,21 +88,23 @@ public class TouchView extends View {
         super.onDraw(canvas);
 
         for(int i = 0; i < shapesForColor.size(); i++){
+            Shape shape = shapes.get(i);
             canvas.save();
-            canvas.translate(shapes.get(i).getPosX(), shapes.get(i).getPosY());
-            canvas.scale(shapes.get(i).getScaleFactor(), shapes.get(i).getScaleFactor(), pivotx, pivoty);
-            canvas.rotate(shapes.get(i).getAngle(),pivotx, pivoty);
-            shapes.get(i).getDrawable().draw(canvas);
+            canvas.translate(shape.getPosX(), shape.getPosY());
+            canvas.scale(shape.getxScaleFactor(), shape.getyScaleFactor(), shape.getPivotX(), shape.getPivotY());
+            canvas.rotate(shape.getAngle(),shape.getPivotX(), shape.getPivotY());
+            shape.getDrawable().draw(canvas);
             shapesForColor.get(i).getDrawable().draw(canvas);
             canvas.restore();
         }
 
         for(int i = 0; i < texts.size(); i++){
+            TextBody tBody = texts.get(i);
             canvas.save();
-            canvas.translate(texts.get(i).getPosX(), texts.get(i).getPosY());
-            canvas.scale(texts.get(i).getScaleFactor(), texts.get(i).getScaleFactor(),texts.get(i).getTextPivotx(), texts.get(i).getTextPivoty());
-            canvas.rotate(texts.get(i).getAngle(),texts.get(i).getTextPivotx(), texts.get(i).getTextPivoty());
-            texts.get(i).getSl().draw(canvas);
+            canvas.translate(tBody.getPosX(), tBody.getPosY());
+            canvas.scale(tBody.getScaleFactor(), tBody.getScaleFactor(),tBody.getTextPivotx(), tBody.getTextPivoty());
+            canvas.rotate(tBody.getAngle(),tBody.getTextPivotx(), tBody.getTextPivoty());
+            tBody.getSl().draw(canvas);
             canvas.restore();
         }
 
@@ -115,7 +112,7 @@ public class TouchView extends View {
 
     private boolean clickOnShape(Shape shape, MotionEvent event) {
 
-        float scaleFactor = shape.getScaleFactor();
+        float scaleFactor = shape.getxScaleFactor();
         scaleFactor = Math.max(1f, Math.min(mScaleFactor, 1.3f));
 
         float x = (shape.getPosX()*0.9f);
@@ -189,12 +186,7 @@ public class TouchView extends View {
 
                             if(!clickedShapes.isEmpty()){
                                 CURRENT_SHAPE = clickedShapes.getLast();
-                                fillColorShapes();
-                                if(shapesForColor.get(CURRENT_SHAPE).getTag().equals("punch")){
-                                    shapesForColor.get(CURRENT_SHAPE).getDrawable().mutate().setColorFilter(getResources().getColor(R.color.transparent),PorterDuff.Mode.SRC_IN);
-                                }else{
-                                    shapesForColor.get(CURRENT_SHAPE).getDrawable().mutate().setColorFilter(getResources().getColor(R.color.almostWhite),PorterDuff.Mode.SRC_IN);
-                                }
+                                fillColorShapes("shape");
                                 DesignActivity.currentNumText.setText("S");
                                 DesignActivity.vButton.setVisibility(VISIBLE);
                             }else{
@@ -206,7 +198,7 @@ public class TouchView extends View {
                                 if(!clickedTexts.isEmpty()){
 
                                     CURRENT_TEXT = clickedTexts.getLast();
-                                    fillColorShapes();
+                                    fillColorShapes("text");
                                     DesignActivity.currentNumText.setText("T");
                                     DesignActivity.isTextEdited = true;
                                     DesignActivity.vButton.setVisibility(VISIBLE);
@@ -233,8 +225,7 @@ public class TouchView extends View {
             }
 
             case MotionEvent.ACTION_MOVE: {
-                if (CURRENT_SHAPE == -1 && !DesignActivity.currentNumText.getText().equals("T")) {
-
+                if (shapes.isEmpty()&& texts.isEmpty()) {
                 } else {
                     final int pointerIndex = ev.findPointerIndex(mActivePointerId);
                     if (pointerIndex >= 0) {
@@ -300,18 +291,7 @@ public class TouchView extends View {
 
             case MotionEvent.ACTION_POINTER_UP: {
                 onSecondaryPointerUp(ev);
-//                final int pointerIndex = (ev.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK)
-//                        >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
-//
-//                final int pointerId = ev.getPointerId(pointerIndex);
-//                if (pointerId == mActivePointerId) {
-//
-//                    final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-//                    mLastTouchX = ev.getX(newPointerIndex);
-//                    mLastTouchY = ev.getY(newPointerIndex);
-//                    mActivePointerId = ev.getPointerId(newPointerIndex);
-//
-//                }
+
                 break;
             }
         }
@@ -346,7 +326,9 @@ public class TouchView extends View {
                     mScaleFactor *= detector.getScaleFactor();
 
                     mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
-                    shapes.get(CURRENT_SHAPE).setScaleFactor(mScaleFactor);
+                    shapes.get(CURRENT_SHAPE).setxScaleFactor(mScaleFactor);
+                    shapes.get(CURRENT_SHAPE).setyScaleFactor(mScaleFactor);
+
                 }catch (IndexOutOfBoundsException e){
 
                 }
@@ -357,10 +339,10 @@ public class TouchView extends View {
         }
     }
 
-    public void fillColorShapes(){
+    public void fillColorShapes(String tag){
         DesignActivity.vButton.setVisibility(VISIBLE);
         ColorCommand colorCommand = new ColorCommand(DesignActivity.colorImage, getContext(), 0);
-        colorCommand.fillColorShapes();
+        colorCommand.fillColorShapes(tag);
     }
 
 

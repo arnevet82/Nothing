@@ -14,36 +14,43 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <Button
+            android:tag="#fff8e81c"
+            android:onClick="onColorButtonClicked"
             android:layout_margin="5dp"
             android:id="@+id/color1"
             android:background="#f8e81c"
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:onClick="onColorButtonClicked"
             android:layout_margin="5dp"
             android:id="@+id/color2"
             android:background="#f6a623"
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:onClick="onColorButtonClicked"
             android:layout_margin="5dp"
             android:id="@+id/color3"
             android:background="#d0011b"
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:onClick="onColorButtonClicked"
             android:layout_margin="5dp"
             android:id="@+id/color4"
             android:background="#ff68a0"
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:onClick="onColorButtonClicked"
             android:layout_margin="5dp"
             android:id="@+id/color5"
             android:background="#9012fe"
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:onClick="onColorButtonClicked"
             android:layout_margin="5dp"
             android:id="@+id/color6"
             android:background="#145aaf"
@@ -60,36 +67,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <Button
+            android:onClick="onColorButtonClicked"
             android:layout_margin="5dp"
             android:id="@+id/color7"
             android:background="#00abff"
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:onClick="onColorButtonClicked"
             android:layout_margin="5dp"
             android:id="@+id/color8"
             android:background="#4ab722"
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:onClick="onColorButtonClicked"
             android:layout_margin="5dp"
             android:id="@+id/color9"
             android:background="#000000"
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:onClick="onColorButtonClicked"
             android:layout_margin="5dp"
             android:id="@+id/color10"
             android:background="#9b9b9b"
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:onClick="onColorButtonClicked"
             android:layout_margin="5dp"
             android:id="@+id/color11"
             android:background="#ffffff"
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:onClick="onColorButtonClicked"
             android:layout_margin="5dp"
             android:id="@+id/color12"
             android:background="@drawable/non_color"

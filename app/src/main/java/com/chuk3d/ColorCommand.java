@@ -97,7 +97,7 @@ public class ColorCommand extends Command {
         DesignActivity.touchView.invalidate();
     }
 
-    void fillColorShapes(){
+    void fillColorShapes(String tag){
         if(DesignActivity.baseShapes[DesignActivity.position] != R.drawable.g_base_shape_31){
             colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.editGrayBigShape), PorterDuff.Mode.SRC_IN);
         }
@@ -106,16 +106,24 @@ public class ColorCommand extends Command {
                 shape.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.editGraysmallShape), PorterDuff.Mode.SRC_IN);
 
             }
+
+            if(tag.equals("shape")){
+                if(TouchView.shapesForColor.get(TouchView.CURRENT_SHAPE).getTag().equals("punch")){
+                    TouchView.shapesForColor.get(TouchView.CURRENT_SHAPE).getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.transparent),PorterDuff.Mode.SRC_IN);
+                }else{
+                    TouchView.shapesForColor.get(TouchView.CURRENT_SHAPE).getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.almostWhite),PorterDuff.Mode.SRC_IN);
+                }
+            }
         }
         if (!TouchView.texts.isEmpty()) {
             for (TextBody textBody : TouchView.texts) {
-
                 textBody.getTextPaint().setColor(context.getResources().getColor(R.color.buttonGray));
-
+            }
+            if(tag.equals("text")){
+                TouchView.texts.get(TouchView.CURRENT_TEXT).getTextPaint().setColor(context.getResources().getColor(R.color.almostWhite));
             }
         }
 
-        TouchView.texts.get(TouchView.CURRENT_TEXT).getTextPaint().setColor(context.getResources().getColor(R.color.almostWhite));
         DesignActivity.touchView.invalidate();
     }
 

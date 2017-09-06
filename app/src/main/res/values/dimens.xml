@@ -46,5 +46,7 @@
     <dimen name="bottom_bar_text_padd_right">40dp</dimen>
     <dimen name="bottom_bar_text_padd_left">35dp</dimen>
 
+    <dimen name="resize_max_circle">257dp</dimen>
+
 
 </resources>

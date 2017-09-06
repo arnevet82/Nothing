@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -142,9 +143,6 @@ public class DesignActivity extends AppCompatActivity
                     bottomBar.setVisibility(View.INVISIBLE);
                     vButton.setVisibility(View.INVISIBLE);
                     clearGrayColor();
-                    rotationBar.setVisibility(View.INVISIBLE);
-                    fontsBar.setVisibility(View.INVISIBLE);
-                    textPunchToppingChoice.setVisibility(View.INVISIBLE);
                     setResizeScreen();
                 }else if(resizeBar.getVisibility() == View.VISIBLE){
                     setUpBeforePayment();
@@ -240,11 +238,24 @@ public class DesignActivity extends AppCompatActivity
                     x = event.getX();
                     y = event.getY();
 
-                    if(event.getX() < 1200 && event.getX() > 150){
+                    if(event.getX() < rotateLine.getRight() && event.getX() > 100){
                         resizeBall.setX(x);
                     }
 
-                    float scaleFactor = x*0.0014f;
+
+                    float scaleFactor;
+                    switch (Helper.getDeviceDensity(getApplicationContext())){
+                        case "3.0 xxhdpi":
+                            scaleFactor = x*0.0014f;
+                            break;
+                        case "4.0 xxxhdpi":
+                            scaleFactor = x*0.00105f;
+                            break;
+                        default:
+                            scaleFactor = x*0.00105f;
+                            break;
+                    }
+
                     scaleFactor = Math.max(0.25f, Math.min(scaleFactor, 1.25f));
 
                     designContainer.setScaleX(scaleFactor);
@@ -315,6 +326,9 @@ public class DesignActivity extends AppCompatActivity
         undo.setVisibility(View.INVISIBLE);
         delete.setVisibility(View.INVISIBLE);
         rotationBar.setVisibility(View.INVISIBLE);
+        fontsBar.setVisibility(View.INVISIBLE);
+        rotationBar.setVisibility(View.INVISIBLE);
+        textPunchToppingChoice.setVisibility(View.INVISIBLE);
     }
 
     public void cleanBarButtons(){
@@ -440,7 +454,6 @@ public class DesignActivity extends AppCompatActivity
 
         final String mTag = tag;
         final String mState = state;
-        Log.e("state", mState);
 
         vText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -460,7 +473,7 @@ public class DesignActivity extends AppCompatActivity
                         textCommand1.edit();
                         if(isTextEdited){
                             ColorCommand colorCommand = new ColorCommand(colorImage, getApplicationContext(), 0);
-                            colorCommand.fillColorShapes();
+                            colorCommand.fillColorShapes("text");
                         }
                         break;
                 }
@@ -549,6 +562,8 @@ public class DesignActivity extends AppCompatActivity
                 rotationBar.setVisibility(View.INVISIBLE);
                 fontsBar.setVisibility(View.INVISIBLE);
                 textPunchToppingChoice.setVisibility(View.INVISIBLE);
+                TouchView.CURRENT_SHAPE = -1;
+                TouchView.CURRENT_TEXT = -1;
             }
         });
     }
@@ -578,33 +593,26 @@ public class DesignActivity extends AppCompatActivity
     public void showColorBar(){
         color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.lightPrimary),PorterDuff.Mode.SRC_IN);
         colorBar.setVisibility(View.VISIBLE);
-        changeColor();
     }
 
-    public void changeColor(){
-        final Button[]buttons = {color1, color2, color3, color4, color5, color6, color7, color8, color9, color10, color11, color12};
-        for(final Button button:buttons){
-            button.setVisibility(View.VISIBLE);
-            button.setOnClickListener(new View.OnClickListener() {
-                int[]buttonId = {R.id.color1, R.id.color2, R.id.color3, R.id.color4, R.id.color5, R.id.color6, R.id.color7, R.id.color8, R.id.color9, R.id.color10, R.id.color11, R.id.color12};
-                int[]colors={R.color.yellowBtn, R.color.orangeBtn, R.color.redBtn, R.color.pinkBtn, R.color.purpleBtn, R.color.darkeBlueBtn,
-                        R.color.blueBtn, R.color.greenBtn, R.color.blackBtn, R.color.grayBtn, R.color.whiteBtn, R.color.transBtn};
-                @Override
-                public void onClick(View v) {
-                    for(int i = 0; i < buttons.length; i++){
-                        if(v.getId() == buttonId[i]){
-                            colorBar.setVisibility(View.INVISIBLE);
-                            buttons[i].setVisibility(View.INVISIBLE);
-                            color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.white),PorterDuff.Mode.SRC_IN);
-                            currentColor = colors[i];
-                            ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), colors[i]);
-                            colorCommand.execute();
-                            showButtons();
-                            fontsBar.setVisibility(View.INVISIBLE);
-                        }
-                    }
-                }
-            });
+    public void onColorButtonClicked(View v){
+        colorBar.setVisibility(View.INVISIBLE);
+        color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.white),PorterDuff.Mode.SRC_IN);
+        Button[]buttons = {color1, color2, color3, color4, color5, color6, color7, color8, color9, color10, color11, color12};
+        int[]buttonId = {R.id.color1, R.id.color2, R.id.color3, R.id.color4, R.id.color5, R.id.color6, R.id.color7, R.id.color8, R.id.color9, R.id.color10, R.id.color11, R.id.color12};
+        int[]colors={R.color.yellowBtn, R.color.orangeBtn, R.color.redBtn, R.color.pinkBtn, R.color.purpleBtn, R.color.darkeBlueBtn,
+                R.color.blueBtn, R.color.greenBtn, R.color.blackBtn, R.color.grayBtn, R.color.whiteBtn, R.color.transBtn};
+        for(int i = 0; i < buttons.length; i++){
+            if(v.getId() == buttonId[i]){
+                colorBar.setVisibility(View.INVISIBLE);
+                buttons[i].setVisibility(View.INVISIBLE);
+                color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.white),PorterDuff.Mode.SRC_IN);
+                currentColor = colors[i];
+                ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), colors[i]);
+                colorCommand.execute();
+                showButtons();
+            }
+            buttons[i].setVisibility(View.VISIBLE);
         }
     }
 
@@ -773,14 +781,18 @@ public class DesignActivity extends AppCompatActivity
                 public void onClick(View v) {
                     for(int i = 0; i < buttonId.length; i++){
                         if(v.getId() == buttonId[i]){
-                            if (currentNumText.getText().equals("T")) {
-                                TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle(degrees[i]);
-                            } else if (!TouchView.shapes.isEmpty()) {
-                                TouchView.shapes.get(TouchView.CURRENT_SHAPE).setAngle(degrees[i]);
-                            } else {
+                            try {
+                                if (currentNumText.getText().equals("T")) {
+                                    TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle(degrees[i]);
+                                } else if (!TouchView.shapes.isEmpty()) {
+                                    TouchView.shapes.get(TouchView.CURRENT_SHAPE).setAngle(degrees[i]);
+                                } else {
+
+                                }
+                                touchView.invalidate();
+                            }catch (Exception e){
 
                             }
-                            touchView.invalidate();
                         }
                     }
                 }
@@ -797,37 +809,47 @@ public class DesignActivity extends AppCompatActivity
 
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
-                        x = motionEvent.getX()/3;
+                        try{
+                            x = motionEvent.getX()/3;
+                            if (currentNumText.getText().equals("T")&&!TouchView.texts.isEmpty()) {
+                                delta = (x/3 - TouchView.texts.get(TouchView.CURRENT_TEXT).getAngle());
+                            } else if (!TouchView.shapes.isEmpty()) {
+                                delta = (x/3 - TouchView.shapes.get(TouchView.CURRENT_SHAPE).getAngle());
+                            }
 
-                        if (currentNumText.getText().equals("T")&&!TouchView.texts.isEmpty()) {
-                            delta = (x/3 - TouchView.texts.get(TouchView.CURRENT_TEXT).getAngle());
-                        } else if (!TouchView.shapes.isEmpty()) {
-                            delta = (x/3 - TouchView.shapes.get(TouchView.CURRENT_SHAPE).getAngle());
-                        } else {
+                        }catch (Exception e){
 
                         }
+
+
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        x = motionEvent.getX()/3;
+                        try{
+                            x = motionEvent.getX()/3;
 
-                        if (currentNumText.getText().equals("T")&&!TouchView.texts.isEmpty()) {
-                            TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle((x/3 - delta));
-                        } else if (!TouchView.shapes.isEmpty()) {
-                            TouchView.shapes.get(TouchView.CURRENT_SHAPE).setAngle((x/3 - delta));
-                        } else {
+                            if (currentNumText.getText().equals("T")&&!TouchView.texts.isEmpty()) {
+                                TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle((x/3 - delta));
+                            } else if (!TouchView.shapes.isEmpty()) {
+                                TouchView.shapes.get(TouchView.CURRENT_SHAPE).setAngle((x/3 - delta));
+                            }
+                        }catch (Exception e){
 
                         }
 
                         break;
                     case MotionEvent.ACTION_UP:
-                        if (currentNumText.getText().equals("T")&&!TouchView.texts.isEmpty()) {
-                            TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle((x/3 - delta));
-                        } else if (!TouchView.shapes.isEmpty()) {
-                            TouchView.shapes.get(TouchView.CURRENT_SHAPE).setAngle((x/3 - delta));
+                        try{
+                            x = motionEvent.getX()/3;
 
-                        } else {
+                            if (currentNumText.getText().equals("T")&&!TouchView.texts.isEmpty()) {
+                                TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle((x/3 - delta));
+                            } else if (!TouchView.shapes.isEmpty()) {
+                                TouchView.shapes.get(TouchView.CURRENT_SHAPE).setAngle((x/3 - delta));
+                            }
+                        }catch (Exception e){
 
                         }
+
                         break;
                 }
                 touchView.invalidate();
@@ -1033,9 +1055,6 @@ public class DesignActivity extends AppCompatActivity
                 fromPassword, toEmailList, emailSubject, "", fileName, emailBody);
 
     }
-
-
-
 
     @Override
     public void onBackPressed() {

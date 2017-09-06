@@ -10,17 +10,38 @@ public class Shape {
 
     private Drawable drawable;
     private float posX, posY;
-    private float scaleFactor = 1.f;
+    private float xScaleFactor = 1.f;
+    private float yScaleFactor = 1.f;
+
     private float angle;
     private String tag;
-
+    private float pivotX;
+    private float pivotY;
 
     public Shape(Drawable drawable, float posX, float posY){
         this.drawable = drawable;
         this.posX = posX;
         this.posY = posY;
+        pivotX = drawable.getIntrinsicWidth()/2;
+        pivotY = drawable.getIntrinsicHeight()/2;
+
     }
 
+    public float getPivotX() {
+        return pivotX;
+    }
+
+    public void setPivotX(float pivotX) {
+        this.pivotX = pivotX;
+    }
+
+    public float getPivotY() {
+        return pivotY;
+    }
+
+    public void setPivotY(float pivotY) {
+        this.pivotY = pivotY;
+    }
 
     public Drawable getDrawable() {
         return drawable;
@@ -46,12 +67,20 @@ public class Shape {
         this.posY = posY;
     }
 
-    public float getScaleFactor() {
-        return scaleFactor;
+    public float getxScaleFactor() {
+        return xScaleFactor;
     }
 
-    public void setScaleFactor(float scaleFactor) {
-        this.scaleFactor = scaleFactor;
+    public void setxScaleFactor(float xScaleFactor) {
+        this.xScaleFactor = xScaleFactor;
+    }
+
+    public float getyScaleFactor() {
+        return yScaleFactor;
+    }
+
+    public void setyScaleFactor(float yScaleFactor) {
+        this.yScaleFactor = yScaleFactor;
     }
 
     public float getAngle() {

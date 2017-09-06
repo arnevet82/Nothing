@@ -30,7 +30,7 @@ public class TextCommand extends Command {
         imm.hideSoftInputFromWindow(DesignActivity.editText.getWindowToken(), 0);
 
         TouchView.texts.add(new TextBody(text, context, tag));
-        TouchView.CURRENT_TEXT++;
+        TouchView.CURRENT_TEXT = TouchView.texts.size()-1;
 
         if(DesignActivity.TcurrentFont != null && TouchView.texts.getLast().getTag().equals("topping")){
             TouchView.texts.getLast().getTextPaint().setTypeface(DesignActivity.TcurrentFont);
@@ -40,6 +40,7 @@ public class TextCommand extends Command {
 
         DesignActivity.editText.setText("");
         DesignActivity.fontsBar.setVisibility(View.VISIBLE);
+
 
         DesignActivity.stack.add("text");
         DesignActivity.clearStack(3);
