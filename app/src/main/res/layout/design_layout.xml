@@ -13,6 +13,7 @@
 
 
     <RelativeLayout
+        android:layout_marginLeft="8dp"
         android:id="@+id/design_container"
         android:layout_width="match_parent"
         android:layout_height="@dimen/canvas_height">
@@ -289,6 +290,7 @@
 
 
     <Button
+        android:onClick="onDeleteBtnClicked"
         android:layout_marginRight="80dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
@@ -299,6 +301,7 @@
         android:layout_height="61dp" />
 
     <Button
+        android:onClick="undo"
         android:layout_marginLeft="85dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
@@ -309,6 +312,7 @@
         android:layout_height="61dp" />
 
     <Button
+        android:onClick="setRotationRuler"
         android:layout_marginRight="28dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
@@ -319,6 +323,7 @@
         android:layout_height="61dp" />
 
     <Button
+        android:onClick="onGridBtnClicked"
         android:layout_marginLeft="28dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
@@ -331,6 +336,12 @@
     <include layout="@layout/color_bar" />
 
 
+    <EditText
+        android:id="@+id/edit_text"
+        android:layout_marginTop="175dp"
+        android:layout_centerHorizontal="true"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content" />
 
 
 </RelativeLayout>

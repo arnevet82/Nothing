@@ -189,6 +189,7 @@ public class TouchView extends View {
                                 fillColorShapes("shape");
                                 DesignActivity.currentNumText.setText("S");
                                 DesignActivity.vButton.setVisibility(VISIBLE);
+                                DesignActivity.showDeleteAndRotate();
                             }else{
                                 for(int i = 0; i < texts.size(); i++){
                                     if(clickOnText(texts.get(i), ev)){
@@ -201,6 +202,7 @@ public class TouchView extends View {
                                     fillColorShapes("text");
                                     DesignActivity.currentNumText.setText("T");
                                     DesignActivity.isTextEdited = true;
+                                    DesignActivity.showDeleteAndRotate();
                                     DesignActivity.vButton.setVisibility(VISIBLE);
                                     DesignActivity.initFonts(texts.get(CURRENT_TEXT).getTag());
 

@@ -12,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -92,7 +91,7 @@ public class DesignActivity extends AppCompatActivity
     public static int currentColor;
     public static TextView currentNumText;
     public static Button vButton;
-    Button grid, undo, delete, rotate;
+    public static Button grid, undo, delete, rotate;
     static TouchView touchView;
     ImageView rotateCircle, rotateRuler, rotateLine;
     RelativeLayout rotationBar, resizeBar;
@@ -124,36 +123,42 @@ public class DesignActivity extends AppCompatActivity
 
         init();
         setUpBaseShape(position);
-        onBottomBarClicked();
-        setRotationRuler();
-        initDeleteButton();
-        initGridButton();
         touchView = new TouchView(this);
         designContainer.addView(touchView);
-        undo();
-        onNextButtonClicked();
     }
 
-    public void onNextButtonClicked() {
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(resizeBar.getVisibility() == View.INVISIBLE && bPaymentScreen.getVisibility() == View.INVISIBLE){
-                    hideAllUIElements();
-                    bottomBar.setVisibility(View.INVISIBLE);
-                    vButton.setVisibility(View.INVISIBLE);
-                    clearGrayColor();
-                    setResizeScreen();
-                }else if(resizeBar.getVisibility() == View.VISIBLE){
-                    setUpBeforePayment();
-                }else if(bPaymentScreen.getVisibility() == View.VISIBLE){
-                    if (checkPermissionREAD_EXTERNAL_STORAGE(getApplicationContext())) {
-                        takeScreenshot();
-                        takeScreenshotForGallery();                }
-                }
+    public static void showGridAndUndo(){
+        grid.setVisibility(View.VISIBLE);
+        undo.setVisibility(View.VISIBLE);
+    }
 
+    public static void showDeleteAndRotate(){
+        delete.setVisibility(View.VISIBLE);
+        rotate.setVisibility(View.VISIBLE);
+    }
+
+    public void hideDeleteAndRotate(){
+        delete.setVisibility(View.INVISIBLE);
+        rotate.setVisibility(View.INVISIBLE);
+    }
+
+    public void onNextButtonClicked(View v){
+        if(vText.getVisibility() == View.VISIBLE){
+            Toast.makeText(this, "finished? click 'done' ", Toast.LENGTH_SHORT).show();
+        }else if(resizeBar.getVisibility() == View.INVISIBLE && bPaymentScreen.getVisibility() == View.INVISIBLE){
+            hideAllUIElements();
+            bottomBar.setVisibility(View.INVISIBLE);
+            vButton.setVisibility(View.INVISIBLE);
+            clearGrayColor();
+            setResizeScreen();
+        }else if(resizeBar.getVisibility() == View.VISIBLE){
+            setUpBeforePayment();
+        }else if(bPaymentScreen.getVisibility() == View.VISIBLE){
+            if (checkPermissionREAD_EXTERNAL_STORAGE(getApplicationContext())) {
+                takeScreenshot();
+                takeScreenshotForGallery();
             }
-        });
+        }
     }
 
     public void setUpBeforePayment(){
@@ -268,39 +273,35 @@ public class DesignActivity extends AppCompatActivity
                     }
                 }
 
-                    return true;
+                return true;
             }
         });
     }
 
-    public void undo(){
-        undo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!stack.isEmpty()){
-                    switch (stack.getLast()){
-                        case "color":
-                            ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), currentColor);
-                            colorCommand.undo();
-                            break;
-                        case "punch":
-                            PunchCommand punchCommand = new PunchCommand(touchView, 0, "punch", baseShapes);
-                            punchCommand.undo();
-                            break;
-                        case "topping":
-                            punchCommand = new PunchCommand(touchView, 0, "topping", baseShapes);
-                            punchCommand.undo();
-                            break;
-                        case "text":
-                            TextCommand textCommand = new TextCommand(getApplicationContext(), "", "", touchView);
-                            textCommand.undo();
-                            break;
-                        default:
-                            break;
-                    }
-                }
+    public void undo(View v){
+
+        if(!stack.isEmpty()){
+            switch (stack.getLast()){
+                case "color":
+                    ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), currentColor);
+                    colorCommand.undo();
+                    break;
+                case "punch":
+                    PunchCommand punchCommand = new PunchCommand(touchView, 0, "punch", baseShapes);
+                    punchCommand.undo();
+                    break;
+                case "topping":
+                    punchCommand = new PunchCommand(touchView, 0, "topping", baseShapes);
+                    punchCommand.undo();
+                    break;
+                case "text":
+                    TextCommand textCommand = new TextCommand(getApplicationContext(), "", "", touchView);
+                    textCommand.undo();
+                    break;
+                default:
+                    break;
             }
-        });
+        }
 
     }
 
@@ -336,59 +337,6 @@ public class DesignActivity extends AppCompatActivity
         color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.white),PorterDuff.Mode.SRC_IN);
         topping.setImageDrawable(getResources().getDrawable(R.drawable.topping_icon));
         punch.setImageDrawable(getResources().getDrawable(R.drawable.punch_icon));
-    }
-
-    public void showButtons(){
-        rotate.setVisibility(View.VISIBLE);
-        grid.setVisibility(View.VISIBLE);
-        undo.setVisibility(View.VISIBLE);
-        delete.setVisibility(View.VISIBLE);
-    }
-
-    public void onBottomBarClicked(){
-        ImageButton[]buttons = {color, topping, punch, text};
-        for(ImageButton button: buttons){
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    hideAllUIElements();
-                    switch (v.getId()){
-                        case R.id.color:
-                            showColorBar();
-                            break;
-                        case R.id.topping:
-                            topping.setImageDrawable(getResources().getDrawable(R.drawable.topping_icon_green));
-                            onToppingButtonClicked(getCurrentFocus());
-                            break;
-                        case R.id.punch:
-                            punch.setImageDrawable(getResources().getDrawable(R.drawable.punch_icon_green));
-                            onPunchButtonClicked(getCurrentFocus());
-                            break;
-                        case R.id.text:
-                            text.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.lightPrimary),PorterDuff.Mode.SRC_IN);
-                            textContainer.setVisibility(View.VISIBLE);
-                            textPunchToppingChoice.setVisibility(View.VISIBLE);
-                            View.OnClickListener textListener = new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    switch (v.getId()){
-                                        case R.id.text_topping:
-                                            onTextButtonClicked("topping");
-                                            break;
-                                        case R.id.text_punch:
-                                            onTextButtonClicked("punch");
-                                            break;
-                                    }
-                                }
-                            };
-                            punchText.setOnClickListener(textListener);
-                            toppingText.setOnClickListener(textListener);
-                            initEditTextBody();
-                            break;
-                    }
-                }
-            });
-        }
     }
 
     public void initEditTextBody(){
@@ -438,13 +386,29 @@ public class DesignActivity extends AppCompatActivity
         editText.setVisibility(View.VISIBLE);
     }
 
-    public void onTextButtonClicked(String tag){
+    public void onTextButtonClicked(View v){
+        if(textContainer.getVisibility()==View.VISIBLE){
+            textContainer.setVisibility(View.INVISIBLE);
+            text.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.almostWhite),PorterDuff.Mode.SRC_IN);
+            if(!TouchView.shapes.isEmpty() || !TouchView.texts.isEmpty() || currentColor != 0){
+                showGridAndUndo();
+            }
+            }else{
+            hideAllUIElements();
+            text.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.lightPrimary),PorterDuff.Mode.SRC_IN);
+            textContainer.setVisibility(View.VISIBLE);
+            textPunchToppingChoice.setVisibility(View.VISIBLE);
+            initEditTextBody();
+        }
+    }
+
+    public void onTextPunchTopClicked(View v){
+        String tag = (String)v.getTag();
         designEditText(tag);
         editText.requestFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         textPunchToppingChoice.setVisibility(View.INVISIBLE);
-        showButtons();
         vText.setVisibility(View.VISIBLE);
         onVTextClicked(tag, "normal");
         currentNumText.setText("T");
@@ -478,6 +442,8 @@ public class DesignActivity extends AppCompatActivity
                         break;
                 }
                 vButton.setVisibility(View.VISIBLE);
+                showDeleteAndRotate();
+                showGridAndUndo();
                 initFonts(mTag);
                 touchView.invalidate();
             }
@@ -564,22 +530,20 @@ public class DesignActivity extends AppCompatActivity
                 textPunchToppingChoice.setVisibility(View.INVISIBLE);
                 TouchView.CURRENT_SHAPE = -1;
                 TouchView.CURRENT_TEXT = -1;
+                showGridAndUndo();
+                hideDeleteAndRotate();
             }
         });
     }
 
-    public void initGridButton() {
-        grid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(gridScreen.getVisibility()==View.INVISIBLE){
-                    gridScreen.setVisibility(View.VISIBLE);
-                }else{
-                    gridScreen.setVisibility(View.INVISIBLE);
-                }
+    public void onGridBtnClicked(View v) {
 
-            }
-        });
+        if(gridScreen.getVisibility()==View.INVISIBLE){
+            gridScreen.setVisibility(View.VISIBLE);
+        }else {
+            gridScreen.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     public void clearGrayColor(){
@@ -590,9 +554,18 @@ public class DesignActivity extends AppCompatActivity
         touchView.invalidate();
     }
 
-    public void showColorBar(){
-        color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.lightPrimary),PorterDuff.Mode.SRC_IN);
-        colorBar.setVisibility(View.VISIBLE);
+    public void showColorBar(View v){
+        if(colorBar.getVisibility() == View.VISIBLE){
+            colorBar.setVisibility(View.INVISIBLE);
+            color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.almostWhite),PorterDuff.Mode.SRC_IN);
+            if(!TouchView.shapes.isEmpty() || !TouchView.texts.isEmpty() || currentColor != 0){
+                showGridAndUndo();
+            }
+        }else{
+            hideAllUIElements();
+            color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.lightPrimary),PorterDuff.Mode.SRC_IN);
+            colorBar.setVisibility(View.VISIBLE);
+        }
     }
 
     public void onColorButtonClicked(View v){
@@ -610,7 +583,7 @@ public class DesignActivity extends AppCompatActivity
                 currentColor = colors[i];
                 ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), colors[i]);
                 colorCommand.execute();
-                showButtons();
+                showGridAndUndo();
             }
             buttons[i].setVisibility(View.VISIBLE);
         }
@@ -677,32 +650,63 @@ public class DesignActivity extends AppCompatActivity
         return true;
     }
 
+
+    public void checkIfTopTabsOpen(View v){
+        if(toppingTabs.getVisibility() == View.VISIBLE){
+            toppingTabs.setVisibility(View.INVISIBLE);
+            toppingTabLayout.setVisibility(View.INVISIBLE);
+            toppingViewPager.setVisibility(View.INVISIBLE);
+            topping.setImageDrawable(getResources().getDrawable(R.drawable.topping_icon));
+            if(!TouchView.shapes.isEmpty() || !TouchView.texts.isEmpty() || currentColor != 0){
+                showGridAndUndo();
+            }
+        }else{
+            hideAllUIElements();
+            toppingTabs.setVisibility(View.VISIBLE);
+            toppingTabLayout.setVisibility(View.VISIBLE);
+            toppingViewPager.setVisibility(View.VISIBLE);
+            topping.setImageDrawable(getResources().getDrawable(R.drawable.topping_icon_green));
+        }
+    }
+
+    public void checkIfPunchTabsOpen(View v){
+        if(punchTabs.getVisibility() == View.VISIBLE){
+            punchTabs.setVisibility(View.INVISIBLE);
+            punchTabLayout.setVisibility(View.INVISIBLE);
+            punchViewPager.setVisibility(View.INVISIBLE);
+            punch.setImageDrawable(getResources().getDrawable(R.drawable.topping_icon));
+            if(!TouchView.shapes.isEmpty() || !TouchView.texts.isEmpty() || currentColor != 0){
+                showGridAndUndo();
+            }
+        }else{
+            hideAllUIElements();
+            punchTabs.setVisibility(View.VISIBLE);
+            punchTabLayout.setVisibility(View.VISIBLE);
+            punchViewPager.setVisibility(View.VISIBLE);
+            punch.setImageDrawable(getResources().getDrawable(R.drawable.topping_icon_green));
+        }
+    }
+
     @Override
     public void onToppingButtonClicked(View view) {
-        toppingScrollView.scrollTo(0,0);
-
         int[]toppingResources = {R.drawable.g_topping_shape_1, R.drawable.g_topping_shape_2, R.drawable.g_topping_shape_3,R.drawable.g_topping_shape_4, R.drawable.g_topping_shape_5, R.drawable.g_topping_shape_6, R.drawable.g_topping_shape_7, R.drawable.g_topping_shape_8, R.drawable.g_topping_shap_9, R.drawable.g_topping_shape_10, R.drawable.g_topping_shape_11, R.drawable.g_topping_shape_12, R.drawable.g_topping_shape_13, R.drawable.g_topping_shape_14, R.drawable.g_topping_shape_15, R.drawable.g_topping_shape_16, R.drawable.g_topping_shape_17, R.drawable.g_topping_shape_18, R.drawable.g_topping_shape_19, R.drawable.g_topping_shape_20, R.drawable.g_topping_shape_21, R.drawable.g_topping_shape_22, R.drawable.g_topping_shape_23, R.drawable.g_topping_shape_24, R.drawable.g_topping_shape_25, R.drawable.g_topping_shape_26, R.drawable.g_topping_shape_27, R.drawable.g_topping_shape_28, R.drawable.g_topping_shape_29, R.drawable.g_topping_shape_30, R.drawable.g_topping_shape_31, R.drawable.g_topping_shape_32, R.drawable.g_topping_shape_33, R.drawable.g_topping_shape_34, R.drawable.g_topping_shape_35, R.drawable.g_topping_shape_36};
         addTopping(view, toppingResources);
     }
 
     @Override
     public void onOtherToppingButtonClicked(View view) {
-        toppingScrollView.scrollTo(0,0);
-
         int[]toppingResources = {R.drawable.other_topping_shape_1, R.drawable.other_topping_shape_2, R.drawable.other_topping_shape_3,R.drawable.other_topping_shape_4, R.drawable.other_topping_shape_5, R.drawable.other_topping_shape_6, R.drawable.other_topping_shape_7, R.drawable.other_topping_shape_8, R.drawable.other_topping_shape_9, R.drawable.other_topping_shape_10, R.drawable.other_topping_shape_11, R.drawable.other_topping_shape_12, R.drawable.other_topping_shape_13, R.drawable.other_topping_shape_14, R.drawable.other_topping_shape_15, R.drawable.other_topping_shape_16, R.drawable.other_topping_shape_17, R.drawable.other_topping_shape_18, R.drawable.other_topping_shape_19, R.drawable.other_topping_shape_20, R.drawable.other_topping_shape_21, R.drawable.other_topping_shape_22, R.drawable.other_topping_shape_23, R.drawable.other_topping_shape_24, R.drawable.other_topping_shape_25, R.drawable.other_topping_shape_26, R.drawable.other_topping_shape_27, R.drawable.other_topping_shape_28, R.drawable.other_topping_shape_29, R.drawable.other_topping_shape_30, R.drawable.other_topping_shape_31, R.drawable.other_topping_shape_32, R.drawable.other_topping_shape_33, R.drawable.other_topping_shape_34, R.drawable.other_topping_shape_35, R.drawable.other_topping_shape_36};
         addTopping(view, toppingResources);
     }
     @Override
     public void onPunchButtonClicked(View view) {
-        punchScrollView.scrollTo(0,0);
-
+        punch.setImageDrawable(getResources().getDrawable(R.drawable.punch_icon_green));
         int[]punchResources = {R.drawable.g_punch_shape_1, R.drawable.g_punch_shape_2, R.drawable.g_punch_shape_3,R.drawable.g_punch_shape_4, R.drawable.g_punch_shape_5, R.drawable.g_punch_shape_6, R.drawable.g_punch_shape_7, R.drawable.g_punch_shape_8, R.drawable.g_punch_shap_9, R.drawable.g_punch_shape_10, R.drawable.g_punch_shape_11, R.drawable.g_punch_shape_12, R.drawable.g_punch_shape_13, R.drawable.g_punch_shape_14, R.drawable.g_punch_shape_15, R.drawable.g_punch_shape_16, R.drawable.g_punch_shape_17, R.drawable.g_punch_shape_18, R.drawable.g_punch_shape_19, R.drawable.g_punch_shape_20, R.drawable.g_punch_shape_21, R.drawable.g_punch_shape_22, R.drawable.g_punch_shape_23, R.drawable.g_punch_shape_24, R.drawable.g_punch_shape_25, R.drawable.g_punch_shape_26, R.drawable.g_punch_shape_27, R.drawable.g_punch_shape_28, R.drawable.g_punch_shape_29, R.drawable.g_punch_shape_30, R.drawable.g_punch_shape_31, R.drawable.g_punch_shape_32, R.drawable.g_punch_shape_33, R.drawable.g_punch_shape_34, R.drawable.g_punch_shape_35, R.drawable.g_punch_shape_36};
         punch(view, punchResources);
     }
 
     @Override
     public void onOtherPunchButtonClicked(View view) {
-        punchScrollView.scrollTo(0,0);
 
         int[]punchResources = {R.drawable.other_punch_shape_1, R.drawable.other_punch_shape_2, R.drawable.other_punch_shape_3,R.drawable.other_punch_shape_4, R.drawable.other_punch_shape_5, R.drawable.other_punch_shape_6, R.drawable.other_punch_shape_7, R.drawable.other_punch_shape_8, R.drawable.other_punch_shape_9, R.drawable.other_punch_shape_10, R.drawable.other_punch_shape_11, R.drawable.other_punch_shape_12, R.drawable.other_punch_shape_13, R.drawable.other_punch_shape_14, R.drawable.other_punch_shape_15, R.drawable.other_punch_shape_16, R.drawable.other_punch_shape_17, R.drawable.other_punch_shape_18, R.drawable.other_punch_shape_19, R.drawable.other_punch_shape_20, R.drawable.other_punch_shape_21, R.drawable.other_punch_shape_22, R.drawable.other_punch_shape_23, R.drawable.other_punch_shape_24, R.drawable.other_punch_shape_25, R.drawable.other_punch_shape_26, R.drawable.other_punch_shape_27, R.drawable.other_punch_shape_28, R.drawable.other_punch_shape_29, R.drawable.other_punch_shape_30, R.drawable.other_punch_shape_31, R.drawable.other_punch_shape_32, R.drawable.other_punch_shape_33, R.drawable.other_punch_shape_34, R.drawable.other_punch_shape_35, R.drawable.other_punch_shape_36};
         punch(view, punchResources);
@@ -710,65 +714,53 @@ public class DesignActivity extends AppCompatActivity
 
     public void punch(View view, int[]punchResources){
         int[]buttonId = {R.id.punch1, R.id.punch2, R.id.punch3, R.id.punch4, R.id.punch5, R.id.punch6, R.id.punch7, R.id.punch8, R.id.punch9, R.id.punch10, R.id.punch11, R.id.punch12, R.id.punch13, R.id.punch14, R.id.punch15, R.id.punch16, R.id.punch17, R.id.punch18, R.id.punch19, R.id.punch20, R.id.punch21, R.id.punch22, R.id.punch23, R.id.punch24, R.id.punch25, R.id.punch26, R.id.punch27, R.id.punch28, R.id.punch29, R.id.punch30, R.id.punch31, R.id.punch32, R.id.punch33, R.id.punch34, R.id.punch35, R.id.punch36};
-        punchTabs.setVisibility(View.VISIBLE);
-        punchViewPager.setVisibility(View.VISIBLE);
-        punchTabLayout.setVisibility(View.VISIBLE);
+
         int pos = 0;
         for (pos = 0; pos < buttonId.length; pos++) {
             if (view.getId() == buttonId[pos]) {
                 PunchCommand punchCommand = new PunchCommand(touchView, pos, "punch", punchResources);
                 punchCommand.execute();
                 hideAllUIElements();
-                showButtons();
                 vButton.setVisibility(View.VISIBLE);
+                showGridAndUndo();
+                showDeleteAndRotate();
             }
         }
     }
 
     public void addTopping(View view, int[]toppingResources){
         int[]buttonId = {R.id.topping1, R.id.topping2, R.id.topping3, R.id.topping4, R.id.topping5, R.id.topping6, R.id.topping7, R.id.topping8, R.id.topping9, R.id.topping10, R.id.topping11, R.id.topping12, R.id.topping13, R.id.topping14, R.id.topping15, R.id.topping16, R.id.topping17, R.id.topping18, R.id.topping19, R.id.topping20, R.id.topping21, R.id.topping22, R.id.topping23, R.id.topping24, R.id.topping25, R.id.topping26, R.id.topping27, R.id.topping28, R.id.topping29, R.id.topping30, R.id.topping31, R.id.topping32, R.id.topping33, R.id.topping34, R.id.topping35, R.id.topping36};
-        toppingTabs.setVisibility(View.VISIBLE);
-        toppingTabLayout.setVisibility(View.VISIBLE);
-        toppingViewPager.setVisibility(View.VISIBLE);
+
         int pos = 0;
         for(pos = 0; pos < buttonId.length; pos++){
             if(view.getId() == buttonId[pos]){
                 PunchCommand punchCommand = new PunchCommand(touchView, pos, "topping", toppingResources);
                 punchCommand.execute();
                 hideAllUIElements();
-                showButtons();
                 vButton.setVisibility(View.VISIBLE);
+                showGridAndUndo();
+                showDeleteAndRotate();
             }
         }
     }
 
-
-    public void initDeleteButton() {
-
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DeleteCommand deleteCommand = new DeleteCommand(touchView);
-                deleteCommand.execute();
-                clearGrayColor();
-            }
-        });
+    public void onDeleteBtnClicked(View v) {
+        if(!TouchView.shapes.isEmpty() || !TouchView.texts.isEmpty()){
+            DeleteCommand deleteCommand = new DeleteCommand(touchView);
+            deleteCommand.execute();
+            clearGrayColor();
+            hideDeleteAndRotate();
+        }
     }
 
-    public void setRotationRuler() {
+    public void setRotationRuler(View v) {
 
-
-        rotate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fontsBar.setVisibility(View.INVISIBLE);
-                rotationBar.setVisibility(View.VISIBLE);
-                rotateLine.setVisibility(View.VISIBLE);
-                rotateCircle.setVisibility(View.VISIBLE);
-                rotateRuler.setVisibility(View.VISIBLE);
-                vButton.setVisibility(View.VISIBLE);
-            }
-        });
+        fontsBar.setVisibility(View.INVISIBLE);
+        rotationBar.setVisibility(View.VISIBLE);
+        rotateLine.setVisibility(View.VISIBLE);
+        rotateCircle.setVisibility(View.VISIBLE);
+        rotateRuler.setVisibility(View.VISIBLE);
+        vButton.setVisibility(View.VISIBLE);
 
         Button[]buttons = {degrees0, degrees90, degrees180, degrees270, degrees360};
         for(Button button: buttons){
@@ -1076,10 +1068,12 @@ public class DesignActivity extends AppCompatActivity
         }else if(resizeBar.getVisibility()==View.VISIBLE){
             resizeBar.setVisibility(View.INVISIBLE);
             bottomBar.setVisibility(View.VISIBLE);
-            showButtons();
             designContainer.setScaleX(1);
             designContainer.setScaleY(1);
             title.setText("Create your design");
+            if(!TouchView.shapes.isEmpty() || !TouchView.texts.isEmpty() || currentColor != 0){
+                showGridAndUndo();
+            }
         }else if(bPaymentScreen.getVisibility()==View.VISIBLE) {
             bPaymentScreen.setVisibility(View.INVISIBLE);
             designContainer.setVisibility(View.VISIBLE);
@@ -1225,108 +1219,107 @@ public class DesignActivity extends AppCompatActivity
 
     }
 
-        public void initButtons(){
+    public void initButtons(){
 
-            initVButton();
+        initVButton();
 
-            degrees0 = (Button)findViewById(R.id.degrees_zero);
-            degrees90 = (Button)findViewById(R.id.degrees_ninty);
-            degrees180 = (Button)findViewById(R.id.degrees_one_eighty);
-            degrees270 = (Button)findViewById(R.id.degrees_two_seventy);
-            degrees360 = (Button)findViewById(R.id.degrees_three_sixty);
-
-
-            color1 = (Button)findViewById(R.id.color1);
-            color2 = (Button)findViewById(R.id.color2);
-            color3 = (Button)findViewById(R.id.color3);
-            color4 = (Button)findViewById(R.id.color4);
-            color5 = (Button)findViewById(R.id.color5);
-            color6 = (Button)findViewById(R.id.color6);
-            color7 = (Button)findViewById(R.id.color7);
-            color8 = (Button)findViewById(R.id.color8);
-            color9 = (Button)findViewById(R.id.color9);
-            color10 = (Button)findViewById(R.id.color10);
-            color11 = (Button)findViewById(R.id.color11);
-            color12 = (Button)findViewById(R.id.color12);
-
-            font1 = (Button)findViewById(R.id.font_1);
-            font2 = (Button)findViewById(R.id.font_2);
-            font3 = (Button)findViewById(R.id.font_3);
-            font4 = (Button)findViewById(R.id.font_4);
-            font5 = (Button)findViewById(R.id.font_5);
-            font6 = (Button)findViewById(R.id.font_6);
-            font7 = (Button)findViewById(R.id.font_7);
-            editTextBody = (Button)findViewById(R.id.edit_text_body);
-
-            vampiro = Typeface.createFromAsset(getAssets(), "VampiroOne-Regular.ttf");
-            montserratItalic = Typeface.createFromAsset(getAssets(), "Montserrat-Italic.ttf");
-            athelas = Typeface.createFromAsset(getAssets(), "Athelas-Regular.ttf");
-            alef = Typeface.createFromAsset(getAssets(), "Alef-Regular.ttf");
-            hiraKaku = Typeface.createFromAsset(getAssets(), "copyfonts.com_hirakakustd-w8-opentype.otf");
-            baloo = Typeface.createFromAsset(getAssets(), "BalooBhaijaan-Regular.ttf");
-            pacifico = Typeface.createFromAsset(getAssets(), "Pacifico-Regular.ttf");
-
-            font1.setTypeface(hiraKaku);
-            font2.setTypeface(montserratItalic);
-            font3.setTypeface(baloo);
-            font4.setTypeface(alef);
-            font5.setTypeface(athelas);
-            font6.setTypeface(pacifico);
-            font7.setTypeface(vampiro);
+        degrees0 = (Button)findViewById(R.id.degrees_zero);
+        degrees90 = (Button)findViewById(R.id.degrees_ninty);
+        degrees180 = (Button)findViewById(R.id.degrees_one_eighty);
+        degrees270 = (Button)findViewById(R.id.degrees_two_seventy);
+        degrees360 = (Button)findViewById(R.id.degrees_three_sixty);
 
 
-            vText = (ImageButton)findViewById(R.id.v_text);
-            vText.setVisibility(View.INVISIBLE);
+        color1 = (Button)findViewById(R.id.color1);
+        color2 = (Button)findViewById(R.id.color2);
+        color3 = (Button)findViewById(R.id.color3);
+        color4 = (Button)findViewById(R.id.color4);
+        color5 = (Button)findViewById(R.id.color5);
+        color6 = (Button)findViewById(R.id.color6);
+        color7 = (Button)findViewById(R.id.color7);
+        color8 = (Button)findViewById(R.id.color8);
+        color9 = (Button)findViewById(R.id.color9);
+        color10 = (Button)findViewById(R.id.color10);
+        color11 = (Button)findViewById(R.id.color11);
+        color12 = (Button)findViewById(R.id.color12);
 
-            next = (ImageButton)findViewById(R.id.next);
-            resizeBar = (RelativeLayout)findViewById(R.id.resize_container);
-            resizeBar.setVisibility(View.INVISIBLE);
+        font1 = (Button)findViewById(R.id.font_1);
+        font2 = (Button)findViewById(R.id.font_2);
+        font3 = (Button)findViewById(R.id.font_3);
+        font4 = (Button)findViewById(R.id.font_4);
+        font5 = (Button)findViewById(R.id.font_5);
+        font6 = (Button)findViewById(R.id.font_6);
+        font7 = (Button)findViewById(R.id.font_7);
+        editTextBody = (Button)findViewById(R.id.edit_text_body);
 
-            cm = (Button)findViewById(R.id.cm);
-            inch = (Button)findViewById(R.id.inch);
+        vampiro = Typeface.createFromAsset(getAssets(), "VampiroOne-Regular.ttf");
+        montserratItalic = Typeface.createFromAsset(getAssets(), "Montserrat-Italic.ttf");
+        athelas = Typeface.createFromAsset(getAssets(), "Athelas-Regular.ttf");
+        alef = Typeface.createFromAsset(getAssets(), "Alef-Regular.ttf");
+        hiraKaku = Typeface.createFromAsset(getAssets(), "copyfonts.com_hirakakustd-w8-opentype.otf");
+        baloo = Typeface.createFromAsset(getAssets(), "BalooBhaijaan-Regular.ttf");
+        pacifico = Typeface.createFromAsset(getAssets(), "Pacifico-Regular.ttf");
 
-            bPaymentScreen = (RelativeLayout)findViewById(R.id.before_payment);
-            bPaymentScreen.setVisibility(View.INVISIBLE);
+        font1.setTypeface(alef);
+        font2.setTypeface(athelas);
+        font3.setTypeface(hiraKaku);
+        font4.setTypeface(montserratItalic);
+        font5.setTypeface(baloo);
+        font6.setTypeface(pacifico);
+        font7.setTypeface(vampiro);
 
-            letsChukAgain = (Button)findViewById(R.id.Lets_chuk_again);
+        vText = (ImageButton)findViewById(R.id.v_text);
+        vText.setVisibility(View.INVISIBLE);
 
-            punchScrollView = (NestedScrollView)findViewById(R.id.scrollView_punch);
-            toppingScrollView = (NestedScrollView)findViewById(R.id.topping_scrollView);
+        next = (ImageButton)findViewById(R.id.next);
+        resizeBar = (RelativeLayout)findViewById(R.id.resize_container);
+        resizeBar.setVisibility(View.INVISIBLE);
+
+        cm = (Button)findViewById(R.id.cm);
+        inch = (Button)findViewById(R.id.inch);
+
+        bPaymentScreen = (RelativeLayout)findViewById(R.id.before_payment);
+        bPaymentScreen.setVisibility(View.INVISIBLE);
+
+        letsChukAgain = (Button)findViewById(R.id.Lets_chuk_again);
+
+        punchScrollView = (NestedScrollView)findViewById(R.id.scrollView_punch);
+        toppingScrollView = (NestedScrollView)findViewById(R.id.topping_scrollView);
 
 
-            toppingTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-                @Override
-                public void onTabSelected(TabLayout.Tab tab) {
-                    toppingScrollView.scrollTo(0,0);
-                }
+        toppingTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                toppingScrollView.scrollTo(0,0);
+            }
 
-                @Override
-                public void onTabUnselected(TabLayout.Tab tab) {
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
 
-                }
+            }
 
-                @Override
-                public void onTabReselected(TabLayout.Tab tab) {
-                    toppingScrollView.scrollTo(0,0);
-                }
-            });
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                toppingScrollView.scrollTo(0,0);
+            }
+        });
 
-            punchTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-                @Override
-                public void onTabSelected(TabLayout.Tab tab) {
-                    punchScrollView.scrollTo(0,0);
-                }
+        punchTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                punchScrollView.scrollTo(0,0);
+            }
 
-                @Override
-                public void onTabUnselected(TabLayout.Tab tab) {
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
 
-                }
+            }
 
-                @Override
-                public void onTabReselected(TabLayout.Tab tab) {
-                    punchScrollView.scrollTo(0,0);
-                }
-            });
-        }
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                punchScrollView.scrollTo(0,0);
+            }
+        });
+    }
 
 }

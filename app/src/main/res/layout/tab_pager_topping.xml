@@ -32,7 +32,7 @@
             android:layout_marginBottom="60dp"
             android:id="@+id/tabs_wrapper_topping"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
 
@@ -41,7 +41,7 @@
                 android:layout_below="@+id/topping_tabs"
                 android:id="@+id/topping_viewpager"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/base_viewPager_height"
+                android:layout_height="@dimen/viewPager_height"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         </LinearLayout>

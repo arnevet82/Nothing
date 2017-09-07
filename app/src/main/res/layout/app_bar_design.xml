@@ -32,6 +32,7 @@
             android:layout_gravity="center"/>
 
         <ImageButton
+            android:onClick="onNextButtonClicked"
             android:id="@+id/next"
             android:paddingLeft="27dp"
             android:paddingRight="27dp"
@@ -43,7 +44,7 @@
             android:layout_width="67dp"
             android:layout_height="72dp"
             android:src="@drawable/next_arrow"
-            android:backgroundTint="@color/almostWhite"
+            android:background="@color/almostWhite"
             android:scaleType="fitXY"
             android:layout_gravity="right"/>
     </android.support.v7.widget.Toolbar>

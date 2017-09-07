@@ -12,6 +12,7 @@
     android:layout_alignParentBottom="true">
 
     <ImageButton
+        android:onClick="showColorBar"
         android:id="@+id/color"
         android:paddingLeft="35dp"
         android:paddingRight="35dp"
@@ -22,9 +23,10 @@
         android:layout_width="@dimen/bottom_bar_button_width"
         android:layout_height="@dimen/bottom_bar_button_height"
         android:src="@drawable/color_icon"
-        android:backgroundTint="@color/darkGray"
+        android:background="@color/darkGray"
         android:scaleType="fitXY" />
     <ImageButton
+        android:onClick="checkIfTopTabsOpen"
         android:id="@+id/topping"
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
@@ -35,9 +37,10 @@
         android:layout_width="@dimen/bottom_bar_button_width"
         android:layout_height="@dimen/bottom_bar_button_height"
         android:src="@drawable/topping_icon"
-        android:backgroundTint="@color/darkGray"
+        android:background="@color/darkGray"
         android:scaleType="fitXY" />
     <ImageButton
+        android:onClick="checkIfPunchTabsOpen"
         android:id="@+id/punch"
         android:paddingLeft="35dp"
         android:paddingRight="35dp"
@@ -48,9 +51,10 @@
         android:layout_width="@dimen/bottom_bar_button_width"
         android:layout_height="@dimen/bottom_bar_button_height"
         android:src="@drawable/punch_icon"
-        android:backgroundTint="@color/darkGray"
+        android:background="@color/darkGray"
         android:scaleType="fitXY" />
     <ImageButton
+        android:onClick="onTextButtonClicked"
         android:id="@+id/text"
         android:paddingLeft="@dimen/bottom_bar_text_padd_left"
         android:paddingRight="@dimen/bottom_bar_text_padd_right"
@@ -61,7 +65,7 @@
         android:layout_width="@dimen/bottom_bar_button_width"
         android:layout_height="@dimen/bottom_bar_button_height"
         android:src="@drawable/text_icon"
-        android:backgroundTint="@color/darkGray"
+        android:background="@color/darkGray"
         android:scaleType="fitXY" />
 
 </LinearLayout>

@@ -148,10 +148,19 @@ public class ColorCommand extends Command {
             }
             if (!TouchView.texts.isEmpty()) {
                 for (TextBody textBody : TouchView.texts) {
-                    if(currentColor == R.color.transBtn){
-                        textBody.getTextPaint().setColor(context.getResources().getColor(R.color.background));
+                    if (textBody.getTag().equals("topping")) {
+                        if(currentColor == R.color.transBtn){
+                            textBody.getTextPaint().setColor(context.getResources().getColor(R.color.background));
+                        }else{
+                            textBody.getTextPaint().setColor(context.getResources().getColor(currentColor));
+                        }
                     }else{
-                        textBody.getTextPaint().setColor(context.getResources().getColor(currentColor));
+
+                        MaskFilter filter =
+                                new EmbossMaskFilter(new float[]{0.0f, -1.0f, 0.5f}, 0.8f, 15f, 1f);
+                        textBody.getTextPaint().setMaskFilter(filter);
+
+                        textBody.getTextPaint().setColor(context.getResources().getColor(R.color.almostWhite));
                     }
                 }
             }
