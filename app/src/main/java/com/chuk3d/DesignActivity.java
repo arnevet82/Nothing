@@ -1000,7 +1000,6 @@ public class DesignActivity extends AppCompatActivity
         Log.i("SendMailActivity", "To List: " + toEmailList);
         String emailSubject = "My creation";
 
-//        String colorStr = getResources().getString(currentColor);
         String colorStr = "#"+Integer.toHexString(currentColor);
         String size = "";
         if(isInches){
