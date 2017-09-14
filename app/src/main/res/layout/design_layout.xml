@@ -57,69 +57,84 @@
         android:id="@+id/rotation_kit"
         android:layout_above="@+id/v"
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="90dp">
         <Button
+            android:onClick="rotationClick"
             android:textColor="#626066"
             android:letterSpacing="-0.031"
             android:textSize="8.5sp"
             android:layout_marginLeft="20dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="10dp"
             android:id="@+id/degrees_zero"
+            android:textStyle="italic"
+            android:tag="0"
             android:text="0°"
             android:layout_above="@+id/rotate_circle"
-            android:background="@drawable/rotate_circle"
+            android:background="@drawable/rotate_degrees_btn"
             android:layout_width="30dp"
             android:layout_height="30dp" />
         <Button
+            android:onClick="rotationClick"
             android:textColor="#626066"
             android:letterSpacing="-0.031"
             android:textSize="8.5sp"
-            android:layout_marginLeft="92dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="@dimen/rotate_btn_margin"
+            android:layout_marginBottom="10dp"
             android:id="@+id/degrees_ninty"
+            android:textStyle="italic"
+            android:tag="90"
             android:text="90°"
             android:layout_above="@+id/rotate_circle"
-            android:background="@drawable/rotate_circle"
+            android:background="@drawable/rotate_degrees_btn"
             android:layout_width="30dp"
             android:layout_height="30dp" />
         <Button
+            android:onClick="rotationClick"
             android:textColor="#626066"
             android:letterSpacing="-0.031"
             android:textSize="8.5sp"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="10dp"
             android:id="@+id/degrees_one_eighty"
+            android:textStyle="italic"
+            android:tag="180"
             android:text="180°"
             android:layout_above="@+id/rotate_circle"
-            android:background="@drawable/rotate_circle"
+            android:background="@drawable/rotate_degrees_btn"
             android:layout_width="30dp"
             android:layout_height="30dp" />
         <Button
+            android:onClick="rotationClick"
             android:textColor="#626066"
             android:letterSpacing="-0.031"
             android:textSize="8.5sp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="92dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginRight="@dimen/rotate_btn_margin"
+            android:layout_marginBottom="10dp"
             android:id="@+id/degrees_two_seventy"
+            android:textStyle="italic"
+            android:tag="270"
             android:text="270°"
             android:layout_above="@+id/rotate_circle"
-            android:background="@drawable/rotate_circle"
+            android:background="@drawable/rotate_degrees_btn"
             android:layout_width="30dp"
             android:layout_height="30dp" />
 
 
         <Button
+            android:onClick="rotationClick"
             android:textColor="#626066"
             android:letterSpacing="-0.031"
             android:textSize="8.5sp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="10dp"
             android:id="@+id/degrees_three_sixty"
+            android:tag="360"
             android:text="360°"
+            android:textStyle="italic"
             android:layout_above="@+id/rotate_circle"
-            android:background="@drawable/rotate_circle"
+            android:background="@drawable/rotate_degrees_btn"
             android:layout_width="30dp"
             android:layout_height="30dp" />
 
@@ -139,16 +154,24 @@
             android:layout_centerHorizontal="true"
             android:layout_width="324dp"
             android:layout_height="7dp"
-            android:background="#626066"/>
+            android:background="@drawable/rotate_slide"/>
+
+        <ImageView
+            android:id="@+id/rotate_slide"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="26dp"
+            android:src="@drawable/rotate_slide_center"
+            android:layout_width="150dp"
+            android:layout_height="7dp" />
 
         <ImageView
             android:id="@+id/rotate_circle"
-            android:layout_alignParentBottom="true"
+            android:layout_above="@+id/rotate_ruler"
+            android:background="@drawable/rotate_circle"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="14dp"
-            android:src="@drawable/rotate_circle"
-            android:layout_width="30dp"
-            android:layout_height="30dp" />
+            android:layout_width="10dp"
+            android:layout_height="10dp" />
 
     </RelativeLayout>
 
@@ -179,10 +202,9 @@
             android:textColor="#626066"
             android:id="@+id/edit_text_body"
             android:layout_marginRight="@dimen/edit_textbody_margin_right"
-            android:background="@drawable/edit"
+            android:background="@drawable/edit_button_gray"
             android:layout_width="44dp"
             android:layout_height="44dp" />
-
         <Button
             android:id="@+id/font_1"
             android:paddingLeft="-7dp"
@@ -312,7 +334,7 @@
         android:layout_height="61dp" />
 
     <Button
-        android:onClick="setRotationRuler"
+        android:onClick="rotationRuler"
         android:layout_marginRight="28dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"

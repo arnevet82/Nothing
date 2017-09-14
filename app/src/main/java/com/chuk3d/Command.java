@@ -5,7 +5,7 @@ package com.chuk3d;
  */
 
 public abstract class Command {
-    abstract void execute();
-    abstract void undo();
+    public abstract boolean execute();
+    public abstract void undo();
 
 }

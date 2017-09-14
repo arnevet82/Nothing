@@ -69,6 +69,7 @@ public class GPunchFragment extends Fragment {
         ImageButton[]buttons = {punch1, punch2, punch3, punch4, punch5, punch6, punch7, punch8, punch9, punch10, punch11, punch12, punch13, punch14, punch15, punch16, punch17, punch18, punch19, punch20, punch21, punch22, punch23, punch24, punch25, punch26, punch27, punch28, punch29, punch30, punch31, punch32, punch33, punch34, punch35, punch36};
 
         for(ImageButton button: buttons){
+
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

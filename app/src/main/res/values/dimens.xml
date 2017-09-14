@@ -50,5 +50,10 @@
 
     <dimen name="resize_max_circle">257dp</dimen>
 
+    <dimen name="rotate_line_width">320dp</dimen>
+
+    <dimen name="rotate_btn_margin">92dp</dimen>
+
+    <dimen name="rotate_limit">10dp</dimen>
 
 </resources>

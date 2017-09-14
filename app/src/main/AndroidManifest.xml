@@ -31,6 +31,7 @@
         <activity
             android:name=".StartActivity"
             android:label="@string/app_name"
+            android:supportsRtl="false"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -40,10 +41,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".BaseShapeActivity"
+            android:supportsRtl="false"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"></activity>
 
         <activity android:name=".DesignActivity"
+            android:supportsRtl="false"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"></activity>
 

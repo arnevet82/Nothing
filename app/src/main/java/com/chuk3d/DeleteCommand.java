@@ -14,7 +14,7 @@ public class DeleteCommand extends Command {
     }
 
     @Override
-    void execute() {
+    public boolean execute() {
 
 
         if (DesignActivity.currentNumText.getText().equals("T")) {
@@ -34,7 +34,6 @@ public class DeleteCommand extends Command {
             if (!TouchView.shapes.isEmpty()) {
 
                 TouchView.shapes.remove(TouchView.CURRENT_SHAPE);
-                TouchView.shapesForColor.remove(TouchView.CURRENT_SHAPE);
 
                 if (TouchView.CURRENT_SHAPE == 0 && !TouchView.shapes.isEmpty()) {
                     TouchView.CURRENT_SHAPE++;
@@ -50,11 +49,11 @@ public class DeleteCommand extends Command {
         touchView.invalidate();
 
 
-
+        return true;
     }
 
     @Override
-    void undo() {
+    public void undo() {
 
     }
 }

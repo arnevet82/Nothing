@@ -1,16 +1,21 @@
 package com.chuk3d;
 
 import android.content.Context;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Color;
+import android.graphics.CornerPathEffect;
 import android.graphics.EmbossMaskFilter;
 import android.graphics.MaskFilter;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 
+import static com.chuk3d.R.attr.alpha;
 import static java.security.AccessController.getContext;
 
 /**
@@ -43,21 +48,24 @@ public class TextBody {
         textPaint = new TextPaint();
         switch (tag){
             case "punch":
-                MaskFilter filter =
+
+                EmbossMaskFilter filter =
                         new EmbossMaskFilter(new float[]{0.0f, -1.0f, 0.5f}, 0.8f, 15f, 1f);
                 textPaint.setMaskFilter(filter);
 
                 textPaint.setColor(context.getResources().getColor(R.color.almostWhite));
                 Typeface punchTf = Typeface.createFromAsset(context.getAssets(), "BalooBhaijaan-Regular.ttf");
                 textPaint.setTypeface(punchTf);
+
                 break;
             case "topping":
 
-            if(DesignActivity.currentColor!= 0){
-                textPaint.setColor(context.getResources().getColor(DesignActivity.currentColor));
-            }else{
-                textPaint.setColor(context.getResources().getColor(R.color.baseShapeFirstColor));
-            }
+//                if(DesignActivity.currentColor!= 0){
+//                    textPaint.setColor(context.getResources().getColor(DesignActivity.currentColor));
+//                }else{
+//                    textPaint.setColor(context.getResources().getColor(R.color.baseShapeFirstColor));
+//                }
+                setInitialColor(context);
                 textPaint.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
                 Typeface toppingTf = Typeface.createFromAsset(context.getAssets(), "Pacifico-Regular.ttf");
                 textPaint.setTypeface(toppingTf);
@@ -147,5 +155,18 @@ public class TextBody {
 
     public void setTextPivoty(float textPivoty) {
         this.textPivoty = textPivoty;
+    }
+
+    public void setColor(int color) {
+       textPaint.setColor(color);
+    }
+
+    public void setClickColor(Context context) {
+        textPaint.setColor(Color.parseColor("#f9f8f8"));
+    }
+
+    public void setInitialColor(Context context) {
+
+        textPaint.setColor(DesignActivity.currentColor);
     }
 }

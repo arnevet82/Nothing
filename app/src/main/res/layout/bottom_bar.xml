@@ -26,7 +26,7 @@
         android:background="@color/darkGray"
         android:scaleType="fitXY" />
     <ImageButton
-        android:onClick="checkIfTopTabsOpen"
+        android:onClick="onToppingBarClicked"
         android:id="@+id/topping"
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
@@ -40,7 +40,7 @@
         android:background="@color/darkGray"
         android:scaleType="fitXY" />
     <ImageButton
-        android:onClick="checkIfPunchTabsOpen"
+        android:onClick="onPunchBarClicked"
         android:id="@+id/punch"
         android:paddingLeft="35dp"
         android:paddingRight="35dp"

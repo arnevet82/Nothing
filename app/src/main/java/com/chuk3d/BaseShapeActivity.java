@@ -40,7 +40,7 @@ public class BaseShapeActivity extends AppCompatActivity
     ImageView mainImage;
     static ImageView colorImage;
     public BaseShapeTabPager baseShapeTabPager;
-    ImageView rotateCircle, rotateRuler, rotateLine;
+    ImageView rotateSlide, rotateRuler, rotateLine;
     RelativeLayout rotationBar;
     Button degrees0, degrees90, degrees180, degrees270, degrees360;
     NestedScrollView scrollView;
@@ -59,6 +59,16 @@ public class BaseShapeActivity extends AppCompatActivity
         setRotationRuler();
         onNextButtonClicked();
 
+    }
+
+    @Override
+    protected void onResume() {
+
+        imagePosition = 0;
+        imageRotation = 0;
+        baseShapes = new int[]{R.drawable.g_base_shape_1, R.drawable.g_base_shape_2, R.drawable.g_base_shape_3, R.drawable.g_base_shape_4, R.drawable.g_base_shape_5, R.drawable.g_base_shape_6, R.drawable.g_base_shape_7, R.drawable.g_base_shape_8, R.drawable.g_base_shap_9, R.drawable.g_base_shape_10, R.drawable.g_base_shape_11, R.drawable.g_base_shape_12, R.drawable.g_base_shape_13, R.drawable.g_base_shape_14, R.drawable.g_base_shape_15, R.drawable.g_base_shape_16, R.drawable.g_base_shape_17, R.drawable.g_base_shape_18, R.drawable.g_base_shape_19, R.drawable.g_base_shape_20, R.drawable.g_base_shape_21, R.drawable.g_base_shape_22, R.drawable.g_base_shape_23, R.drawable.g_base_shape_24, R.drawable.g_base_shape_25, R.drawable.g_base_shape_26, R.drawable.g_base_shape_27, R.drawable.g_base_shape_28, R.drawable.g_base_shape_29, R.drawable.g_base_shape_30, R.drawable.g_base_shape_31, R.drawable.g_base_shape_32, R.drawable.g_base_shape_33, R.drawable.g_base_shape_34, R.drawable.g_base_shape_35, R.drawable.g_base_shape_36};
+
+        super.onResume();
     }
 
 
@@ -87,6 +97,8 @@ public class BaseShapeActivity extends AppCompatActivity
         rotateRuler.setOnTouchListener(new View.OnTouchListener() {
             float x;
             float delta;
+            float deltaC;
+            float slideLimit;
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -96,18 +108,24 @@ public class BaseShapeActivity extends AppCompatActivity
                     case MotionEvent.ACTION_DOWN:
                         x = motionEvent.getX()/3;
                         delta = (x/3 - mainImage.getRotation());
-
+                        deltaC = motionEvent.getX()- rotateSlide.getX();
                         break;
                     case MotionEvent.ACTION_MOVE:
                         x = motionEvent.getX()/3;
-
                         mainImage.setRotation((x/3 - delta));
                         colorImage.setRotation((x/3 - delta));
+                        slideLimit = motionEvent.getX()- deltaC;
+                        if(slideLimit < (rotateLine.getRight()*0.55f) && slideLimit > 40){
+                            rotateSlide.setX(slideLimit);
+                        }
                         break;
                     case MotionEvent.ACTION_UP:
                         mainImage.setRotation((x/3 - delta));
                         colorImage.setRotation((x/3 - delta));
                         imageRotation = (x/3 - delta);
+                        if(slideLimit < (rotateLine.getRight()*0.55f) && slideLimit > 50){
+                            rotateSlide.setX(slideLimit);
+                        }
                         break;
                 }
 
@@ -267,7 +285,7 @@ public class BaseShapeActivity extends AppCompatActivity
         initDrawerAndNavigationView();
 
         rotateRuler = (ImageView)findViewById(R.id.rotate_ruler);
-        rotateCircle = (ImageView)findViewById(R.id.rotate_circle);
+        rotateSlide = (ImageView)findViewById(R.id.rotate_slide);
         rotateLine = (ImageView)findViewById(R.id.line);
         rotationBar = (RelativeLayout)findViewById(R.id.rotation_kit);
 

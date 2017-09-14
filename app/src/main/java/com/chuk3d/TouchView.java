@@ -1,10 +1,15 @@
 package com.chuk3d;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.EmbossMaskFilter;
+import android.graphics.MaskFilter;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.MotionEventCompat;
+import android.text.Layout;
+import android.text.StaticLayout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -12,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.LinkedList;
@@ -23,13 +29,10 @@ import java.util.NoSuchElementException;
 
 public class TouchView extends View {
 
-    public Drawable heartDrawable;
-
     public static LinkedList<Shape> shapes = new LinkedList<>();
     public static LinkedList<Shape> shapesForColor = new LinkedList<>();
 
     public static LinkedList<TextBody> texts = new LinkedList<>();
-
 
     private float mPosX;
     private float mPosY;
@@ -40,9 +43,6 @@ public class TouchView extends View {
     private float heightScreen;
     private float widthScreen;
 
-    private float pivotx;
-    private float pivoty;
-
     private static final int INVALID_POINTER_ID = -1;
     private int mActivePointerId = INVALID_POINTER_ID;
 
@@ -52,11 +52,11 @@ public class TouchView extends View {
     public static int CURRENT_SHAPE = -1;
     public static int CURRENT_TEXT = -1;
 
-
-//    public static int DO_NOT_MOVE = 99;
-
     public static float textScaleFactor = 1.f;
-    private ScaleGestureDetector textScaleDetector;
+
+    private MoveCommand moveCommand = null;
+
+    public static SizedStack<Command> commandStack = new SizedStack<Command>(100);
 
 
     public TouchView(Context context) {
@@ -87,15 +87,8 @@ public class TouchView extends View {
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        for(int i = 0; i < shapesForColor.size(); i++){
-            Shape shape = shapes.get(i);
-            canvas.save();
-            canvas.translate(shape.getPosX(), shape.getPosY());
-            canvas.scale(shape.getxScaleFactor(), shape.getyScaleFactor(), shape.getPivotX(), shape.getPivotY());
-            canvas.rotate(shape.getAngle(),shape.getPivotX(), shape.getPivotY());
-            shape.getDrawable().draw(canvas);
-            shapesForColor.get(i).getDrawable().draw(canvas);
-            canvas.restore();
+        for(Shape shape:shapes){
+            shape.draw(canvas);
         }
 
         for(int i = 0; i < texts.size(); i++){
@@ -112,7 +105,7 @@ public class TouchView extends View {
 
     private boolean clickOnShape(Shape shape, MotionEvent event) {
 
-        float scaleFactor = shape.getxScaleFactor();
+        float scaleFactor = shape.getScaleFactor();
         scaleFactor = Math.max(1f, Math.min(mScaleFactor, 1.3f));
 
         float x = (shape.getPosX()*0.9f);
@@ -157,13 +150,10 @@ public class TouchView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
 
-
         LinkedList<Integer>clickedShapes = new LinkedList<>();
         LinkedList<Integer>clickedTexts = new LinkedList<>();
 
-
         mScaleDetector.onTouchEvent(ev);
-        textScaleDetector.onTouchEvent(ev);
 
         final int action = ev.getAction();
 
@@ -172,8 +162,12 @@ public class TouchView extends View {
                 if(shapes.isEmpty()&& texts.isEmpty()){
                     // do nothing
                 }else{
+
                     switch (DesignActivity.vButton.getVisibility()){
                         case VISIBLE:
+                            if(!shapes.isEmpty()&&CURRENT_SHAPE > -1){
+                                moveCommand = new MoveCommand(shapes.get(CURRENT_SHAPE));
+                            }
                             // do nothing
                             break;
                         case INVISIBLE:
@@ -186,7 +180,10 @@ public class TouchView extends View {
 
                             if(!clickedShapes.isEmpty()){
                                 CURRENT_SHAPE = clickedShapes.getLast();
-                                fillColorShapes("shape");
+                                moveCommand = new MoveCommand(shapes.get(CURRENT_SHAPE));
+                                fillColorShapes();
+                                shapes.get(CURRENT_SHAPE).setClickColor(getContext());
+
                                 DesignActivity.currentNumText.setText("S");
                                 DesignActivity.vButton.setVisibility(VISIBLE);
                                 DesignActivity.showDeleteAndRotate();
@@ -198,12 +195,13 @@ public class TouchView extends View {
                                 }
                                 if(!clickedTexts.isEmpty()){
 
+                                    fillColorShapes();
                                     CURRENT_TEXT = clickedTexts.getLast();
-                                    fillColorShapes("text");
+                                    texts.get(CURRENT_TEXT).getTextPaint().setColor(getResources().getColor(R.color.almostWhite));
                                     DesignActivity.currentNumText.setText("T");
+                                    DesignActivity.vButton.setVisibility(VISIBLE);
                                     DesignActivity.isTextEdited = true;
                                     DesignActivity.showDeleteAndRotate();
-                                    DesignActivity.vButton.setVisibility(VISIBLE);
                                     DesignActivity.initFonts(texts.get(CURRENT_TEXT).getTag());
 
                                 }else{
@@ -224,6 +222,7 @@ public class TouchView extends View {
                     mActivePointerId = ev.getPointerId(0);
                     invalidate();
                 }
+                break;
             }
 
             case MotionEvent.ACTION_MOVE: {
@@ -240,27 +239,30 @@ public class TouchView extends View {
                             final float dx = x - mLastTouchX;
                             final float dy = y - mLastTouchY;
 
-                            try{
 
-                                if (DesignActivity.currentNumText.getText().equals("T")) {
+                                if (DesignActivity.currentNumText.getText().equals("T")&& CURRENT_TEXT > -1) {
                                     float xpos = texts.get(CURRENT_TEXT).getPosX();
                                     float ypos = texts.get(CURRENT_TEXT).getPosY();
                                     texts.get(CURRENT_TEXT).setPosX(xpos += dx);
                                     texts.get(CURRENT_TEXT).setPosY(ypos += dy);
 
                                 } else {
+                                    try{
                                     float xpos = shapes.get(CURRENT_SHAPE).getPosX();
                                     float ypos = shapes.get(CURRENT_SHAPE).getPosY();
-                                    shapes.get(CURRENT_SHAPE).setPosX(xpos += dx);
-                                    shapes.get(CURRENT_SHAPE).setPosY(ypos += dy);
 
+                                        if(moveCommand != null){
+                                            moveCommand.setNewX(xpos+dx);
+                                            moveCommand.setNewY(ypos+dy);
+                                            moveCommand.execute();
+                                        }
+
+                                    }catch (IndexOutOfBoundsException e){
+
+                                    }catch (NoSuchElementException e){
+
+                                    }
                                 }
-
-                            }catch (IndexOutOfBoundsException e){
-
-                            }catch (NoSuchElementException e){
-
-                            }
 
                             invalidate();
 
@@ -275,11 +277,19 @@ public class TouchView extends View {
 
             case MotionEvent.ACTION_UP: {
                 mActivePointerId = INVALID_POINTER_ID;
+
+                if (moveCommand!= null && moveCommand.isExecute()) {
+                    commandStack.push(moveCommand);
+                }
                 break;
             }
 
             case MotionEvent.ACTION_CANCEL: {
                 mActivePointerId = INVALID_POINTER_ID;
+                if (moveCommand!= null && moveCommand.isExecute()) {
+                    commandStack.push(moveCommand);
+                    moveCommand = null;
+                }
 
                 final int pointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
 
@@ -316,8 +326,42 @@ public class TouchView extends View {
     }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+
+
+        private ScaleCommand scaleCommand = null;
+
+
+
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            Log.d("ScaleListener", "onScaleBegin");
+            Log.e("currentNumText", DesignActivity.currentNumText.getText().toString());
+            if(DesignActivity.currentNumText.equals("T")){
+
+            }else{
+                if(!shapes.isEmpty()&&CURRENT_SHAPE>-1)
+                scaleCommand = new ScaleCommand(shapes.get(CURRENT_SHAPE));
+            }
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            Log.d("ScaleListener", "onScaleEnd");
+            if(DesignActivity.currentNumText.equals("T")){
+
+            }else{
+                if(scaleCommand != null){
+                    if (scaleCommand.isExecute()) {
+                        commandStack.push(scaleCommand);
+                        scaleCommand = null;
+                    }
+                }
+            }
+        }
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
+            Log.d("ScaleListener", "onScale");
             if(DesignActivity.currentNumText.getText().equals("T")) {
                 textScaleFactor *= detector.getScaleFactor();
 
@@ -328,8 +372,10 @@ public class TouchView extends View {
                     mScaleFactor *= detector.getScaleFactor();
 
                     mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
-                    shapes.get(CURRENT_SHAPE).setxScaleFactor(mScaleFactor);
-                    shapes.get(CURRENT_SHAPE).setyScaleFactor(mScaleFactor);
+                    if(scaleCommand!= null){
+                        scaleCommand.setNewScaleFactor(mScaleFactor);
+                        scaleCommand.execute();
+                    }
 
                 }catch (IndexOutOfBoundsException e){
 
@@ -341,57 +387,39 @@ public class TouchView extends View {
         }
     }
 
-    public void fillColorShapes(String tag){
+    public void fillColorShapes(){
         DesignActivity.vButton.setVisibility(VISIBLE);
-        ColorCommand colorCommand = new ColorCommand(DesignActivity.colorImage, getContext(), 0);
-        colorCommand.fillColorShapes(tag);
+        DesignActivity.colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.editGrayBigShape),PorterDuff.Mode.SRC_IN);
+        for(Shape shape:shapes){
+            shape.getColorDrawable().mutate().setColorFilter(getResources().getColor(R.color.editGraysmallShape),PorterDuff.Mode.SRC_IN);
+        }
+        for(TextBody textBody: texts){
+            textBody.getTextPaint().setColor(getResources().getColor(R.color.background));
+        }
     }
 
+    public void executeAddCommand(Context context, int resourceId, String type) {
+        AddCommand addCommand = new AddCommand(context, resourceId, mPosX, mPosY, type);
+        boolean isExecute = addCommand.execute();
+        if (isExecute) {
+            commandStack.push(addCommand);
+        }
+    }
+    public void executeAngleCommand(Shape shape, float newAngle) {
+        AngleCommand angleCommand = new AngleCommand(shape, newAngle);
+        boolean isExecute = angleCommand.execute();
+        if (isExecute) {
+            commandStack.push(angleCommand);
+        }
+    }
 
-
-    public void punch(int shapeToPunch, String type, int[]resources){
-
-        try{
-
-            Drawable drawable = null, colorDrawable = null;
-            switch (type){
-                case "punch":
-                    drawable = getResources().getDrawable(resources[shapeToPunch]);
-                    colorDrawable = getResources().getDrawable(resources[shapeToPunch]);
-                    shapesForColor.add(new Shape(colorDrawable, mPosX, mPosY));
-                    shapesForColor.getLast().getDrawable().mutate().setColorFilter(getResources().getColor(R.color.transparent), PorterDuff.Mode.SRC_IN);
-
-                    break;
-                case "topping":
-                    drawable = getResources().getDrawable(resources[shapeToPunch]);
-                    colorDrawable = getResources().getDrawable(resources[shapeToPunch]);
-                    shapesForColor.add(new Shape(colorDrawable, mPosX, mPosY));
-                    if(DesignActivity.currentColor == 0){
-                        shapesForColor.getLast().getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
-                    }else{
-                        shapesForColor.getLast().getDrawable().mutate().setColorFilter(getResources().getColor(DesignActivity.currentColor),PorterDuff.Mode.SRC_IN);
-                    }
-                    break;
-            }
-
-            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-            Shape shape = new Shape(drawable, mPosX, mPosY);
-            shapes.add(shape);
-
-            colorDrawable.setBounds(0, 0, colorDrawable.getIntrinsicWidth(), colorDrawable.getIntrinsicHeight());
-            shapesForColor.getLast().setTag(type);
-
-
-            invalidate();
-        }catch (IndexOutOfBoundsException e){
-            Toast.makeText(getContext(), "Unable to perform action", Toast.LENGTH_SHORT).show();
+    public void undo(){
+        if (!commandStack.isEmpty()) {
+            Command command = commandStack.pop();
+            command.undo();
         }
 
-
-        CURRENT_SHAPE = shapes.size()-1;
     }
-
-
 
     public void init(){
 
@@ -410,14 +438,7 @@ public class TouchView extends View {
             mPosY = heightScreen / 5.3f;
         }
 
-        heartDrawable = getResources().getDrawable(R.drawable.g_punch_shape_1);
-        heartDrawable.setBounds(0, 0, heartDrawable.getIntrinsicWidth()/2, heartDrawable.getIntrinsicHeight()/2);
-
-        pivotx = heartDrawable.getIntrinsicWidth()/2;
-        pivoty = heartDrawable.getIntrinsicHeight()/2;
-
         mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
-        textScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
 
     }
 

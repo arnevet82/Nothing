@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -74,7 +75,9 @@ public class DesignActivity extends AppCompatActivity
     public static float mainImageRotation;
     public static final String BASE_SHAPE_ARRAY_KEY = "BASE_SHAPE";
     public static int [] baseShapes = new int[36];
-
+    private static final String TAG = "DesignActivity";
+    boolean b = true;
+    private AngleCommand angleCommand = null;
     TextView title;
     TabLayout toppingTabLayout, punchTabLayout;
     ViewPager toppingViewPager, punchViewPager;
@@ -125,6 +128,10 @@ public class DesignActivity extends AppCompatActivity
         setUpBaseShape(position);
         touchView = new TouchView(this);
         designContainer.addView(touchView);
+        currentColor = this.getResources().getColor(R.color.baseShapeFirstColor);
+        setRotationRuler();
+
+        Log.e("currentNumText", currentNumText.getText().toString());
     }
 
     public static void showGridAndUndo(){
@@ -280,34 +287,8 @@ public class DesignActivity extends AppCompatActivity
 
     public void undo(View v){
 
-        if(!stack.isEmpty()){
-            switch (stack.getLast()){
-                case "color":
-                    ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), currentColor);
-                    colorCommand.undo();
-                    break;
-                case "punch":
-                    PunchCommand punchCommand = new PunchCommand(touchView, 0, "punch", baseShapes);
-                    punchCommand.undo();
-                    break;
-                case "topping":
-                    punchCommand = new PunchCommand(touchView, 0, "topping", baseShapes);
-                    punchCommand.undo();
-                    break;
-                case "text":
-                    TextCommand textCommand = new TextCommand(getApplicationContext(), "", "", touchView);
-                    textCommand.undo();
-                    break;
-                default:
-                    break;
-            }
-        }
-
-    }
-
-    public static void clearStack(int stackSize){
-        while(stack.size() > stackSize){
-            stack.removeFirst();
+        if(!TouchView.commandStack.isEmpty()){
+            touchView.undo();
         }
     }
 
@@ -393,7 +374,7 @@ public class DesignActivity extends AppCompatActivity
             if(!TouchView.shapes.isEmpty() || !TouchView.texts.isEmpty() || currentColor != 0){
                 showGridAndUndo();
             }
-            }else{
+        }else{
             hideAllUIElements();
             text.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.lightPrimary),PorterDuff.Mode.SRC_IN);
             textContainer.setVisibility(View.VISIBLE);
@@ -430,14 +411,15 @@ public class DesignActivity extends AppCompatActivity
                     case "normal":
                         TextCommand textCommand = new TextCommand(getApplicationContext(), text, mTag, touchView);
                         textCommand.execute();
+                        currentNumText.setText("T");
+
+                        Log.e("currentNumText", currentNumText.getText().toString());
                         cleanBarButtons();
                         break;
                     case "edit":
                         TextCommand textCommand1 = new TextCommand(getApplicationContext(), text, mTag, touchView);
                         textCommand1.edit();
                         if(isTextEdited){
-                            ColorCommand colorCommand = new ColorCommand(colorImage, getApplicationContext(), 0);
-                            colorCommand.fillColorShapes("text");
                         }
                         break;
                 }
@@ -547,11 +529,8 @@ public class DesignActivity extends AppCompatActivity
     }
 
     public void clearGrayColor(){
-
-        ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), currentColor);
+        ColorCommand colorCommand = new ColorCommand(getApplication(), colorImage, currentColor);
         colorCommand.execute();
-
-        touchView.invalidate();
     }
 
     public void showColorBar(View v){
@@ -565,28 +544,28 @@ public class DesignActivity extends AppCompatActivity
             hideAllUIElements();
             color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.lightPrimary),PorterDuff.Mode.SRC_IN);
             colorBar.setVisibility(View.VISIBLE);
+            Button[]buttons = {color1, color2, color3, color4, color5, color6, color7, color8, color9, color10, color11, color12};
+
+            for(Button button:buttons){
+                button.setVisibility(View.VISIBLE);
+            }
         }
     }
 
-    public void onColorButtonClicked(View v){
-        colorBar.setVisibility(View.INVISIBLE);
+    public void colorClick(View view) {
+
+        Button b = (Button) view;
         color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.white),PorterDuff.Mode.SRC_IN);
-        Button[]buttons = {color1, color2, color3, color4, color5, color6, color7, color8, color9, color10, color11, color12};
-        int[]buttonId = {R.id.color1, R.id.color2, R.id.color3, R.id.color4, R.id.color5, R.id.color6, R.id.color7, R.id.color8, R.id.color9, R.id.color10, R.id.color11, R.id.color12};
-        int[]colors={R.color.yellowBtn, R.color.orangeBtn, R.color.redBtn, R.color.pinkBtn, R.color.purpleBtn, R.color.darkeBlueBtn,
-                R.color.blueBtn, R.color.greenBtn, R.color.blackBtn, R.color.grayBtn, R.color.whiteBtn, R.color.transBtn};
-        for(int i = 0; i < buttons.length; i++){
-            if(v.getId() == buttonId[i]){
-                colorBar.setVisibility(View.INVISIBLE);
-                buttons[i].setVisibility(View.INVISIBLE);
-                color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.white),PorterDuff.Mode.SRC_IN);
-                currentColor = colors[i];
-                ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), colors[i]);
-                colorCommand.execute();
-                showGridAndUndo();
-            }
-            buttons[i].setVisibility(View.VISIBLE);
+        int newColor = ((ColorDrawable)b.getBackground()).getColor();
+        ColorCommand colorCommand = new ColorCommand(this, colorImage, newColor);
+        boolean isExecute = colorCommand.execute();
+        if (isExecute) {
+            touchView.commandStack.push(colorCommand);
         }
+        colorBar.setVisibility(View.INVISIBLE);
+        b.setVisibility(View.INVISIBLE);
+        showGridAndUndo();
+        currentColor = newColor;
     }
 
     public void setUpBaseShape(int pos){
@@ -650,8 +629,7 @@ public class DesignActivity extends AppCompatActivity
         return true;
     }
 
-
-    public void checkIfTopTabsOpen(View v){
+    public void onToppingBarClicked(View view) {
         if(toppingTabs.getVisibility() == View.VISIBLE){
             toppingTabs.setVisibility(View.INVISIBLE);
             toppingTabLayout.setVisibility(View.INVISIBLE);
@@ -669,7 +647,7 @@ public class DesignActivity extends AppCompatActivity
         }
     }
 
-    public void checkIfPunchTabsOpen(View v){
+    public void onPunchBarClicked(View view) {
         if(punchTabs.getVisibility() == View.VISIBLE){
             punchTabs.setVisibility(View.INVISIBLE);
             punchTabLayout.setVisibility(View.INVISIBLE);
@@ -689,59 +667,81 @@ public class DesignActivity extends AppCompatActivity
 
     @Override
     public void onToppingButtonClicked(View view) {
-        int[]toppingResources = {R.drawable.g_topping_shape_1, R.drawable.g_topping_shape_2, R.drawable.g_topping_shape_3,R.drawable.g_topping_shape_4, R.drawable.g_topping_shape_5, R.drawable.g_topping_shape_6, R.drawable.g_topping_shape_7, R.drawable.g_topping_shape_8, R.drawable.g_topping_shap_9, R.drawable.g_topping_shape_10, R.drawable.g_topping_shape_11, R.drawable.g_topping_shape_12, R.drawable.g_topping_shape_13, R.drawable.g_topping_shape_14, R.drawable.g_topping_shape_15, R.drawable.g_topping_shape_16, R.drawable.g_topping_shape_17, R.drawable.g_topping_shape_18, R.drawable.g_topping_shape_19, R.drawable.g_topping_shape_20, R.drawable.g_topping_shape_21, R.drawable.g_topping_shape_22, R.drawable.g_topping_shape_23, R.drawable.g_topping_shape_24, R.drawable.g_topping_shape_25, R.drawable.g_topping_shape_26, R.drawable.g_topping_shape_27, R.drawable.g_topping_shape_28, R.drawable.g_topping_shape_29, R.drawable.g_topping_shape_30, R.drawable.g_topping_shape_31, R.drawable.g_topping_shape_32, R.drawable.g_topping_shape_33, R.drawable.g_topping_shape_34, R.drawable.g_topping_shape_35, R.drawable.g_topping_shape_36};
-        addTopping(view, toppingResources);
+        toppingTabs.setVisibility(View.VISIBLE);
+        toppingTabLayout.setVisibility(View.VISIBLE);
+        toppingViewPager.setVisibility(View.VISIBLE);
+
+        int resourceId = getResources().getIdentifier("@" + view.getTag(), "drawable", this.getPackageName());
+
+        touchView.executeAddCommand(this, resourceId, "topping");
+        currentNumText.setText("S");
+        Log.e("currentNumText", currentNumText.getText().toString());
+        hideAllUIElements();
+        showGridAndUndo();
+        showDeleteAndRotate();
+        vButton.setVisibility(View.VISIBLE);
+
+        Log.e("current shape", String.valueOf(TouchView.CURRENT_SHAPE));
+
     }
 
     @Override
     public void onOtherToppingButtonClicked(View view) {
-        int[]toppingResources = {R.drawable.other_topping_shape_1, R.drawable.other_topping_shape_2, R.drawable.other_topping_shape_3,R.drawable.other_topping_shape_4, R.drawable.other_topping_shape_5, R.drawable.other_topping_shape_6, R.drawable.other_topping_shape_7, R.drawable.other_topping_shape_8, R.drawable.other_topping_shape_9, R.drawable.other_topping_shape_10, R.drawable.other_topping_shape_11, R.drawable.other_topping_shape_12, R.drawable.other_topping_shape_13, R.drawable.other_topping_shape_14, R.drawable.other_topping_shape_15, R.drawable.other_topping_shape_16, R.drawable.other_topping_shape_17, R.drawable.other_topping_shape_18, R.drawable.other_topping_shape_19, R.drawable.other_topping_shape_20, R.drawable.other_topping_shape_21, R.drawable.other_topping_shape_22, R.drawable.other_topping_shape_23, R.drawable.other_topping_shape_24, R.drawable.other_topping_shape_25, R.drawable.other_topping_shape_26, R.drawable.other_topping_shape_27, R.drawable.other_topping_shape_28, R.drawable.other_topping_shape_29, R.drawable.other_topping_shape_30, R.drawable.other_topping_shape_31, R.drawable.other_topping_shape_32, R.drawable.other_topping_shape_33, R.drawable.other_topping_shape_34, R.drawable.other_topping_shape_35, R.drawable.other_topping_shape_36};
-        addTopping(view, toppingResources);
+            toppingTabs.setVisibility(View.VISIBLE);
+            toppingTabLayout.setVisibility(View.VISIBLE);
+            toppingViewPager.setVisibility(View.VISIBLE);
+
+            int resourceId = getResources().getIdentifier("@" + view.getTag(), "drawable", this.getPackageName());
+
+            touchView.executeAddCommand(this, resourceId, "topping");
+            currentNumText.setText("S");
+        Log.e("currentNumText", currentNumText.getText().toString());
+            hideAllUIElements();
+            showGridAndUndo();
+            showDeleteAndRotate();
+            vButton.setVisibility(View.VISIBLE);
+
+            Log.e("current shape", String.valueOf(TouchView.CURRENT_SHAPE));
     }
+
     @Override
     public void onPunchButtonClicked(View view) {
-        punch.setImageDrawable(getResources().getDrawable(R.drawable.punch_icon_green));
-        int[]punchResources = {R.drawable.g_punch_shape_1, R.drawable.g_punch_shape_2, R.drawable.g_punch_shape_3,R.drawable.g_punch_shape_4, R.drawable.g_punch_shape_5, R.drawable.g_punch_shape_6, R.drawable.g_punch_shape_7, R.drawable.g_punch_shape_8, R.drawable.g_punch_shap_9, R.drawable.g_punch_shape_10, R.drawable.g_punch_shape_11, R.drawable.g_punch_shape_12, R.drawable.g_punch_shape_13, R.drawable.g_punch_shape_14, R.drawable.g_punch_shape_15, R.drawable.g_punch_shape_16, R.drawable.g_punch_shape_17, R.drawable.g_punch_shape_18, R.drawable.g_punch_shape_19, R.drawable.g_punch_shape_20, R.drawable.g_punch_shape_21, R.drawable.g_punch_shape_22, R.drawable.g_punch_shape_23, R.drawable.g_punch_shape_24, R.drawable.g_punch_shape_25, R.drawable.g_punch_shape_26, R.drawable.g_punch_shape_27, R.drawable.g_punch_shape_28, R.drawable.g_punch_shape_29, R.drawable.g_punch_shape_30, R.drawable.g_punch_shape_31, R.drawable.g_punch_shape_32, R.drawable.g_punch_shape_33, R.drawable.g_punch_shape_34, R.drawable.g_punch_shape_35, R.drawable.g_punch_shape_36};
-        punch(view, punchResources);
+        punchTabs.setVisibility(View.VISIBLE);
+        punchViewPager.setVisibility(View.VISIBLE);
+        punchTabLayout.setVisibility(View.VISIBLE);
+
+        int resourceId = getResources().getIdentifier("@" + view.getTag(), "drawable", this.getPackageName());
+        touchView.executeAddCommand(this, resourceId, "punch");
+        currentNumText.setText("S");
+        Log.e("currentNumText", currentNumText.getText().toString());
+
+        hideAllUIElements();
+        showGridAndUndo();
+        showDeleteAndRotate();
+        vButton.setVisibility(View.VISIBLE);
+
+        Log.e("current shape", String.valueOf(TouchView.CURRENT_SHAPE));
     }
 
     @Override
     public void onOtherPunchButtonClicked(View view) {
+        punchTabs.setVisibility(View.VISIBLE);
+        punchViewPager.setVisibility(View.VISIBLE);
+        punchTabLayout.setVisibility(View.VISIBLE);
 
-        int[]punchResources = {R.drawable.other_punch_shape_1, R.drawable.other_punch_shape_2, R.drawable.other_punch_shape_3,R.drawable.other_punch_shape_4, R.drawable.other_punch_shape_5, R.drawable.other_punch_shape_6, R.drawable.other_punch_shape_7, R.drawable.other_punch_shape_8, R.drawable.other_punch_shape_9, R.drawable.other_punch_shape_10, R.drawable.other_punch_shape_11, R.drawable.other_punch_shape_12, R.drawable.other_punch_shape_13, R.drawable.other_punch_shape_14, R.drawable.other_punch_shape_15, R.drawable.other_punch_shape_16, R.drawable.other_punch_shape_17, R.drawable.other_punch_shape_18, R.drawable.other_punch_shape_19, R.drawable.other_punch_shape_20, R.drawable.other_punch_shape_21, R.drawable.other_punch_shape_22, R.drawable.other_punch_shape_23, R.drawable.other_punch_shape_24, R.drawable.other_punch_shape_25, R.drawable.other_punch_shape_26, R.drawable.other_punch_shape_27, R.drawable.other_punch_shape_28, R.drawable.other_punch_shape_29, R.drawable.other_punch_shape_30, R.drawable.other_punch_shape_31, R.drawable.other_punch_shape_32, R.drawable.other_punch_shape_33, R.drawable.other_punch_shape_34, R.drawable.other_punch_shape_35, R.drawable.other_punch_shape_36};
-        punch(view, punchResources);
-    }
+        int resourceId = getResources().getIdentifier("@" + view.getTag(), "drawable", this.getPackageName());
+        touchView.executeAddCommand(this, resourceId, "punch");
+        currentNumText.setText("S");
+        Log.e("currentNumText", currentNumText.getText().toString());
 
-    public void punch(View view, int[]punchResources){
-        int[]buttonId = {R.id.punch1, R.id.punch2, R.id.punch3, R.id.punch4, R.id.punch5, R.id.punch6, R.id.punch7, R.id.punch8, R.id.punch9, R.id.punch10, R.id.punch11, R.id.punch12, R.id.punch13, R.id.punch14, R.id.punch15, R.id.punch16, R.id.punch17, R.id.punch18, R.id.punch19, R.id.punch20, R.id.punch21, R.id.punch22, R.id.punch23, R.id.punch24, R.id.punch25, R.id.punch26, R.id.punch27, R.id.punch28, R.id.punch29, R.id.punch30, R.id.punch31, R.id.punch32, R.id.punch33, R.id.punch34, R.id.punch35, R.id.punch36};
+        hideAllUIElements();
+        showGridAndUndo();
+        showDeleteAndRotate();
+        vButton.setVisibility(View.VISIBLE);
 
-        int pos = 0;
-        for (pos = 0; pos < buttonId.length; pos++) {
-            if (view.getId() == buttonId[pos]) {
-                PunchCommand punchCommand = new PunchCommand(touchView, pos, "punch", punchResources);
-                punchCommand.execute();
-                hideAllUIElements();
-                vButton.setVisibility(View.VISIBLE);
-                showGridAndUndo();
-                showDeleteAndRotate();
-            }
-        }
-    }
-
-    public void addTopping(View view, int[]toppingResources){
-        int[]buttonId = {R.id.topping1, R.id.topping2, R.id.topping3, R.id.topping4, R.id.topping5, R.id.topping6, R.id.topping7, R.id.topping8, R.id.topping9, R.id.topping10, R.id.topping11, R.id.topping12, R.id.topping13, R.id.topping14, R.id.topping15, R.id.topping16, R.id.topping17, R.id.topping18, R.id.topping19, R.id.topping20, R.id.topping21, R.id.topping22, R.id.topping23, R.id.topping24, R.id.topping25, R.id.topping26, R.id.topping27, R.id.topping28, R.id.topping29, R.id.topping30, R.id.topping31, R.id.topping32, R.id.topping33, R.id.topping34, R.id.topping35, R.id.topping36};
-
-        int pos = 0;
-        for(pos = 0; pos < buttonId.length; pos++){
-            if(view.getId() == buttonId[pos]){
-                PunchCommand punchCommand = new PunchCommand(touchView, pos, "topping", toppingResources);
-                punchCommand.execute();
-                hideAllUIElements();
-                vButton.setVisibility(View.VISIBLE);
-                showGridAndUndo();
-                showDeleteAndRotate();
-            }
-        }
+        Log.e("current shape", String.valueOf(TouchView.CURRENT_SHAPE));
+//        int[]punchResources = {R.drawable.other_punch_shape_1, R.drawable.other_punch_shape_2, R.drawable.other_punch_shape_3,R.drawable.other_punch_shape_4, R.drawable.other_punch_shape_5, R.drawable.other_punch_shape_6, R.drawable.other_punch_shape_7, R.drawable.other_punch_shape_8, R.drawable.other_punch_shape_9, R.drawable.other_punch_shape_10, R.drawable.other_punch_shape_11, R.drawable.other_punch_shape_12, R.drawable.other_punch_shape_13, R.drawable.other_punch_shape_14, R.drawable.other_punch_shape_15, R.drawable.other_punch_shape_16, R.drawable.other_punch_shape_17, R.drawable.other_punch_shape_18, R.drawable.other_punch_shape_19, R.drawable.other_punch_shape_20, R.drawable.other_punch_shape_21, R.drawable.other_punch_shape_22, R.drawable.other_punch_shape_23, R.drawable.other_punch_shape_24, R.drawable.other_punch_shape_25, R.drawable.other_punch_shape_26, R.drawable.other_punch_shape_27, R.drawable.other_punch_shape_28, R.drawable.other_punch_shape_29, R.drawable.other_punch_shape_30, R.drawable.other_punch_shape_31, R.drawable.other_punch_shape_32, R.drawable.other_punch_shape_33, R.drawable.other_punch_shape_34, R.drawable.other_punch_shape_35, R.drawable.other_punch_shape_36};
+//        punch(view, punchResources);
     }
 
     public void onDeleteBtnClicked(View v) {
@@ -753,43 +753,25 @@ public class DesignActivity extends AppCompatActivity
         }
     }
 
-    public void setRotationRuler(View v) {
-
-        fontsBar.setVisibility(View.INVISIBLE);
+    public void rotationRuler(View view) {
         rotationBar.setVisibility(View.VISIBLE);
         rotateLine.setVisibility(View.VISIBLE);
         rotateCircle.setVisibility(View.VISIBLE);
         rotateRuler.setVisibility(View.VISIBLE);
         vButton.setVisibility(View.VISIBLE);
+        fontsBar.setVisibility(View.INVISIBLE);
+    }
 
-        Button[]buttons = {degrees0, degrees90, degrees180, degrees270, degrees360};
-        for(Button button: buttons){
-            button.setOnClickListener(new View.OnClickListener() {
-
-
-                int[]buttonId = {R.id.degrees_zero, R.id.degrees_ninty, R.id.degrees_one_eighty, R.id.degrees_two_seventy, R.id.degrees_three_sixty};
-                float[]degrees = {0, 90, 180, 270, 360};
-                @Override
-                public void onClick(View v) {
-                    for(int i = 0; i < buttonId.length; i++){
-                        if(v.getId() == buttonId[i]){
-                            try {
-                                if (currentNumText.getText().equals("T")) {
-                                    TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle(degrees[i]);
-                                } else if (!TouchView.shapes.isEmpty()) {
-                                    TouchView.shapes.get(TouchView.CURRENT_SHAPE).setAngle(degrees[i]);
-                                } else {
-
-                                }
-                                touchView.invalidate();
-                            }catch (Exception e){
-
-                            }
-                        }
-                    }
-                }
-            });
+    public void rotationClick(View view) {
+        float newAngle = Float.parseFloat(view.getTag().toString());
+        if(!TouchView.shapes.isEmpty()&& TouchView.CURRENT_SHAPE > -1){
+            touchView.executeAngleCommand(TouchView.shapes.get(TouchView.CURRENT_SHAPE), newAngle);
+        }else{
+            touchView.executeAngleCommand(null, newAngle);
         }
+    }
+
+    public void setRotationRuler() {
 
         rotateRuler.setOnTouchListener(new View.OnTouchListener() {
             float x;
@@ -801,51 +783,35 @@ public class DesignActivity extends AppCompatActivity
 
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
-                        try{
-                            x = motionEvent.getX()/3;
-                            if (currentNumText.getText().equals("T")&&!TouchView.texts.isEmpty()) {
-                                delta = (x/3 - TouchView.texts.get(TouchView.CURRENT_TEXT).getAngle());
-                            } else if (!TouchView.shapes.isEmpty()) {
-                                delta = (x/3 - TouchView.shapes.get(TouchView.CURRENT_SHAPE).getAngle());
-                            }
-
-                        }catch (Exception e){
-
+                        if(!TouchView.shapes.isEmpty()&&TouchView.CURRENT_SHAPE > -1){
+                            angleCommand = new AngleCommand(TouchView.shapes.get(TouchView.CURRENT_SHAPE));
+                        }else{
+                            angleCommand = new AngleCommand(null);
                         }
+                        x = motionEvent.getX();
 
+                        if (currentNumText.getText().equals("T")&&!TouchView.texts.isEmpty()) {
+                            delta = (x - TouchView.texts.get(TouchView.CURRENT_TEXT).getAngle());
+                        } else if (!TouchView.shapes.isEmpty()) {
+                            delta = (x - TouchView.shapes.get(TouchView.CURRENT_SHAPE).getAngle());
+                        }
 
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        try{
-                            x = motionEvent.getX()/3;
 
-                            if (currentNumText.getText().equals("T")&&!TouchView.texts.isEmpty()) {
-                                TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle((x/3 - delta));
-                            } else if (!TouchView.shapes.isEmpty()) {
-                                TouchView.shapes.get(TouchView.CURRENT_SHAPE).setAngle((x/3 - delta));
-                            }
-                        }catch (Exception e){
+                        x = motionEvent.getX();
+                        float newAngle = (x - delta) / 3;
 
-                        }
+                        angleCommand.setNewAngle(newAngle);
+                        angleCommand.execute();
 
                         break;
                     case MotionEvent.ACTION_UP:
-                        try{
-                            x = motionEvent.getX()/3;
-
-                            if (currentNumText.getText().equals("T")&&!TouchView.texts.isEmpty()) {
-                                TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle((x/3 - delta));
-                            } else if (!TouchView.shapes.isEmpty()) {
-                                TouchView.shapes.get(TouchView.CURRENT_SHAPE).setAngle((x/3 - delta));
-                            }
-                        }catch (Exception e){
-
+                        if (angleCommand.isExecute()) {
+                            TouchView.commandStack.push(angleCommand);
                         }
-
                         break;
                 }
-                touchView.invalidate();
-
                 return true;
             }
         });
@@ -971,8 +937,8 @@ public class DesignActivity extends AppCompatActivity
 
         designContainer.setBackgroundColor(Color.WHITE);
 
-        ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), R.color.blackBtn);
-        colorCommand.colorBeforeScreenShot();
+//        ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), R.color.blackBtn);
+//        colorCommand.colorBeforeScreenShot();
 
         Date now = new Date();
         android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
@@ -1008,8 +974,8 @@ public class DesignActivity extends AppCompatActivity
         }
 
         designContainer.setBackgroundColor(Color.TRANSPARENT);
-        colorCommand = new ColorCommand(colorImage, getApplication(), currentColor);
-        colorCommand.execute();
+//        colorCommand = new ColorCommand(colorImage, getApplication(), currentColor);
+//        colorCommand.execute();
 
         try {
 
@@ -1034,7 +1000,8 @@ public class DesignActivity extends AppCompatActivity
         Log.i("SendMailActivity", "To List: " + toEmailList);
         String emailSubject = "My creation";
 
-        String colorStr = getResources().getString(currentColor);
+//        String colorStr = getResources().getString(currentColor);
+        String colorStr = "#"+Integer.toHexString(currentColor);
         String size = "";
         if(isInches){
             size = "inch";

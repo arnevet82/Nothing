@@ -1,46 +1,44 @@
 package com.chuk3d;
 
+import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 
 /**
  * Created by Admin on 17/08/2017.
  */
 
-public class Shape {
+public abstract class Shape {
 
-    private Drawable drawable;
-    private float posX, posY;
-    private float xScaleFactor = 1.f;
-    private float yScaleFactor = 1.f;
+    public static float pivotx;
+    public static float pivoty;
 
-    private float angle;
-    private String tag;
-    private float pivotX;
-    private float pivotY;
+    protected Drawable drawable;
+    protected Drawable colorDrawable;
+    protected float posX, posY;
+    protected float scaleFactor = 1.f;
+    protected float angle;
+    protected String tag;
 
-    public Shape(Drawable drawable, float posX, float posY){
+    public Shape(Drawable drawable, Drawable colorDrawable, float posX, float posY){
         this.drawable = drawable;
+        this.colorDrawable = colorDrawable;
         this.posX = posX;
         this.posY = posY;
-        pivotX = drawable.getIntrinsicWidth()/2;
-        pivotY = drawable.getIntrinsicHeight()/2;
-
+        pivotx = drawable.getIntrinsicWidth()/2;
+        pivoty = drawable.getIntrinsicHeight()/2;
     }
 
-    public float getPivotX() {
-        return pivotX;
-    }
-
-    public void setPivotX(float pivotX) {
-        this.pivotX = pivotX;
-    }
-
-    public float getPivotY() {
-        return pivotY;
-    }
-
-    public void setPivotY(float pivotY) {
-        this.pivotY = pivotY;
+    public Shape(Drawable drawable, Drawable colorDrawable, float posX, float posY, float scaleFactor, float angle, String tag){
+        this.drawable = drawable;
+        this.colorDrawable = colorDrawable;
+        this.posX = posX;
+        this.posY = posY;
+        this.scaleFactor = scaleFactor;
+        this.angle = angle;
+        this.tag = tag;
+        pivotx = drawable.getIntrinsicWidth()/2;
+        pivoty = drawable.getIntrinsicHeight()/2;
     }
 
     public Drawable getDrawable() {
@@ -48,7 +46,14 @@ public class Shape {
     }
 
     public void setDrawable(Drawable drawable) {
-        this.drawable = drawable;
+        this.colorDrawable = drawable;
+    }
+    public Drawable getColorDrawable() {
+        return colorDrawable;
+    }
+
+    public void setColorDrawable(Drawable colorDrawable) {
+        this.colorDrawable = colorDrawable;
     }
 
     public float getPosX() {
@@ -67,20 +72,12 @@ public class Shape {
         this.posY = posY;
     }
 
-    public float getxScaleFactor() {
-        return xScaleFactor;
+    public float getScaleFactor() {
+        return scaleFactor;
     }
 
-    public void setxScaleFactor(float xScaleFactor) {
-        this.xScaleFactor = xScaleFactor;
-    }
-
-    public float getyScaleFactor() {
-        return yScaleFactor;
-    }
-
-    public void setyScaleFactor(float yScaleFactor) {
-        this.yScaleFactor = yScaleFactor;
+    public void setScaleFactor(float scaleFactor) {
+        this.scaleFactor = scaleFactor;
     }
 
     public float getAngle() {
@@ -97,5 +94,21 @@ public class Shape {
 
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    public void setColor(int color){}
+
+    public void setClickColor(Context context){}
+
+    public void setInitialColor(Context context){}
+
+    public void draw(Canvas canvas) {
+        canvas.save();
+        canvas.translate(posX, posY);
+        canvas.scale(scaleFactor, scaleFactor, pivotx, pivoty);
+        canvas.rotate(angle,pivotx, pivoty);
+        drawable.draw(canvas);
+        colorDrawable.draw(canvas);
+        canvas.restore();
     }
 }

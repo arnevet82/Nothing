@@ -23,7 +23,7 @@ public class TextCommand extends Command {
     }
 
     @Override
-    void execute() {
+    public boolean execute() {
 
         DesignActivity.editText.setVisibility(View.INVISIBLE);
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -38,12 +38,14 @@ public class TextCommand extends Command {
             TouchView.texts.getLast().getTextPaint().setTypeface(DesignActivity.PcurrentFont);
         }
 
+        touchView.invalidate();
+
         DesignActivity.editText.setText("");
         DesignActivity.fontsBar.setVisibility(View.VISIBLE);
 
 
         DesignActivity.stack.add("text");
-        DesignActivity.clearStack(3);
+        return true;
     }
 
 
@@ -75,7 +77,7 @@ public class TextCommand extends Command {
     }
 
     @Override
-    void undo() {
+    public void undo() {
         if(!TouchView.texts.isEmpty()){
             TouchView.texts.removeLast();
             DesignActivity.stack.removeLast();
