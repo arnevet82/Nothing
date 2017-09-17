@@ -1,15 +1,9 @@
 package com.chuk3d;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.EmbossMaskFilter;
-import android.graphics.MaskFilter;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.support.v4.view.MotionEventCompat;
-import android.text.Layout;
-import android.text.StaticLayout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -17,8 +11,6 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
@@ -30,12 +22,13 @@ import java.util.NoSuchElementException;
 public class TouchView extends View {
 
     public static LinkedList<Shape> shapes = new LinkedList<>();
-    public static LinkedList<Shape> shapesForColor = new LinkedList<>();
 
-    public static LinkedList<TextBody> texts = new LinkedList<>();
+    public static LinkedList<Shape> texts = new LinkedList<>();
 
     private float mPosX;
     private float mPosY;
+    private float tPosX;
+    private float tPosY;
 
     private float mLastTouchX;
     private float mLastTouchY;
@@ -91,14 +84,8 @@ public class TouchView extends View {
             shape.draw(canvas);
         }
 
-        for(int i = 0; i < texts.size(); i++){
-            TextBody tBody = texts.get(i);
-            canvas.save();
-            canvas.translate(tBody.getPosX(), tBody.getPosY());
-            canvas.scale(tBody.getScaleFactor(), tBody.getScaleFactor(),tBody.getTextPivotx(), tBody.getTextPivoty());
-            canvas.rotate(tBody.getAngle(),tBody.getTextPivotx(), tBody.getTextPivoty());
-            tBody.getSl().draw(canvas);
-            canvas.restore();
+        for(Shape shape: texts){
+            shape.draw(canvas);
         }
 
     }
@@ -116,7 +103,7 @@ public class TouchView extends View {
         if ((event.getX() >= x && event.getX() <= xEnd)
                 && (event.getY() >= y && event.getY() <= yEnd)){
 
-            if (!(shape.getDrawable().getIntrinsicWidth() == 0)) {
+            if (!(shape.getScaleFactor() == 0)) {
 
                 return true;
             } else {
@@ -127,15 +114,15 @@ public class TouchView extends View {
         return false;
     }
 
-    private boolean clickOnText(TextBody textBody, MotionEvent event) {
+    private boolean clickOnText(Shape shape, MotionEvent event) {
 
-        float xEnd = textBody.getPosX() + textScaleFactor*250;
-        float yEnd = textBody.getPosY() + textScaleFactor*150;
+        float xEnd = shape.getPosX() + textScaleFactor*250;
+        float yEnd = shape.getPosY() + textScaleFactor*150;
 
-        if ((event.getX() >= (textBody.getPosX()) && event.getX() <= (xEnd))
-                && (event.getY() >= (textBody.getPosY()) && event.getY() <= yEnd)) {
+        if ((event.getX() >= (shape.getPosX()) && event.getX() <= (xEnd))
+                && (event.getY() >= (shape.getPosY()) && event.getY() <= yEnd)) {
 
-            if (!(textBody.getScaleFactor() == 0)) {
+            if (!(shape.getScaleFactor() == 0)) {
                 return true;
             } else {
                 return false;
@@ -195,12 +182,11 @@ public class TouchView extends View {
                                 }
                                 if(!clickedTexts.isEmpty()){
 
-                                    fillColorShapes();
                                     CURRENT_TEXT = clickedTexts.getLast();
-                                    texts.get(CURRENT_TEXT).getTextPaint().setColor(getResources().getColor(R.color.almostWhite));
+                                    fillColorShapes();
+                                    texts.get(CURRENT_TEXT).setGrayColor(getContext());
                                     DesignActivity.currentNumText.setText("T");
                                     DesignActivity.vButton.setVisibility(VISIBLE);
-                                    DesignActivity.isTextEdited = true;
                                     DesignActivity.showDeleteAndRotate();
                                     DesignActivity.initFonts(texts.get(CURRENT_TEXT).getTag());
 
@@ -240,29 +226,29 @@ public class TouchView extends View {
                             final float dy = y - mLastTouchY;
 
 
-                                if (DesignActivity.currentNumText.getText().equals("T")&& CURRENT_TEXT > -1) {
-                                    float xpos = texts.get(CURRENT_TEXT).getPosX();
-                                    float ypos = texts.get(CURRENT_TEXT).getPosY();
-                                    texts.get(CURRENT_TEXT).setPosX(xpos += dx);
-                                    texts.get(CURRENT_TEXT).setPosY(ypos += dy);
+                            if (DesignActivity.currentNumText.getText().equals("T")&& CURRENT_TEXT > -1) {
+                                float xpos = texts.get(CURRENT_TEXT).getPosX();
+                                float ypos = texts.get(CURRENT_TEXT).getPosY();
+                                texts.get(CURRENT_TEXT).setPosX(xpos += dx);
+                                texts.get(CURRENT_TEXT).setPosY(ypos += dy);
 
-                                } else {
-                                    try{
+                            } else {
+                                try{
                                     float xpos = shapes.get(CURRENT_SHAPE).getPosX();
                                     float ypos = shapes.get(CURRENT_SHAPE).getPosY();
 
-                                        if(moveCommand != null){
-                                            moveCommand.setNewX(xpos+dx);
-                                            moveCommand.setNewY(ypos+dy);
-                                            moveCommand.execute();
-                                        }
-
-                                    }catch (IndexOutOfBoundsException e){
-
-                                    }catch (NoSuchElementException e){
-
+                                    if(moveCommand != null){
+                                        moveCommand.setNewX(xpos+dx);
+                                        moveCommand.setNewY(ypos+dy);
+                                        moveCommand.execute();
                                     }
+
+                                }catch (IndexOutOfBoundsException e){
+
+                                }catch (NoSuchElementException e){
+
                                 }
+                            }
 
                             invalidate();
 
@@ -334,20 +320,17 @@ public class TouchView extends View {
 
         @Override
         public boolean onScaleBegin(ScaleGestureDetector detector) {
-            Log.d("ScaleListener", "onScaleBegin");
-            Log.e("currentNumText", DesignActivity.currentNumText.getText().toString());
             if(DesignActivity.currentNumText.equals("T")){
 
             }else{
                 if(!shapes.isEmpty()&&CURRENT_SHAPE>-1)
-                scaleCommand = new ScaleCommand(shapes.get(CURRENT_SHAPE));
+                    scaleCommand = new ScaleCommand(shapes.get(CURRENT_SHAPE));
             }
             return true;
         }
 
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
-            Log.d("ScaleListener", "onScaleEnd");
             if(DesignActivity.currentNumText.equals("T")){
 
             }else{
@@ -361,8 +344,7 @@ public class TouchView extends View {
         }
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            Log.d("ScaleListener", "onScale");
-            if(DesignActivity.currentNumText.getText().equals("T")) {
+            if(DesignActivity.currentNumText.getText().equals("T") && texts.size()>-1 ) {
                 textScaleFactor *= detector.getScaleFactor();
 
                 textScaleFactor = Math.max(0.1f, Math.min(textScaleFactor, 5.0f));
@@ -391,10 +373,10 @@ public class TouchView extends View {
         DesignActivity.vButton.setVisibility(VISIBLE);
         DesignActivity.colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.editGrayBigShape),PorterDuff.Mode.SRC_IN);
         for(Shape shape:shapes){
-            shape.getColorDrawable().mutate().setColorFilter(getResources().getColor(R.color.editGraysmallShape),PorterDuff.Mode.SRC_IN);
+            shape.setGrayColor(getContext());
         }
-        for(TextBody textBody: texts){
-            textBody.getTextPaint().setColor(getResources().getColor(R.color.background));
+        for(Shape shape : texts){
+            shape.setGrayColor(getContext());
         }
     }
 
@@ -405,6 +387,15 @@ public class TouchView extends View {
             commandStack.push(addCommand);
         }
     }
+
+    public void executeTextCommand(Context context, String text, String type) {
+        TextCommand textCommand = new TextCommand(context, text, tPosX,tPosY, type);
+        boolean isExecute = textCommand.execute();
+        if (isExecute) {
+            commandStack.push(textCommand);
+        }
+    }
+
     public void executeAngleCommand(Shape shape, float newAngle) {
         AngleCommand angleCommand = new AngleCommand(shape, newAngle);
         boolean isExecute = angleCommand.execute();
@@ -423,20 +414,15 @@ public class TouchView extends View {
 
     public void init(){
 
-        float scale = getResources().getDisplayMetrics().density;
-        int pixels = (int) (100 * scale + 0.5f);
-
-
         heightScreen = getResources().getDisplayMetrics().heightPixels;
         widthScreen = getResources().getDisplayMetrics().widthPixels;
 
-        if(pixels == 300) {
-            mPosX = widthScreen / 2.945f;
-            mPosY = heightScreen / 5f;
-        }else{
-            mPosX = widthScreen / 2.5f;
-            mPosY = heightScreen / 5.3f;
-        }
+        mPosX = widthScreen / 2.5f;
+        mPosY = heightScreen / 5.3f;
+
+        tPosX = widthScreen / 7f;
+        tPosY = heightScreen / 5.3f;
+
 
         mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
 

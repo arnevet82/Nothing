@@ -4,56 +4,34 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 
+import java.util.List;
+
 /**
  * Created by Admin on 17/08/2017.
  */
 
 public abstract class Shape {
 
-    public static float pivotx;
-    public static float pivoty;
-
-    protected Drawable drawable;
-    protected Drawable colorDrawable;
     protected float posX, posY;
     protected float scaleFactor = 1.f;
     protected float angle;
     protected String tag;
 
-    public Shape(Drawable drawable, Drawable colorDrawable, float posX, float posY){
-        this.drawable = drawable;
-        this.colorDrawable = colorDrawable;
+    public Shape(float posX, float posY){
+
         this.posX = posX;
         this.posY = posY;
-        pivotx = drawable.getIntrinsicWidth()/2;
-        pivoty = drawable.getIntrinsicHeight()/2;
+
     }
 
-    public Shape(Drawable drawable, Drawable colorDrawable, float posX, float posY, float scaleFactor, float angle, String tag){
-        this.drawable = drawable;
-        this.colorDrawable = colorDrawable;
+    public Shape(float posX, float posY, float scaleFactor, float angle, String tag){
+
         this.posX = posX;
         this.posY = posY;
         this.scaleFactor = scaleFactor;
         this.angle = angle;
         this.tag = tag;
-        pivotx = drawable.getIntrinsicWidth()/2;
-        pivoty = drawable.getIntrinsicHeight()/2;
-    }
 
-    public Drawable getDrawable() {
-        return drawable;
-    }
-
-    public void setDrawable(Drawable drawable) {
-        this.colorDrawable = drawable;
-    }
-    public Drawable getColorDrawable() {
-        return colorDrawable;
-    }
-
-    public void setColorDrawable(Drawable colorDrawable) {
-        this.colorDrawable = colorDrawable;
     }
 
     public float getPosX() {
@@ -96,19 +74,15 @@ public abstract class Shape {
         this.tag = tag;
     }
 
-    public void setColor(int color){}
+    public void setColor(Context context, int color){}
 
     public void setClickColor(Context context){}
 
     public void setInitialColor(Context context){}
 
+    public void setGrayColor(Context context){}
+
     public void draw(Canvas canvas) {
-        canvas.save();
-        canvas.translate(posX, posY);
-        canvas.scale(scaleFactor, scaleFactor, pivotx, pivoty);
-        canvas.rotate(angle,pivotx, pivoty);
-        drawable.draw(canvas);
-        colorDrawable.draw(canvas);
-        canvas.restore();
+
     }
 }

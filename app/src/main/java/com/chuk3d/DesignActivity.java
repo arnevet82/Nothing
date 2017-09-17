@@ -104,11 +104,11 @@ public class DesignActivity extends AppCompatActivity
     public static Typeface PcurrentFont, TcurrentFont;
     NestedScrollView punchScrollView, toppingScrollView;
 
+    int heightScreen, widthScreen;
 
     public static LinkedList<String> stack = new LinkedList<>();
     public static EditText editText;
     public static boolean isInches;
-    public static boolean isTextEdited;
     public static String sizeTerm = "cm";
 
     File imageFile, galleryImageFile;
@@ -130,8 +130,6 @@ public class DesignActivity extends AppCompatActivity
         designContainer.addView(touchView);
         currentColor = this.getResources().getColor(R.color.baseShapeFirstColor);
         setRotationRuler();
-
-        Log.e("currentNumText", currentNumText.getText().toString());
     }
 
     public static void showGridAndUndo(){
@@ -325,19 +323,34 @@ public class DesignActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 editText.setVisibility(View.VISIBLE);
-                TextBody textBody = TouchView.texts.get(TouchView.CURRENT_TEXT);
-                editText.setText(textBody.getSl().getText());
-                textBody.setSl(new StaticLayout("", new TextPaint(),800,
-                        Layout.Alignment.ALIGN_CENTER, 1f,0f,false));
+                Shape shape = TouchView.texts.get(TouchView.CURRENT_TEXT);
+                ToppingText toppingText;
+                PunchText punchText;
+                String tag = TouchView.texts.get(TouchView.CURRENT_TEXT).getTag();
+                switch (tag){
+                    case "topping":
+                        toppingText = (ToppingText) TouchView.texts.get(TouchView.CURRENT_TEXT);
+                        editText.setText(toppingText.getSl().getText());
+                        toppingText.setSl(new StaticLayout("", new TextPaint(),800,
+                                Layout.Alignment.ALIGN_CENTER, 1f,0f,false));
+                        break;
+                    case "punch":
+                        punchText = (PunchText) TouchView.texts.get(TouchView.CURRENT_TEXT);
+                        editText.setText(punchText.getSl().getText());
+                        punchText.setSl(new StaticLayout("", new TextPaint(),800,
+                                Layout.Alignment.ALIGN_CENTER, 1f,0f,false));
+                        break;
+                }
+
+                designEditText(shape.getTag());
                 touchView.invalidate();
-                designEditText(textBody.getTag());
                 editText.requestFocus();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
                 vText.setVisibility(View.VISIBLE);
                 currentNumText.setText("T");
 
-                onVTextClicked(textBody.getTag(), "edit");
+                onVTextClicked(shape.getTag(), "edit");
             }
         });
     }
@@ -409,18 +422,15 @@ public class DesignActivity extends AppCompatActivity
 
                 switch (mState){
                     case "normal":
-                        TextCommand textCommand = new TextCommand(getApplicationContext(), text, mTag, touchView);
-                        textCommand.execute();
+                        touchView.executeTextCommand(getApplicationContext(), text, mTag);
                         currentNumText.setText("T");
-
-                        Log.e("currentNumText", currentNumText.getText().toString());
                         cleanBarButtons();
                         break;
                     case "edit":
-                        TextCommand textCommand1 = new TextCommand(getApplicationContext(), text, mTag, touchView);
-                        textCommand1.edit();
-                        if(isTextEdited){
-                        }
+                        float posX = widthScreen / 6.5f;
+                        float posY = heightScreen / 5.3f;
+                        TextCommand textCommand = new TextCommand(getApplicationContext(), text, posX,posY, mTag);
+                        textCommand.edit();
                         break;
                 }
                 vButton.setVisibility(View.VISIBLE);
@@ -449,10 +459,12 @@ public class DesignActivity extends AppCompatActivity
                 if(!TouchView.texts.isEmpty()){
                     switch (TouchView.texts.get(TouchView.CURRENT_TEXT).getTag()){
                         case "topping":
-                            TouchView.texts.get(TouchView.CURRENT_TEXT).getTextPaint().setTypeface(TcurrentFont);
+                            ToppingText toppingText = (ToppingText)TouchView.texts.get(TouchView.CURRENT_TEXT);
+                            toppingText.setFont(TcurrentFont);
                             break;
                         case "punch":
-                            TouchView.texts.get(TouchView.CURRENT_TEXT).getTextPaint().setTypeface(PcurrentFont);
+                            PunchText punchText = (PunchText)TouchView.texts.get(TouchView.CURRENT_TEXT);
+                            punchText.setFont(PcurrentFont);
                             break;
                     }
                 }
@@ -680,28 +692,6 @@ public class DesignActivity extends AppCompatActivity
         showGridAndUndo();
         showDeleteAndRotate();
         vButton.setVisibility(View.VISIBLE);
-
-        Log.e("current shape", String.valueOf(TouchView.CURRENT_SHAPE));
-
-    }
-
-    @Override
-    public void onOtherToppingButtonClicked(View view) {
-            toppingTabs.setVisibility(View.VISIBLE);
-            toppingTabLayout.setVisibility(View.VISIBLE);
-            toppingViewPager.setVisibility(View.VISIBLE);
-
-            int resourceId = getResources().getIdentifier("@" + view.getTag(), "drawable", this.getPackageName());
-
-            touchView.executeAddCommand(this, resourceId, "topping");
-            currentNumText.setText("S");
-        Log.e("currentNumText", currentNumText.getText().toString());
-            hideAllUIElements();
-            showGridAndUndo();
-            showDeleteAndRotate();
-            vButton.setVisibility(View.VISIBLE);
-
-            Log.e("current shape", String.valueOf(TouchView.CURRENT_SHAPE));
     }
 
     @Override
@@ -713,35 +703,11 @@ public class DesignActivity extends AppCompatActivity
         int resourceId = getResources().getIdentifier("@" + view.getTag(), "drawable", this.getPackageName());
         touchView.executeAddCommand(this, resourceId, "punch");
         currentNumText.setText("S");
-        Log.e("currentNumText", currentNumText.getText().toString());
 
         hideAllUIElements();
         showGridAndUndo();
         showDeleteAndRotate();
         vButton.setVisibility(View.VISIBLE);
-
-        Log.e("current shape", String.valueOf(TouchView.CURRENT_SHAPE));
-    }
-
-    @Override
-    public void onOtherPunchButtonClicked(View view) {
-        punchTabs.setVisibility(View.VISIBLE);
-        punchViewPager.setVisibility(View.VISIBLE);
-        punchTabLayout.setVisibility(View.VISIBLE);
-
-        int resourceId = getResources().getIdentifier("@" + view.getTag(), "drawable", this.getPackageName());
-        touchView.executeAddCommand(this, resourceId, "punch");
-        currentNumText.setText("S");
-        Log.e("currentNumText", currentNumText.getText().toString());
-
-        hideAllUIElements();
-        showGridAndUndo();
-        showDeleteAndRotate();
-        vButton.setVisibility(View.VISIBLE);
-
-        Log.e("current shape", String.valueOf(TouchView.CURRENT_SHAPE));
-//        int[]punchResources = {R.drawable.other_punch_shape_1, R.drawable.other_punch_shape_2, R.drawable.other_punch_shape_3,R.drawable.other_punch_shape_4, R.drawable.other_punch_shape_5, R.drawable.other_punch_shape_6, R.drawable.other_punch_shape_7, R.drawable.other_punch_shape_8, R.drawable.other_punch_shape_9, R.drawable.other_punch_shape_10, R.drawable.other_punch_shape_11, R.drawable.other_punch_shape_12, R.drawable.other_punch_shape_13, R.drawable.other_punch_shape_14, R.drawable.other_punch_shape_15, R.drawable.other_punch_shape_16, R.drawable.other_punch_shape_17, R.drawable.other_punch_shape_18, R.drawable.other_punch_shape_19, R.drawable.other_punch_shape_20, R.drawable.other_punch_shape_21, R.drawable.other_punch_shape_22, R.drawable.other_punch_shape_23, R.drawable.other_punch_shape_24, R.drawable.other_punch_shape_25, R.drawable.other_punch_shape_26, R.drawable.other_punch_shape_27, R.drawable.other_punch_shape_28, R.drawable.other_punch_shape_29, R.drawable.other_punch_shape_30, R.drawable.other_punch_shape_31, R.drawable.other_punch_shape_32, R.drawable.other_punch_shape_33, R.drawable.other_punch_shape_34, R.drawable.other_punch_shape_35, R.drawable.other_punch_shape_36};
-//        punch(view, punchResources);
     }
 
     public void onDeleteBtnClicked(View v) {
@@ -1070,7 +1036,6 @@ public class DesignActivity extends AppCompatActivity
     public void resetDesign(){
         while (!TouchView.shapes.isEmpty()) {
             TouchView.shapes.remove(0);
-            TouchView.shapesForColor.remove(0);
         }
         TouchView.CURRENT_SHAPE = -1;
         while (!TouchView.texts.isEmpty()) {
@@ -1081,6 +1046,9 @@ public class DesignActivity extends AppCompatActivity
     }
 
     public void init(){
+
+        heightScreen = getResources().getDisplayMetrics().heightPixels;
+        widthScreen = getResources().getDisplayMetrics().widthPixels;
 
         designContainer = (RelativeLayout)findViewById(R.id.design_container);
 

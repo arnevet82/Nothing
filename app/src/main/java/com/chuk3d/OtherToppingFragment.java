@@ -72,7 +72,7 @@ public class OtherToppingFragment extends Fragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onOtherToppingButtonClicked(v);
+                    callback.onToppingButtonClicked(v);
 
                 }
             });
@@ -93,6 +93,6 @@ public class OtherToppingFragment extends Fragment {
 
     public interface ToppinfFragmentItemClickCallback {
 
-        void onOtherToppingButtonClicked(View view);
+        void onToppingButtonClicked(View view);
     }
 }

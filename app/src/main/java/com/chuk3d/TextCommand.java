@@ -1,8 +1,11 @@
 package com.chuk3d;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 /**
  * Created by Admin on 29/08/2017.
@@ -13,60 +16,62 @@ public class TextCommand extends Command {
     private String text;
     private String tag;
     TouchView touchView;
+    private float x;
+    private float y;
+    private String type;
 
 
-    public TextCommand(Context context, String text, String tag, TouchView touchView) {
+    public TextCommand(Context context, String text, float x, float y, String type){
         this.context = context;
-        this.tag = tag;
         this.text = text;
-        this.touchView = touchView;
+        this.x = x;
+        this.y = y;
+        this.type = type;
     }
 
     @Override
     public boolean execute() {
-
         DesignActivity.editText.setVisibility(View.INVISIBLE);
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(DesignActivity.editText.getWindowToken(), 0);
 
-        TouchView.texts.add(new TextBody(text, context, tag));
+        try{
+            TouchView.texts.add(ShapeFactory.getShape(text, x, y, type, context));
+            TouchView.texts.getLast().setTag(type);
+            TouchView.texts.getLast().setInitialColor(context);
+
+        }catch (IndexOutOfBoundsException e){
+            Toast.makeText(context, "Unable to perform action", Toast.LENGTH_SHORT).show();
+        }
         TouchView.CURRENT_TEXT = TouchView.texts.size()-1;
 
-        if(DesignActivity.TcurrentFont != null && TouchView.texts.getLast().getTag().equals("topping")){
-            TouchView.texts.getLast().getTextPaint().setTypeface(DesignActivity.TcurrentFont);
-        }else if(DesignActivity.PcurrentFont != null && TouchView.texts.getLast().getTag().equals("punch")){
-            TouchView.texts.getLast().getTextPaint().setTypeface(DesignActivity.PcurrentFont);
-        }
-
-        touchView.invalidate();
-
+        DesignActivity.touchView.invalidate();
         DesignActivity.editText.setText("");
         DesignActivity.fontsBar.setVisibility(View.VISIBLE);
-
-
         DesignActivity.stack.add("text");
         return true;
     }
 
-
     void edit(){
-        TextBody previousText = TouchView.texts.get(TouchView.CURRENT_TEXT);
+        Shape previousText = TouchView.texts.get(TouchView.CURRENT_TEXT);
         float angle = previousText.getAngle();
         float xPos = previousText.getPosX();
         float yPos = previousText.getPosY();
         float scaleFactor = previousText.getScaleFactor();
 
-        TextBody newTextBody = new TextBody(text, context, tag);
-        newTextBody.setAngle(angle);
-        newTextBody.setPosX(xPos);
-        newTextBody.setPosY(yPos);
-        newTextBody.setScaleFactor(scaleFactor);
-        TouchView.texts.set(TouchView.CURRENT_TEXT, newTextBody);
+        Shape shape = ShapeFactory.getShape(text, x, y, type, context);
+        shape.setAngle(angle);
+        shape.setPosX(xPos);
+        shape.setPosY(yPos);
+        shape.setScaleFactor(scaleFactor);
+        TouchView.texts.set(TouchView.CURRENT_TEXT, shape);
 
         if(DesignActivity.TcurrentFont != null && TouchView.texts.getLast().getTag().equals("topping")){
-            TouchView.texts.getLast().getTextPaint().setTypeface(DesignActivity.TcurrentFont);
+            ToppingText toppingText = (ToppingText)TouchView.texts.getLast();
+            toppingText.setFont(DesignActivity.TcurrentFont);
         }else if(DesignActivity.PcurrentFont != null && TouchView.texts.getLast().getTag().equals("punch")){
-            TouchView.texts.getLast().getTextPaint().setTypeface(DesignActivity.PcurrentFont);
+            PunchText punchText = (PunchText)TouchView.texts.getLast();
+            punchText.setFont(DesignActivity.PcurrentFont);
         }
         DesignActivity.editText.setText("");
         DesignActivity.editText.setVisibility(View.INVISIBLE);
@@ -78,11 +83,8 @@ public class TextCommand extends Command {
 
     @Override
     public void undo() {
-        if(!TouchView.texts.isEmpty()){
-            TouchView.texts.removeLast();
-            DesignActivity.stack.removeLast();
-            TouchView.CURRENT_TEXT--;
-            touchView.invalidate();
-        }
+        TouchView.texts.removeLast();
+        DesignActivity.touchView.invalidate();
+
     }
 }

@@ -1,7 +1,6 @@
 package com.chuk3d;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
@@ -48,7 +47,7 @@ public class AddCommand extends Command {
     @Override
     public void undo() {
         TouchView.shapes.removeLast();
-        TouchView.CURRENT_SHAPE = TouchView.shapes.size()-1;
+//        TouchView.CURRENT_SHAPE = TouchView.shapes.size()-1;
         DesignActivity.touchView.invalidate();
     }
 }

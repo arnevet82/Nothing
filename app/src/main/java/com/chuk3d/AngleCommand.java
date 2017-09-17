@@ -12,14 +12,14 @@ public class AngleCommand extends Command {
     private boolean isExecute = false;
 
     public AngleCommand(Shape shape) {
-        if(shape!=null){
+        if(shape !=null){
             this.shape = shape;
             this.lastAngle = shape.getAngle();
         }
     }
 
     public AngleCommand(Shape shape, float newAngle) {
-        if(shape!=null){
+        if(shape !=null){
             this.shape = shape;
             this.lastAngle = shape.getAngle();
         }
