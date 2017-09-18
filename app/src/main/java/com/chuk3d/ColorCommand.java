@@ -28,15 +28,10 @@ public class ColorCommand extends Command {
 
             colorImage.getDrawable().mutate().setColorFilter(newColor, PorterDuff.Mode.SRC_IN);
             if (!TouchView.shapes.isEmpty()) {
-                for (Shape shape : TouchView.shapes) {
-                    shape.setColor(context, newColor);
+                for (Movable movable : TouchView.shapes) {
+                    movable.setColor(context, newColor);
                 }
 
-            if (!TouchView.texts.isEmpty()) {
-                for (Shape shape : TouchView.texts) {
-                    shape.setColor(context, newColor);
-                }
-            }
             DesignActivity.touchView.invalidate();
             return true;
         }
@@ -47,17 +42,15 @@ public class ColorCommand extends Command {
     public void undo() {
         colorImage.getDrawable().mutate().setColorFilter(lastColor, PorterDuff.Mode.SRC_IN);
         if (!TouchView.shapes.isEmpty()) {
-            for (Shape shape : TouchView.shapes) {
-                shape.setColor(context, lastColor);
+            for (Movable movable : TouchView.shapes) {
+                movable.setColor(context, lastColor);
             }
         }
-        if (!TouchView.texts.isEmpty()) {
-            for (Shape shape : TouchView.texts) {
-                if(shape.getTag().equals("topping")){
-                    shape.setColor(context, lastColor);
-                }
-            }
-        }
+//        if (!TouchView.texts.isEmpty()) {
+//            for (Movable movable : TouchView.texts) {
+//                movable.setColor(context, lastColor);
+//            }
+//        }
         DesignActivity.currentColor = lastColor;
         DesignActivity.touchView.invalidate();
     }

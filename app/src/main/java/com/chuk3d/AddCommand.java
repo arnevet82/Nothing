@@ -16,10 +16,13 @@ public class AddCommand extends Command {
     private float x;
     private float y;
     private String type;
+    private String text;
 
-    public AddCommand(Context context, int resourceId, float x, float y, String type){
+
+    public AddCommand(Context context, int resourceId, String text, float x, float y, String type){
         this.context = context;
         this.resourceId = resourceId;
+        this.text = text;
         this.x = x;
         this.y = y;
         this.type = type;
@@ -27,19 +30,24 @@ public class AddCommand extends Command {
 
     @Override
     public boolean execute() {
-        try{
-            Drawable drawable = ContextCompat.getDrawable(context, resourceId);
-            Drawable colorDrawable = ContextCompat.getDrawable(context, resourceId);
-            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-            TouchView.shapes.add(ShapeFactory.getShape(drawable, colorDrawable, x, y, type));
-            colorDrawable.setBounds(0, 0, colorDrawable.getIntrinsicWidth(), colorDrawable.getIntrinsicHeight());
-            TouchView.shapes.getLast().setTag(type);
-            TouchView.shapes.getLast().setInitialColor(context);
-            DesignActivity.touchView.invalidate();
-        }catch (IndexOutOfBoundsException e){
-            Toast.makeText(context, "Unable to perform action", Toast.LENGTH_SHORT).show();
+
+        switch (type){
+            case "tShape":
+            case "pShape":
+
+                Movable movable = ShapeFactory.getShape(resourceId,x, y, type, context);
+                TouchView.shapes.add(movable);
+                Movable.setCurrent_movable(movable);
+                break;
+            case "tText":
+            case "pText":
+
+                movable = ShapeFactory.getShape(text,x, y, type, context);
+                TouchView.shapes.add(movable);
+                Movable.setCurrent_movable(movable);
+
+                break;
         }
-        TouchView.CURRENT_SHAPE = TouchView.shapes.size()-1;
 
         return true;
     }
@@ -47,7 +55,6 @@ public class AddCommand extends Command {
     @Override
     public void undo() {
         TouchView.shapes.removeLast();
-//        TouchView.CURRENT_SHAPE = TouchView.shapes.size()-1;
         DesignActivity.touchView.invalidate();
     }
 }

@@ -23,113 +23,12 @@ import static java.security.AccessController.getContext;
  * Created by Admin on 27/08/2017.
  */
 
-public class ToppingText extends Shape{
-    private Context context;
-    private float posX, posY;
-    private float scaleFactor = 1.f;
-    private float angle;
-    private StaticLayout sl;
-    private float textPivotx;
-    private float textPivoty;
-    private TextPaint textPaint;
-    private String tag;
+public class ToppingText extends Text{
 
-    int heightScreen;
-    int widthScreen;
 
-    public ToppingText(String text, Context context, String tag, float posX, float posY) {
-        super(posX, posY);
-        this.tag = tag;
-        this.context = context;
-        this.posX = posX;
-        this.posY = posY;
-
-        textPaint = new TextPaint();
-
+    public ToppingText(String text, float posX, float posY, Context context) {
+        super(text, posX, posY, context);
         setInitialColor(context);
-        textPaint.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
-        Typeface toppingTf = Typeface.createFromAsset(context.getAssets(), "Pacifico-Regular.ttf");
-        textPaint.setTypeface(toppingTf);
-
-        textPaint.setAntiAlias(true);
-        textPaint.setTextSize(100);
-        sl = new StaticLayout(text, textPaint,800,
-                Layout.Alignment.ALIGN_CENTER, 1f,0f,false);
-        textPivotx = sl.getWidth()/2;
-        textPivoty = sl.getHeight()/2;
-    }
-
-    public ToppingText(String text, Context context, float posX, float posY, float scaleFactor, float angle, String tag) {
-        super(posX, posY, scaleFactor, angle, tag);
-        this.tag = tag;
-        this.context = context;
-        this.posX = posX;
-        this.posY = posY;
-
-        textPaint = new TextPaint();
-
-        setInitialColor(context);
-        textPaint.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
-        Typeface toppingTf = Typeface.createFromAsset(context.getAssets(), "Pacifico-Regular.ttf");
-        textPaint.setTypeface(toppingTf);
-
-        textPaint.setAntiAlias(true);
-        textPaint.setTextSize(100);
-        sl = new StaticLayout(text, textPaint,800,
-                Layout.Alignment.ALIGN_CENTER, 1f,0f,false);
-        textPivotx = sl.getWidth()/2;
-        textPivoty = sl.getHeight()/2;
-
-        setInitialFont();
-    }
-
-
-    public String getTag() {
-        return tag;
-    }
-
-    public Paint getTextPaint() {
-        return textPaint;
-    }
-
-    public float getPosX() {
-        return posX;
-    }
-
-    public void setPosX(float posX) {
-        this.posX = posX;
-    }
-
-    public float getPosY() {
-        return posY;
-    }
-
-    public void setPosY(float posY) {
-        this.posY = posY;
-    }
-
-    public float getScaleFactor() {
-        return scaleFactor;
-    }
-
-    public void setScaleFactor(float scaleFactor) {
-        this.scaleFactor = scaleFactor;
-    }
-
-    public float getAngle() {
-        return angle;
-    }
-
-    public void setAngle(float angle) {
-        this.angle = angle;
-    }
-
-    public StaticLayout getSl() {
-        return sl;
-    }
-
-    public void setSl(StaticLayout sl) {
-        this.sl = sl;
     }
 
     @Override
@@ -144,7 +43,14 @@ public class ToppingText extends Shape{
 
     @Override
     public void setInitialColor(Context context) {
+        textPaint.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
+        Typeface toppingTf = Typeface.createFromAsset(context.getAssets(), "Pacifico-Regular.ttf");
+        textPaint.setTypeface(toppingTf);
+
+        textPaint.setAntiAlias(true);
         textPaint.setColor(DesignActivity.currentColor);
+
+
     }
 
     @Override
@@ -162,14 +68,6 @@ public class ToppingText extends Shape{
         textPaint.setTypeface(typeface);
     }
 
-    @Override
-    public void draw(Canvas canvas) {
-        canvas.save();
-        canvas.translate(posX, posY);
-        canvas.scale(scaleFactor, scaleFactor, textPivotx, textPivoty);
-        canvas.rotate(angle,textPivotx, textPivoty);
-        sl.draw(canvas);
-        canvas.restore();
-    }
+
 
 }

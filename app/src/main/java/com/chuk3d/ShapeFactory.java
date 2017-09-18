@@ -8,29 +8,21 @@ import android.graphics.drawable.Drawable;
  */
 
 public class ShapeFactory {
-    public static Shape getShape(Drawable drawable, Drawable colorDrawable, float posX, float posY, String tag){
-        if(tag.equals("punch")){
-            return new PunchShape(drawable, colorDrawable, posX, posY);
-        } else if(tag.equals("topping")){
-            return new ToppingShape(drawable, colorDrawable, posX, posY);
+
+    public static Shape getShape(int resourceId, float posX, float posY, String tag, Context context){
+        if(tag.equals("pShape")){
+            return new PunchShape(resourceId, posX, posY, context);
+        } else if(tag.equals("tShape")){
+            return new ToppingShape(resourceId, posX, posY, context);
         }
         return null;
     }
 
-    public static Shape getShape(Drawable drawable, Drawable colorDrawable, float posX, float posY, float scaleFactor, float angle, String tag, Context context){
-        if(tag.equals("punch")){
-            return new PunchShape(drawable, colorDrawable, posX, posY, scaleFactor, angle, tag);
-        } else if(tag.equals("topping")){
-            return new ToppingShape(drawable, colorDrawable, posX, posY, scaleFactor, angle, tag);
-        }
-        return null;
-    }
-
-    public static Shape getShape(String text, float posX, float posY,  String tag, Context context){
-        if(tag.equals("punch")){
-            return new PunchText(text, context, tag, posX, posY);
-        } else if(tag.equals("topping")){
-            return new ToppingText(text, context, tag, posX, posY);
+    public static Text getShape(String text, float posX, float posY,  String tag, Context context){
+        if(tag.equals("pText")){
+            return new PunchText(text, posX, posY, context);
+        } else if(tag.equals("tText")){
+            return new ToppingText(text, posX, posY, context);
         }
         return null;
     }

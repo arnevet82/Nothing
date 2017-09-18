@@ -323,26 +323,37 @@ public class DesignActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 editText.setVisibility(View.VISIBLE);
-                Shape shape = TouchView.texts.get(TouchView.CURRENT_TEXT);
+                Text text = (Text)Movable.current_movable;
+
+                editText.setText(text.getSl().getText());
+                text.setSl(new StaticLayout("", new TextPaint(),800,
+                        Layout.Alignment.ALIGN_CENTER, 1f,0f,false));
+
+
                 ToppingText toppingText;
                 PunchText punchText;
-                String tag = TouchView.texts.get(TouchView.CURRENT_TEXT).getTag();
-                switch (tag){
-                    case "topping":
-                        toppingText = (ToppingText) TouchView.texts.get(TouchView.CURRENT_TEXT);
-                        editText.setText(toppingText.getSl().getText());
-                        toppingText.setSl(new StaticLayout("", new TextPaint(),800,
-                                Layout.Alignment.ALIGN_CENTER, 1f,0f,false));
-                        break;
-                    case "punch":
-                        punchText = (PunchText) TouchView.texts.get(TouchView.CURRENT_TEXT);
-                        editText.setText(punchText.getSl().getText());
-                        punchText.setSl(new StaticLayout("", new TextPaint(),800,
-                                Layout.Alignment.ALIGN_CENTER, 1f,0f,false));
-                        break;
-                }
+//                String tag = TouchView.texts.get(TouchView.CURRENT_TEXT).getTag();
 
-                designEditText(shape.getTag());
+
+
+//                switch (tag){
+//
+//
+//                    case "topping":
+//                        toppingText = (ToppingText) TouchView.texts.get(TouchView.CURRENT_TEXT);
+//                        editText.setText(toppingText.getSl().getText());
+//                        toppingText.setSl(new StaticLayout("", new TextPaint(),800,
+//                                Layout.Alignment.ALIGN_CENTER, 1f,0f,false));
+//                        break;
+//                    case "punch":
+//                        punchText = (PunchText) TouchView.texts.get(TouchView.CURRENT_TEXT);
+//                        editText.setText(punchText.getSl().getText());
+//                        punchText.setSl(new StaticLayout("", new TextPaint(),800,
+//                                Layout.Alignment.ALIGN_CENTER, 1f,0f,false));
+//                        break;
+//                }
+//
+//                designEditText(shape.getTag());
                 touchView.invalidate();
                 editText.requestFocus();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -350,7 +361,7 @@ public class DesignActivity extends AppCompatActivity
                 vText.setVisibility(View.VISIBLE);
                 currentNumText.setText("T");
 
-                onVTextClicked(shape.getTag(), "edit");
+//                onVTextClicked(tag, "edit");
             }
         });
     }
@@ -384,7 +395,7 @@ public class DesignActivity extends AppCompatActivity
         if(textContainer.getVisibility()==View.VISIBLE){
             textContainer.setVisibility(View.INVISIBLE);
             text.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.almostWhite),PorterDuff.Mode.SRC_IN);
-            if(!TouchView.shapes.isEmpty() || !TouchView.texts.isEmpty() || currentColor != 0){
+            if(!TouchView.shapes.isEmpty() || currentColor != 0){
                 showGridAndUndo();
             }
         }else{
@@ -422,17 +433,20 @@ public class DesignActivity extends AppCompatActivity
 
                 switch (mState){
                     case "normal":
-                        touchView.executeTextCommand(getApplicationContext(), text, mTag);
-                        currentNumText.setText("T");
+                        touchView.executeAddCommand(getApplicationContext(), 0, text, mTag);
+//                        touchView.executeTextCommand(getApplicationContext(), text, mTag);
+//                        currentNumText.setText("T");
                         cleanBarButtons();
                         break;
                     case "edit":
                         float posX = widthScreen / 6.5f;
                         float posY = heightScreen / 5.3f;
-                        TextCommand textCommand = new TextCommand(getApplicationContext(), text, posX,posY, mTag);
-                        textCommand.edit();
+//                        TextCommand textCommand = new TextCommand(getApplicationContext(), text, posX,posY, mTag);
+//                        textCommand.edit();
                         break;
                 }
+                editText.setText("");
+                editText.setVisibility(View.INVISIBLE);
                 vButton.setVisibility(View.VISIBLE);
                 showDeleteAndRotate();
                 showGridAndUndo();
@@ -456,17 +470,19 @@ public class DesignActivity extends AppCompatActivity
                     TcurrentFont = typefaces[i];
                 }
 
-                if(!TouchView.texts.isEmpty()){
-                    switch (TouchView.texts.get(TouchView.CURRENT_TEXT).getTag()){
-                        case "topping":
-                            ToppingText toppingText = (ToppingText)TouchView.texts.get(TouchView.CURRENT_TEXT);
-                            toppingText.setFont(TcurrentFont);
-                            break;
-                        case "punch":
-                            PunchText punchText = (PunchText)TouchView.texts.get(TouchView.CURRENT_TEXT);
-                            punchText.setFont(PcurrentFont);
-                            break;
-                    }
+                if(!TouchView.shapes.isEmpty()){
+                    //TODO
+//                    TouchView.texts.get(TouchView.CURRENT_TEXT).setInitialFont();
+//                    switch (TouchView.texts.get(TouchView.CURRENT_TEXT).getTag()){
+//                        case "topping":
+//                            ToppingText toppingText = (ToppingText)TouchView.texts.get(TouchView.CURRENT_TEXT);
+//                            toppingText.setFont(TcurrentFont);
+//                            break;
+//                        case "punch":
+//                            PunchText punchText = (PunchText)TouchView.texts.get(TouchView.CURRENT_TEXT);
+//                            punchText.setFont(PcurrentFont);
+//                            break;
+//                    }
                 }
             }
 
@@ -522,8 +538,7 @@ public class DesignActivity extends AppCompatActivity
                 rotationBar.setVisibility(View.INVISIBLE);
                 fontsBar.setVisibility(View.INVISIBLE);
                 textPunchToppingChoice.setVisibility(View.INVISIBLE);
-                TouchView.CURRENT_SHAPE = -1;
-                TouchView.CURRENT_TEXT = -1;
+                Movable.current_movable = null;
                 showGridAndUndo();
                 hideDeleteAndRotate();
             }
@@ -549,7 +564,7 @@ public class DesignActivity extends AppCompatActivity
         if(colorBar.getVisibility() == View.VISIBLE){
             colorBar.setVisibility(View.INVISIBLE);
             color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.almostWhite),PorterDuff.Mode.SRC_IN);
-            if(!TouchView.shapes.isEmpty() || !TouchView.texts.isEmpty() || currentColor != 0){
+            if(!TouchView.shapes.isEmpty() || currentColor != 0){
                 showGridAndUndo();
             }
         }else{
@@ -566,8 +581,9 @@ public class DesignActivity extends AppCompatActivity
 
     public void colorClick(View view) {
 
-        Button b = (Button) view;
+
         color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.white),PorterDuff.Mode.SRC_IN);
+        Button b = (Button) view;
         int newColor = ((ColorDrawable)b.getBackground()).getColor();
         ColorCommand colorCommand = new ColorCommand(this, colorImage, newColor);
         boolean isExecute = colorCommand.execute();
@@ -647,7 +663,7 @@ public class DesignActivity extends AppCompatActivity
             toppingTabLayout.setVisibility(View.INVISIBLE);
             toppingViewPager.setVisibility(View.INVISIBLE);
             topping.setImageDrawable(getResources().getDrawable(R.drawable.topping_icon));
-            if(!TouchView.shapes.isEmpty() || !TouchView.texts.isEmpty() || currentColor != 0){
+            if(!TouchView.shapes.isEmpty() || currentColor != 0){
                 showGridAndUndo();
             }
         }else{
@@ -665,7 +681,7 @@ public class DesignActivity extends AppCompatActivity
             punchTabLayout.setVisibility(View.INVISIBLE);
             punchViewPager.setVisibility(View.INVISIBLE);
             punch.setImageDrawable(getResources().getDrawable(R.drawable.topping_icon));
-            if(!TouchView.shapes.isEmpty() || !TouchView.texts.isEmpty() || currentColor != 0){
+            if(!TouchView.shapes.isEmpty() || currentColor != 0){
                 showGridAndUndo();
             }
         }else{
@@ -685,7 +701,7 @@ public class DesignActivity extends AppCompatActivity
 
         int resourceId = getResources().getIdentifier("@" + view.getTag(), "drawable", this.getPackageName());
 
-        touchView.executeAddCommand(this, resourceId, "topping");
+        touchView.executeAddCommand(this, resourceId, "", "tShape");
         currentNumText.setText("S");
         Log.e("currentNumText", currentNumText.getText().toString());
         hideAllUIElements();
@@ -701,7 +717,7 @@ public class DesignActivity extends AppCompatActivity
         punchTabLayout.setVisibility(View.VISIBLE);
 
         int resourceId = getResources().getIdentifier("@" + view.getTag(), "drawable", this.getPackageName());
-        touchView.executeAddCommand(this, resourceId, "punch");
+        touchView.executeAddCommand(this, resourceId, "", "pShape");
         currentNumText.setText("S");
 
         hideAllUIElements();
@@ -711,7 +727,7 @@ public class DesignActivity extends AppCompatActivity
     }
 
     public void onDeleteBtnClicked(View v) {
-        if(!TouchView.shapes.isEmpty() || !TouchView.texts.isEmpty()){
+        if(!TouchView.shapes.isEmpty() ){
             DeleteCommand deleteCommand = new DeleteCommand(touchView);
             deleteCommand.execute();
             clearGrayColor();
@@ -730,8 +746,8 @@ public class DesignActivity extends AppCompatActivity
 
     public void rotationClick(View view) {
         float newAngle = Float.parseFloat(view.getTag().toString());
-        if(!TouchView.shapes.isEmpty()&& TouchView.CURRENT_SHAPE > -1){
-            touchView.executeAngleCommand(TouchView.shapes.get(TouchView.CURRENT_SHAPE), newAngle);
+        if(Movable.current_movable != null){
+            touchView.executeAngleCommand(Movable.current_movable, newAngle);
         }else{
             touchView.executeAngleCommand(null, newAngle);
         }
@@ -749,17 +765,17 @@ public class DesignActivity extends AppCompatActivity
 
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
-                        if(!TouchView.shapes.isEmpty()&&TouchView.CURRENT_SHAPE > -1){
-                            angleCommand = new AngleCommand(TouchView.shapes.get(TouchView.CURRENT_SHAPE));
+                        if(Movable.current_movable != null){
+                            angleCommand = new AngleCommand(Movable.current_movable);
                         }else{
                             angleCommand = new AngleCommand(null);
                         }
                         x = motionEvent.getX();
 
-                        if (currentNumText.getText().equals("T")&&!TouchView.texts.isEmpty()) {
-                            delta = (x - TouchView.texts.get(TouchView.CURRENT_TEXT).getAngle());
+                        if (currentNumText.getText().equals("T")&&!TouchView.shapes.isEmpty()) {
+                            delta = (x - Movable.current_movable.getAngle());
                         } else if (!TouchView.shapes.isEmpty()) {
-                            delta = (x - TouchView.shapes.get(TouchView.CURRENT_SHAPE).getAngle());
+                            delta = (x - Movable.current_movable.getAngle());
                         }
 
                         break;
@@ -1003,7 +1019,7 @@ public class DesignActivity extends AppCompatActivity
             designContainer.setScaleX(1);
             designContainer.setScaleY(1);
             title.setText("Create your design");
-            if(!TouchView.shapes.isEmpty() || !TouchView.texts.isEmpty() || currentColor != 0){
+            if(!TouchView.shapes.isEmpty()  || currentColor != 0){
                 showGridAndUndo();
             }
         }else if(bPaymentScreen.getVisibility()==View.VISIBLE) {
@@ -1037,11 +1053,7 @@ public class DesignActivity extends AppCompatActivity
         while (!TouchView.shapes.isEmpty()) {
             TouchView.shapes.remove(0);
         }
-        TouchView.CURRENT_SHAPE = -1;
-        while (!TouchView.texts.isEmpty()) {
-            TouchView.texts.remove(0);
-        }
-        TouchView.CURRENT_TEXT = -1;
+        Movable.current_movable = null;
         currentColor = 0;
     }
 

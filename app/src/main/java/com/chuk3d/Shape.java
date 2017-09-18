@@ -2,7 +2,11 @@ package com.chuk3d;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
+import android.view.MotionEvent;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -10,79 +14,82 @@ import java.util.List;
  * Created by Admin on 17/08/2017.
  */
 
-public abstract class Shape {
+public abstract class Shape extends Movable {
+    protected Drawable drawable;
+    protected Drawable colorDrawable;
+    public static float pivotx;
+    public static float pivoty;
 
-    protected float posX, posY;
-    protected float scaleFactor = 1.f;
-    protected float angle;
-    protected String tag;
-
-    public Shape(float posX, float posY){
-
-        this.posX = posX;
-        this.posY = posY;
-
+    public Shape(int resourceId, float posX, float posY, Context context) {
+        super(posX, posY);
+        Drawable drawable = ContextCompat.getDrawable(context, resourceId);
+        Drawable colorDrawable = ContextCompat.getDrawable(context, resourceId);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        this.drawable = drawable;
+        this.colorDrawable = colorDrawable;
     }
 
-    public Shape(float posX, float posY, float scaleFactor, float angle, String tag){
-
-        this.posX = posX;
-        this.posY = posY;
-        this.scaleFactor = scaleFactor;
-        this.angle = angle;
-        this.tag = tag;
-
+    public float getWidth(){
+        return drawable.getIntrinsicWidth();
     }
 
-    public float getPosX() {
-        return posX;
+    public float getHeight(){
+        return drawable.getIntrinsicHeight();
     }
 
-    public void setPosX(float posX) {
-        this.posX = posX;
+    public Drawable getDrawable() {
+        return drawable;
     }
 
-    public float getPosY() {
-        return posY;
+    public void setDrawable(Drawable drawable) {
+        this.drawable = drawable;
     }
 
-    public void setPosY(float posY) {
-        this.posY = posY;
+    public Drawable getColorDrawable() {
+        return colorDrawable;
     }
 
-    public float getScaleFactor() {
-        return scaleFactor;
+    public void setColorDrawable(Drawable colorDrawable) {
+        this.colorDrawable = colorDrawable;
     }
 
-    public void setScaleFactor(float scaleFactor) {
-        this.scaleFactor = scaleFactor;
+    @Override
+    public void setGrayColor(Context context) {
+        colorDrawable.mutate().setColorFilter(context.getResources().getColor(R.color.editGraysmallShape), PorterDuff.Mode.SRC_IN);
     }
 
-    public float getAngle() {
-        return angle;
-    }
-
-    public void setAngle(float angle) {
-        this.angle = angle;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
-    public void setColor(Context context, int color){}
-
-    public void setClickColor(Context context){}
-
-    public void setInitialColor(Context context){}
-
-    public void setGrayColor(Context context){}
-
+    @Override
     public void draw(Canvas canvas) {
+        canvas.save();
+        canvas.translate(posX, posY);
+        canvas.scale(scaleFactor, scaleFactor, pivotx, pivoty);
+        canvas.rotate(angle,pivotx, pivoty);
+        drawable.draw(canvas);
+        colorDrawable.draw(canvas);
+        canvas.restore();
+    }
 
+    @Override
+    public boolean isClicked(MotionEvent event, float mScaleFactor, Context context) {
+
+        float currentScaleFactor = Math.max(1f, Math.min(mScaleFactor, 1.3f));
+
+        float x = posX*0.9f;
+        float y = posY;
+        float xEnd = (posX + context.getResources().getDimension(R.dimen.punch_size))*currentScaleFactor;
+        float yEnd = (posY + context.getResources().getDimension(R.dimen.punch_size))*currentScaleFactor;
+
+        if ((event.getX() >= x && event.getX() <= xEnd)
+                && (event.getY() >= y && event.getY() <= yEnd)){
+
+            if (currentScaleFactor != 0) {
+
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        return false;
     }
 }

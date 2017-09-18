@@ -24,7 +24,7 @@
         android:layout_height="wrap_content">
 
         <ImageButton
-            android:tag="punch"
+            android:tag="pText"
             android:onClick="onTextPunchTopClicked"
             android:id="@+id/text_punch"
             android:paddingLeft="35dp"
@@ -41,7 +41,7 @@
             android:background="@color/colorPrimary"
             android:scaleType="center" />
         <ImageButton
-            android:tag="topping"
+            android:tag="tText"
             android:onClick="onTextPunchTopClicked"
             android:id="@+id/text_topping"
             android:paddingLeft="25dp"

@@ -21,9 +21,8 @@ import java.util.NoSuchElementException;
 
 public class TouchView extends View {
 
-    public static LinkedList<Shape> shapes = new LinkedList<>();
+    public static LinkedList<Movable> shapes = new LinkedList<>();
 
-    public static LinkedList<Shape> texts = new LinkedList<>();
 
     private float mPosX;
     private float mPosY;
@@ -42,8 +41,8 @@ public class TouchView extends View {
     private ScaleGestureDetector mScaleDetector;
     private float mScaleFactor = 1.f;
 
-    public static int CURRENT_SHAPE = -1;
-    public static int CURRENT_TEXT = -1;
+//    public static int CURRENT_SHAPE = -1;
+//    public static int CURRENT_TEXT = -1;
 
     public static float textScaleFactor = 1.f;
 
@@ -80,65 +79,60 @@ public class TouchView extends View {
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        for(Shape shape:shapes){
-            shape.draw(canvas);
-        }
-
-        for(Shape shape: texts){
-            shape.draw(canvas);
+        for(Movable movable:shapes){
+            movable.draw(canvas);
         }
 
     }
 
-    private boolean clickOnShape(Shape shape, MotionEvent event) {
+//    private boolean clickOnShape(Movable movable, MotionEvent event) {
+//
+//        float scaleFactor = movable.getScaleFactor();
+//        scaleFactor = Math.max(1f, Math.min(mScaleFactor, 1.3f));
+//
+//        float x = (movable.getPosX()*0.9f);
+//        float y = movable.getPosY();
+//        float xEnd = (movable.getPosX() + getResources().getDimension(R.dimen.punch_size))*scaleFactor;
+//        float yEnd = (movable.getPosY() + getResources().getDimension(R.dimen.punch_size))*scaleFactor;
+//
+//        if ((event.getX() >= x && event.getX() <= xEnd)
+//                && (event.getY() >= y && event.getY() <= yEnd)){
+//
+//            if (!(movable.getScaleFactor() == 0)) {
+//
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        }
+//
+//        return false;
+//    }
 
-        float scaleFactor = shape.getScaleFactor();
-        scaleFactor = Math.max(1f, Math.min(mScaleFactor, 1.3f));
-
-        float x = (shape.getPosX()*0.9f);
-        float y = shape.getPosY();
-        float xEnd = (shape.getPosX() + getResources().getDimension(R.dimen.punch_size))*scaleFactor;
-        float yEnd = (shape.getPosY() + getResources().getDimension(R.dimen.punch_size))*scaleFactor;
-
-        if ((event.getX() >= x && event.getX() <= xEnd)
-                && (event.getY() >= y && event.getY() <= yEnd)){
-
-            if (!(shape.getScaleFactor() == 0)) {
-
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean clickOnText(Shape shape, MotionEvent event) {
-
-        float xEnd = shape.getPosX() + textScaleFactor*250;
-        float yEnd = shape.getPosY() + textScaleFactor*150;
-
-        if ((event.getX() >= (shape.getPosX()) && event.getX() <= (xEnd))
-                && (event.getY() >= (shape.getPosY()) && event.getY() <= yEnd)) {
-
-            if (!(shape.getScaleFactor() == 0)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return false;
-
-    }
+//    private boolean clickOnText(Movable movable, MotionEvent event) {
+//
+//        float xEnd = movable.getPosX() + textScaleFactor*250;
+//        float yEnd = movable.getPosY() + textScaleFactor*150;
+//
+//        if ((event.getX() >= (movable.getPosX()) && event.getX() <= (xEnd))
+//                && (event.getY() >= (movable.getPosY()) && event.getY() <= yEnd)) {
+//
+//            if (!(movable.getScaleFactor() == 0)) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        }
+//        return false;
+//
+//    }
 
 
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-
-        LinkedList<Integer>clickedShapes = new LinkedList<>();
-        LinkedList<Integer>clickedTexts = new LinkedList<>();
+//        LinkedList<Integer>clickedShapes = new LinkedList<>();
+//        LinkedList<Integer>clickedTexts = new LinkedList<>();
 
         mScaleDetector.onTouchEvent(ev);
 
@@ -146,74 +140,35 @@ public class TouchView extends View {
 
         switch (action & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN: {
-                if(shapes.isEmpty()&& texts.isEmpty()){
+                if(!shapes.isEmpty()){
                     // do nothing
-                }else{
 
-                    switch (DesignActivity.vButton.getVisibility()){
-                        case VISIBLE:
-                            if(!shapes.isEmpty()&&CURRENT_SHAPE > -1){
-                                moveCommand = new MoveCommand(shapes.get(CURRENT_SHAPE));
-                            }
-                            // do nothing
-                            break;
-                        case INVISIBLE:
+                    Movable movable = Movable.getCurrent_movable(ev, mScaleFactor, getContext());
 
-                            for(int i = 0; i < shapes.size(); i++){
-                                if(clickOnShape(shapes.get(i), ev)){
-                                    clickedShapes.add(i);
-                                }
-                            }
+                    if (movable != null) {
+                        moveCommand = new MoveCommand(movable);
+                        DesignActivity.vButton.setVisibility(VISIBLE);
+                        DesignActivity.showDeleteAndRotate();
+                        invalidate();
 
-                            if(!clickedShapes.isEmpty()){
-                                CURRENT_SHAPE = clickedShapes.getLast();
-                                moveCommand = new MoveCommand(shapes.get(CURRENT_SHAPE));
-                                fillColorShapes();
-                                shapes.get(CURRENT_SHAPE).setClickColor(getContext());
-
-                                DesignActivity.currentNumText.setText("S");
-                                DesignActivity.vButton.setVisibility(VISIBLE);
-                                DesignActivity.showDeleteAndRotate();
-                            }else{
-                                for(int i = 0; i < texts.size(); i++){
-                                    if(clickOnText(texts.get(i), ev)){
-                                        clickedTexts.add(i);
-                                    }
-                                }
-                                if(!clickedTexts.isEmpty()){
-
-                                    CURRENT_TEXT = clickedTexts.getLast();
-                                    fillColorShapes();
-                                    texts.get(CURRENT_TEXT).setGrayColor(getContext());
-                                    DesignActivity.currentNumText.setText("T");
-                                    DesignActivity.vButton.setVisibility(VISIBLE);
-                                    DesignActivity.showDeleteAndRotate();
-                                    DesignActivity.initFonts(texts.get(CURRENT_TEXT).getTag());
-
-                                }else{
-                                    //do nothing
-                                }
-                            }
-
-                            break;
-                        default:
-                            //do nothing
-                            break;
+                        final float x = ev.getX();
+                        final float y = ev.getY();
+                        mLastTouchX = x;
+                        mLastTouchY = y;
+                        mActivePointerId = ev.getPointerId(0);
                     }
 
-                    final float x = ev.getX();
-                    final float y = ev.getY();
-                    mLastTouchX = x;
-                    mLastTouchY = y;
-                    mActivePointerId = ev.getPointerId(0);
-                    invalidate();
-                }
+                    }
+
                 break;
+
             }
 
+
             case MotionEvent.ACTION_MOVE: {
-                if (shapes.isEmpty()&& texts.isEmpty()) {
-                } else {
+                Movable movable = Movable.current_movable;
+
+                if (movable != null) {
                     final int pointerIndex = ev.findPointerIndex(mActivePointerId);
                     if (pointerIndex >= 0) {
 
@@ -225,32 +180,41 @@ public class TouchView extends View {
                             final float dx = x - mLastTouchX;
                             final float dy = y - mLastTouchY;
 
+                            if(moveCommand != null){
 
-                            if (DesignActivity.currentNumText.getText().equals("T")&& CURRENT_TEXT > -1) {
-                                float xpos = texts.get(CURRENT_TEXT).getPosX();
-                                float ypos = texts.get(CURRENT_TEXT).getPosY();
-                                texts.get(CURRENT_TEXT).setPosX(xpos += dx);
-                                texts.get(CURRENT_TEXT).setPosY(ypos += dy);
+                                float xpos = movable.getPosX();
+                                float ypos = movable.getPosY();
 
-                            } else {
-                                try{
-                                    float xpos = shapes.get(CURRENT_SHAPE).getPosX();
-                                    float ypos = shapes.get(CURRENT_SHAPE).getPosY();
-
-                                    if(moveCommand != null){
-                                        moveCommand.setNewX(xpos+dx);
-                                        moveCommand.setNewY(ypos+dy);
-                                        moveCommand.execute();
-                                    }
-
-                                }catch (IndexOutOfBoundsException e){
-
-                                }catch (NoSuchElementException e){
-
-                                }
+                                moveCommand.setNewX(xpos+dx, getWidth());
+                                moveCommand.setNewY(ypos+dy, getHeight());
+                                moveCommand.execute();
+                                invalidate();
                             }
+//                            if (DesignActivity.currentNumText.getText().equals("T")&& CURRENT_TEXT > -1) {
+//                                float xpos = texts.get(CURRENT_TEXT).getPosX();
+//                                float ypos = texts.get(CURRENT_TEXT).getPosY();
+//                                texts.get(CURRENT_TEXT).setPosX(xpos += dx);
+//                                texts.get(CURRENT_TEXT).setPosY(ypos += dy);
+//
+//                            } else {
+//                                try{
+//                                    float xpos = shapes.get(CURRENT_SHAPE).getPosX();
+//                                    float ypos = shapes.get(CURRENT_SHAPE).getPosY();
+//
+//                                    if(moveCommand != null){
+//                                        moveCommand.setNewX(xpos+dx);
+//                                        moveCommand.setNewY(ypos+dy);
+//                                        moveCommand.execute();
+//                                    }
+//
+//                                }catch (IndexOutOfBoundsException e){
+//
+//                                }catch (NoSuchElementException e){
+//
+//                                }
+//                            }
 
-                            invalidate();
+//                            invalidate();
 
                         }
                         mLastTouchX = x;
@@ -266,6 +230,8 @@ public class TouchView extends View {
 
                 if (moveCommand!= null && moveCommand.isExecute()) {
                     commandStack.push(moveCommand);
+                    moveCommand = null;
+
                 }
                 break;
             }
@@ -323,8 +289,9 @@ public class TouchView extends View {
             if(DesignActivity.currentNumText.equals("T")){
 
             }else{
-                if(!shapes.isEmpty()&&CURRENT_SHAPE>-1)
-                    scaleCommand = new ScaleCommand(shapes.get(CURRENT_SHAPE));
+                if(Movable.current_movable != null){
+                    scaleCommand = new ScaleCommand(Movable.current_movable);
+                }
             }
             return true;
         }
@@ -344,11 +311,11 @@ public class TouchView extends View {
         }
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            if(DesignActivity.currentNumText.getText().equals("T") && texts.size()>-1 ) {
+            if(DesignActivity.currentNumText.getText().equals("T") ) {
                 textScaleFactor *= detector.getScaleFactor();
 
                 textScaleFactor = Math.max(0.1f, Math.min(textScaleFactor, 5.0f));
-                texts.get(CURRENT_TEXT).setScaleFactor(textScaleFactor);
+//                texts.get(CURRENT_TEXT).setScaleFactor(textScaleFactor);
             }else {
                 try{
                     mScaleFactor *= detector.getScaleFactor();
@@ -369,35 +336,26 @@ public class TouchView extends View {
         }
     }
 
-    public void fillColorShapes(){
-        DesignActivity.vButton.setVisibility(VISIBLE);
-        DesignActivity.colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.editGrayBigShape),PorterDuff.Mode.SRC_IN);
-        for(Shape shape:shapes){
-            shape.setGrayColor(getContext());
-        }
-        for(Shape shape : texts){
-            shape.setGrayColor(getContext());
-        }
-    }
+//    public void fillColorShapes(){
+//        DesignActivity.vButton.setVisibility(VISIBLE);
+//        DesignActivity.colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.editGrayBigShape),PorterDuff.Mode.SRC_IN);
+//        for(Movable movable:shapes){
+//            movable.setGrayColor(getContext());
+//        }
+//
+//    }
 
-    public void executeAddCommand(Context context, int resourceId, String type) {
-        AddCommand addCommand = new AddCommand(context, resourceId, mPosX, mPosY, type);
+    public void executeAddCommand(Context context, int resourceId, String text, String type) {
+        AddCommand addCommand = new AddCommand(context, resourceId, text, mPosX, mPosY, type);
         boolean isExecute = addCommand.execute();
         if (isExecute) {
             commandStack.push(addCommand);
         }
     }
 
-    public void executeTextCommand(Context context, String text, String type) {
-        TextCommand textCommand = new TextCommand(context, text, tPosX,tPosY, type);
-        boolean isExecute = textCommand.execute();
-        if (isExecute) {
-            commandStack.push(textCommand);
-        }
-    }
 
-    public void executeAngleCommand(Shape shape, float newAngle) {
-        AngleCommand angleCommand = new AngleCommand(shape, newAngle);
+    public void executeAngleCommand(Movable movable, float newAngle) {
+        AngleCommand angleCommand = new AngleCommand(movable, newAngle);
         boolean isExecute = angleCommand.execute();
         if (isExecute) {
             commandStack.push(angleCommand);

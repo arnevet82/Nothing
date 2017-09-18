@@ -6,14 +6,14 @@ package com.chuk3d;
 
 public class ScaleCommand extends Command {
 
-    private Shape shape;
+    private Movable movable;
     protected float newScaleFactor;
     protected float lastScaleFactor;
     private boolean isExecute = false;
 
-    public ScaleCommand(Shape shape) {
-        this.shape = shape;
-        this.lastScaleFactor = shape.getScaleFactor();
+    public ScaleCommand(Movable movable) {
+        this.movable = movable;
+        this.lastScaleFactor = movable.getScaleFactor();
     }
 
     public void setNewScaleFactor(float newScaleFactor) {
@@ -27,7 +27,7 @@ public class ScaleCommand extends Command {
     @Override
     public boolean execute() {
         if (newScaleFactor != lastScaleFactor) {
-            shape.setScaleFactor(newScaleFactor);
+            movable.setScaleFactor(newScaleFactor);
             DesignActivity.touchView.invalidate();
             isExecute = true;
         }
@@ -36,7 +36,7 @@ public class ScaleCommand extends Command {
 
     @Override
     public void undo() {
-        shape.setScaleFactor(lastScaleFactor);
+        movable.setScaleFactor(lastScaleFactor);
         DesignActivity.touchView.invalidate();
     }
 }

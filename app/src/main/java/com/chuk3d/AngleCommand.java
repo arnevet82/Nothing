@@ -6,22 +6,22 @@ package com.chuk3d;
 
 public class AngleCommand extends Command {
 
-    private Shape shape;
+    private Movable movable;
     private float newAngle;
     private float lastAngle;
     private boolean isExecute = false;
 
-    public AngleCommand(Shape shape) {
-        if(shape !=null){
-            this.shape = shape;
-            this.lastAngle = shape.getAngle();
+    public AngleCommand(Movable movable) {
+        if(movable !=null){
+            this.movable = movable;
+            this.lastAngle = movable.getAngle();
         }
     }
 
-    public AngleCommand(Shape shape, float newAngle) {
-        if(shape !=null){
-            this.shape = shape;
-            this.lastAngle = shape.getAngle();
+    public AngleCommand(Movable movable, float newAngle) {
+        if(movable !=null){
+            this.movable = movable;
+            this.lastAngle = movable.getAngle();
         }
         this.newAngle = newAngle;
     }
@@ -38,9 +38,9 @@ public class AngleCommand extends Command {
     public boolean execute() {
         if (newAngle != lastAngle) {
             if (DesignActivity.currentNumText.getText().equals("T")) {
-                TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle(newAngle);
+//                TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle(newAngle);
             } else if (!TouchView.shapes.isEmpty()) {
-                shape.setAngle(newAngle);
+                movable.setAngle(newAngle);
             }
             DesignActivity.touchView.invalidate();
             isExecute = true;
@@ -52,13 +52,13 @@ public class AngleCommand extends Command {
     @Override
     public void undo() {
         if (DesignActivity.currentNumText.getText().equals("T")) {
-            if(!TouchView.texts.isEmpty()&&TouchView.CURRENT_TEXT > -1){
-                TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle(lastAngle);
+            if(Movable.current_movable != null){
+//                TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle(lastAngle);
             }else{
-                TouchView.texts.getLast().setAngle(lastAngle);
+//                TouchView.texts.getLast().setAngle(lastAngle);
             }
         } else if (!TouchView.shapes.isEmpty()) {
-            shape.setAngle(lastAngle);
+            movable.setAngle(lastAngle);
         }
         DesignActivity.touchView.invalidate();
     }
