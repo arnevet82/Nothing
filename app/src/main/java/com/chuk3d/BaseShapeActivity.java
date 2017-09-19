@@ -2,12 +2,14 @@ package com.chuk3d;
 
 import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -38,17 +40,15 @@ public class BaseShapeActivity extends AppCompatActivity
     ImageButton next;
     TabLayout tabLayout;
     ImageView mainImage;
-    static ImageView colorImage;
+    ImageView colorImage;
     public BaseShapeTabPager baseShapeTabPager;
     ImageView rotateSlide, rotateRuler, rotateLine;
     RelativeLayout rotationBar;
     Button degrees0, degrees90, degrees180, degrees270, degrees360;
     NestedScrollView scrollView;
 
-
-    public static int imagePosition;
-    public static float imageRotation;
-    public static int[] baseShapes = new int[36];
+    public int resourceId = 0;
+    public float imageRotation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +64,16 @@ public class BaseShapeActivity extends AppCompatActivity
     @Override
     protected void onResume() {
 
-        imagePosition = 0;
-        imageRotation = 0;
-        baseShapes = new int[]{R.drawable.g_base_shape_1, R.drawable.g_base_shape_2, R.drawable.g_base_shape_3, R.drawable.g_base_shape_4, R.drawable.g_base_shape_5, R.drawable.g_base_shape_6, R.drawable.g_base_shape_7, R.drawable.g_base_shape_8, R.drawable.g_base_shap_9, R.drawable.g_base_shape_10, R.drawable.g_base_shape_11, R.drawable.g_base_shape_12, R.drawable.g_base_shape_13, R.drawable.g_base_shape_14, R.drawable.g_base_shape_15, R.drawable.g_base_shape_16, R.drawable.g_base_shape_17, R.drawable.g_base_shape_18, R.drawable.g_base_shape_19, R.drawable.g_base_shape_20, R.drawable.g_base_shape_21, R.drawable.g_base_shape_22, R.drawable.g_base_shape_23, R.drawable.g_base_shape_24, R.drawable.g_base_shape_25, R.drawable.g_base_shape_26, R.drawable.g_base_shape_27, R.drawable.g_base_shape_28, R.drawable.g_base_shape_29, R.drawable.g_base_shape_30, R.drawable.g_base_shape_31, R.drawable.g_base_shape_32, R.drawable.g_base_shape_33, R.drawable.g_base_shape_34, R.drawable.g_base_shape_35, R.drawable.g_base_shape_36};
+        resourceId = getResources().getIdentifier("@drawable/g_base_shape_1", "drawable", this.getPackageName());
+        Drawable drawable = ContextCompat.getDrawable(this, resourceId);
+        Drawable colorDrawable = ContextCompat.getDrawable(this, resourceId);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        colorDrawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        mainImage.setImageDrawable(drawable);
+        colorImage.setImageDrawable(colorDrawable);
+        colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
+        mainImage.setRotation(0);
+        colorImage.setRotation(0);
 
         super.onResume();
     }
@@ -107,25 +114,22 @@ public class BaseShapeActivity extends AppCompatActivity
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
                         x = motionEvent.getX()/3;
-                        delta = (x/3 - mainImage.getRotation());
+                        delta = (x - mainImage.getRotation());
                         deltaC = motionEvent.getX()- rotateSlide.getX();
                         break;
                     case MotionEvent.ACTION_MOVE:
                         x = motionEvent.getX()/3;
-                        mainImage.setRotation((x/3 - delta));
-                        colorImage.setRotation((x/3 - delta));
+                        mainImage.setRotation((x - delta));
+                        colorImage.setRotation((x - delta));
+                        imageRotation = (x - delta);
+
                         slideLimit = motionEvent.getX()- deltaC;
                         if(slideLimit < (rotateLine.getRight()*0.55f) && slideLimit > 40){
                             rotateSlide.setX(slideLimit);
                         }
                         break;
                     case MotionEvent.ACTION_UP:
-                        mainImage.setRotation((x/3 - delta));
-                        colorImage.setRotation((x/3 - delta));
-                        imageRotation = (x/3 - delta);
-                        if(slideLimit < (rotateLine.getRight()*0.55f) && slideLimit > 50){
-                            rotateSlide.setX(slideLimit);
-                        }
+
                         break;
                 }
 
@@ -143,67 +147,30 @@ public class BaseShapeActivity extends AppCompatActivity
             public void onClick(View v) {
 
                 Intent intent = new Intent(getApplication(), DesignActivity.class);
-                intent.putExtra(DesignActivity.POSITION_KEY, imagePosition);
+                intent.putExtra(DesignActivity.RESOURCE_ID_KEY, resourceId);
                 intent.putExtra(DesignActivity.MAIN_IMAGE_ROTATION, imageRotation);
-                intent.putExtra(DesignActivity.BASE_SHAPE_ARRAY_KEY, baseShapes);
-
-
                 startActivity(intent);
-
-
             }
         });
     }
 
 
 
-
-
     @Override
-    public int onBaseButtonClicked(View view) {
+    public void onBaseButtonClicked(View view) {
 
-        int[]buttonId = {R.id.base1, R.id.base2, R.id.base3, R.id.base4, R.id.base5, R.id.base6, R.id.base7, R.id.base8, R.id.base9, R.id.base10, R.id.base11, R.id.base12, R.id.base13, R.id.base14, R.id.base15, R.id.base16, R.id.base17, R.id.base18, R.id.base19, R.id.base20, R.id.base21, R.id.base22, R.id.base23, R.id.base24, R.id.base25, R.id.base26, R.id.base27, R.id.base28, R.id.base29, R.id.base30, R.id.base31, R.id.base32, R.id.base33, R.id.base34, R.id.base35, R.id.base36};
-        int[]geometricBaseShapes = {R.drawable.g_base_shape_1, R.drawable.g_base_shape_2, R.drawable.g_base_shape_3,R.drawable.g_base_shape_4, R.drawable.g_base_shape_5, R.drawable.g_base_shape_6, R.drawable.g_base_shape_7, R.drawable.g_base_shape_8, R.drawable.g_base_shap_9, R.drawable.g_base_shape_10, R.drawable.g_base_shape_11, R.drawable.g_base_shape_12, R.drawable.g_base_shape_13, R.drawable.g_base_shape_14, R.drawable.g_base_shape_15, R.drawable.g_base_shape_16, R.drawable.g_base_shape_17, R.drawable.g_base_shape_18, R.drawable.g_base_shape_19, R.drawable.g_base_shape_20, R.drawable.g_base_shape_21, R.drawable.g_base_shape_22, R.drawable.g_base_shape_23, R.drawable.g_base_shape_24, R.drawable.g_base_shape_25, R.drawable.g_base_shape_26, R.drawable.g_base_shape_27, R.drawable.g_base_shape_28, R.drawable.g_base_shape_29, R.drawable.g_base_shape_30, R.drawable.g_base_shape_31, R.drawable.g_base_shape_32, R.drawable.g_base_shape_33, R.drawable.g_base_shape_34, R.drawable.g_base_shape_35, R.drawable.g_base_shape_36};
-
-        setUpBaseShape(view, buttonId, geometricBaseShapes);
-        baseShapes = Arrays.copyOf(geometricBaseShapes, geometricBaseShapes.length);
-
-        return setUpBaseShape(view, buttonId, geometricBaseShapes);
+        resourceId = getResources().getIdentifier("@" + view.getTag(), "drawable", this.getPackageName());
+        Drawable drawable = ContextCompat.getDrawable(this, resourceId);
+        Drawable colorDrawable = ContextCompat.getDrawable(this, resourceId);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        colorDrawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        mainImage.setImageDrawable(drawable);
+        colorImage.setImageDrawable(colorDrawable);
+        colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
+        mainImage.setRotation(0);
+        colorImage.setRotation(0);
+        imageRotation = 0;
     }
-
-    @Override
-    public int onOtherBaseButtonClicked(View view) {
-
-        int[]buttonId = {R.id.base1, R.id.base2, R.id.base3, R.id.base4, R.id.base5, R.id.base6, R.id.base7, R.id.base8, R.id.base9, R.id.base10, R.id.base11, R.id.base12, R.id.base13, R.id.base14, R.id.base15, R.id.base16, R.id.base17, R.id.base18, R.id.base19, R.id.base20, R.id.base21, R.id.base22, R.id.base23, R.id.base24, R.id.base25, R.id.base26, R.id.base27, R.id.base28, R.id.base29, R.id.base30, R.id.base31, R.id.base32, R.id.base33, R.id.base34, R.id.base35, R.id.base36};
-        int[]otherBaseShapes = {R.drawable.other_base_shape_1, R.drawable.other_base_shape_2, R.drawable.other_base_shape_3,R.drawable.other_base_shape_4, R.drawable.other_base_shape_5, R.drawable.other_base_shape_6, R.drawable.other_base_shape_7, R.drawable.other_base_shape_8, R.drawable.other_base_shape_9, R.drawable.other_base_shape_10, R.drawable.other_base_shape_11, R.drawable.other_base_shape_12, R.drawable.other_base_shape_13, R.drawable.other_base_shape_14, R.drawable.other_base_shape_15, R.drawable.other_base_shape_16, R.drawable.other_base_shape_17, R.drawable.other_base_shape_18, R.drawable.other_base_shape_19, R.drawable.other_base_shape_20, R.drawable.other_base_shape_21, R.drawable.other_base_shape_22, R.drawable.other_base_shape_23, R.drawable.other_base_shape_24, R.drawable.other_base_shape_25, R.drawable.other_base_shape_26, R.drawable.other_base_shape_27, R.drawable.other_base_shape_28, R.drawable.other_base_shape_29, R.drawable.other_base_shape_30, R.drawable.other_base_shape_31, R.drawable.other_base_shape_32, R.drawable.other_base_shape_33, R.drawable.other_base_shape_34, R.drawable.other_base_shape_35, R.drawable.other_base_shape_36};
-
-        setUpBaseShape(view, buttonId, otherBaseShapes);
-        baseShapes = Arrays.copyOf(otherBaseShapes, otherBaseShapes.length);
-
-        return setUpBaseShape(view, buttonId, otherBaseShapes);
-    }
-
-
-    public int setUpBaseShape(View view, int[]buttonId, int[]baseShapes){
-
-        int pos = 0;
-        for(pos = 0; pos < buttonId.length; pos++){
-            if(view.getId() == buttonId[pos]){
-                mainImage.setImageDrawable(getResources().getDrawable(baseShapes[pos]));
-                colorImage.setImageDrawable(getResources().getDrawable(baseShapes[pos]));
-                colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
-                mainImage.setRotation(0);
-                colorImage.setRotation(0);
-                imageRotation = 0;
-                imagePosition = pos;
-            }
-        }
-        return pos;
-
-
-    }
-
-
 
 
     public void initDrawerAndNavigationView(){
@@ -267,8 +234,6 @@ public class BaseShapeActivity extends AppCompatActivity
     public void init(){
 
         initDrawerAndNavigationView();
-        baseShapes = new int[]{R.drawable.g_base_shape_1, R.drawable.g_base_shape_2, R.drawable.g_base_shape_3, R.drawable.g_base_shape_4, R.drawable.g_base_shape_5, R.drawable.g_base_shape_6, R.drawable.g_base_shape_7, R.drawable.g_base_shape_8, R.drawable.g_base_shap_9, R.drawable.g_base_shape_10, R.drawable.g_base_shape_11, R.drawable.g_base_shape_12, R.drawable.g_base_shape_13, R.drawable.g_base_shape_14, R.drawable.g_base_shape_15, R.drawable.g_base_shape_16, R.drawable.g_base_shape_17, R.drawable.g_base_shape_18, R.drawable.g_base_shape_19, R.drawable.g_base_shape_20, R.drawable.g_base_shape_21, R.drawable.g_base_shape_22, R.drawable.g_base_shape_23, R.drawable.g_base_shape_24, R.drawable.g_base_shape_25, R.drawable.g_base_shape_26, R.drawable.g_base_shape_27, R.drawable.g_base_shape_28, R.drawable.g_base_shape_29, R.drawable.g_base_shape_30, R.drawable.g_base_shape_31, R.drawable.g_base_shape_32, R.drawable.g_base_shape_33, R.drawable.g_base_shape_34, R.drawable.g_base_shape_35, R.drawable.g_base_shape_36};
-
 
         mainImage = (ImageView)findViewById(R.id.main_imageView);
         mainImage.setImageDrawable(getResources().getDrawable(R.drawable.g_base_shape_1));

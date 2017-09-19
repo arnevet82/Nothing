@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -68,14 +69,10 @@ public class DesignActivity extends AppCompatActivity
 {
 
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 99;
-
-    public static final String POSITION_KEY = "POSITION";
-    public static int position = 0;
+    public static final String RESOURCE_ID_KEY = "RESOURCE_ID";
+    public static int resourceId = 0;
     public static final String MAIN_IMAGE_ROTATION = "ROTATION";
     public static float mainImageRotation;
-    public static final String BASE_SHAPE_ARRAY_KEY = "BASE_SHAPE";
-    public static int [] baseShapes = new int[36];
-    private static final String TAG = "DesignActivity";
     boolean b = true;
     private AngleCommand angleCommand = null;
     TextView title;
@@ -101,16 +98,12 @@ public class DesignActivity extends AppCompatActivity
     public static Button font1, font2, font3, font4, font5, font6, font7, editTextBody;
     public static Typeface vampiro, montserrat, alef, hiraKaku, athelas, montserratItalic, baloo, pacifico;
     public static Typeface PcurrentFont, TcurrentFont;
-
     EditCommand editCommand = null;
     NestedScrollView punchScrollView, toppingScrollView;
-
     int heightScreen, widthScreen;
-
     public static EditText editText;
     public static boolean isInches;
     public static String sizeTerm = "cm";
-
     File imageFile, galleryImageFile;
     public static String fileName, galleryFileName, formattedSize;
 
@@ -120,12 +113,12 @@ public class DesignActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_design);
 
-        position = getIntent().getIntExtra(POSITION_KEY, 0);
+        resourceId = getIntent().getIntExtra(RESOURCE_ID_KEY, 0);
+
         mainImageRotation = getIntent().getFloatExtra(MAIN_IMAGE_ROTATION, 0);
-        baseShapes = getIntent().getIntArrayExtra(BASE_SHAPE_ARRAY_KEY);
 
         init();
-        setUpBaseShape(position);
+        setUpBaseShape(resourceId);
         touchView = new TouchView(this);
         designContainer.addView(touchView);
         currentColor = this.getResources().getColor(R.color.baseShapeFirstColor);
@@ -325,7 +318,6 @@ public class DesignActivity extends AppCompatActivity
         vText.setVisibility(View.VISIBLE);
 
         onVTextClicked("", "edit");
-
     }
 
     public void designEditText(String tag){
@@ -550,20 +542,15 @@ public class DesignActivity extends AppCompatActivity
         showGridAndUndo();
     }
 
-    public void setUpBaseShape(int pos){
+    public void setUpBaseShape(int resourceId){
 
-        if(baseShapes[pos] == R.drawable.g_base_shape_31){
-            mainImage.setImageDrawable(null);
-            colorImage.setImageDrawable(null);
-        }else{
-            mainImage.setImageDrawable(getResources().getDrawable(baseShapes[pos]));
-            colorImage.setImageDrawable(getResources().getDrawable(baseShapes[pos]));
-            colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
-            mainImage.setRotation(mainImageRotation);
-            colorImage.setRotation(mainImageRotation);
-
-        }
-
+        Drawable drawable = ContextCompat.getDrawable(this, resourceId);
+        Drawable colorDrawable = ContextCompat.getDrawable(this, resourceId);
+        mainImage.setImageDrawable(drawable);
+        colorImage.setImageDrawable(colorDrawable);
+        colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
+        mainImage.setRotation(mainImageRotation);
+        colorImage.setRotation(mainImageRotation);
     }
 
     public void initDrawerAndNavigationView(){
@@ -664,8 +651,12 @@ public class DesignActivity extends AppCompatActivity
 
     public void onDeleteBtnClicked(View v) {
         if(!TouchView.shapes.isEmpty() ){
-            DeleteCommand deleteCommand = new DeleteCommand(touchView);
+            DeleteCommand deleteCommand = new DeleteCommand(Movable.current_movable, this);
             deleteCommand.execute();
+            if(deleteCommand.isExecute()){
+                TouchView.commandStack.push(deleteCommand);
+                touchView.invalidate();
+            }
             clearGrayColor();
             hideDeleteAndRotate();
         }
@@ -851,9 +842,14 @@ public class DesignActivity extends AppCompatActivity
     private void takeScreenshot() {
 
         designContainer.setBackgroundColor(Color.WHITE);
+        colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.blackBtn), PorterDuff.Mode.SRC_IN);
+        if (!TouchView.shapes.isEmpty()) {
+            for (Movable movable : TouchView.shapes) {
+                movable.setColor(this, getResources().getColor(R.color.meduimGray));
+            }
+            DesignActivity.touchView.invalidate();
+        }
 
-//        ColorCommand colorCommand = new ColorCommand(colorImage, getApplication(), R.color.blackBtn);
-//        colorCommand.colorBeforeScreenShot();
 
         Date now = new Date();
         android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
@@ -868,11 +864,6 @@ public class DesignActivity extends AppCompatActivity
             v1.setDrawingCacheEnabled(true);
             Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
             v1.setDrawingCacheEnabled(false);
-
-//            Drawable drawable = TouchView.shapesForColor.get(0).getDrawable();
-//            Bitmap shapeBitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-//                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-
 
 //////////// file with directory and path
             imageFile = new File(dir, mPath);
@@ -889,8 +880,13 @@ public class DesignActivity extends AppCompatActivity
         }
 
         designContainer.setBackgroundColor(Color.TRANSPARENT);
-//        colorCommand = new ColorCommand(colorImage, getApplication(), currentColor);
-//        colorCommand.execute();
+        colorImage.getDrawable().mutate().setColorFilter(currentColor, PorterDuff.Mode.SRC_IN);
+        if (!TouchView.shapes.isEmpty()) {
+            for (Movable movable : TouchView.shapes) {
+                movable.setColor(this, currentColor);
+            }
+            DesignActivity.touchView.invalidate();
+        }
 
         try {
 
@@ -944,8 +940,11 @@ public class DesignActivity extends AppCompatActivity
             punchTabs.setVisibility(View.INVISIBLE);
             punchTabLayout.setVisibility(View.INVISIBLE);
             punchViewPager.setVisibility(View.INVISIBLE);
-        }else if(textContainer.getVisibility()==View.VISIBLE) {
+        }else if(editText.getVisibility()==View.VISIBLE) {
             textContainer.setVisibility(View.INVISIBLE);
+            editText.setVisibility(View.INVISIBLE);
+            vText.setVisibility(View.INVISIBLE);
+            cleanBarButtons();
         }else if(resizeBar.getVisibility()==View.VISIBLE){
             resizeBar.setVisibility(View.INVISIBLE);
             bottomBar.setVisibility(View.VISIBLE);

@@ -102,7 +102,7 @@ public class GeometricShapeFragment extends Fragment {
 
     public interface FragmentItemClickCallback {
 
-        int onBaseButtonClicked(View view);
+        void onBaseButtonClicked(View view);
     }
 
 

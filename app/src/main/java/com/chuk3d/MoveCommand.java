@@ -20,25 +20,36 @@ public class MoveCommand extends Command {
     }
 
     public void setNewX(float newX, int widthView) {
+        if(movable instanceof Shape){
+            if (newX < 0) {
+                newX = 0;
+            }
+            else if (newX > widthView - movable.getWidth()) {
+                newX = widthView - movable.getWidth();
+            }
+            this.newX = newX;
+        }else{
+            if (newX < - widthView/2) {
+                newX = widthView/2;
+            }
+            else if (newX > widthView - movable.getWidth()) {
+                newX = widthView - movable.getWidth();
+            }
+            this.newX = newX;
+        }
 
-        if (newX < 0) {
-            newX = 0;
-        }
-        else if (newX > widthView - movable.getWidth()) {
-            newX = widthView - movable.getWidth();
-        }
-        this.newX = newX;
     }
 
     public void setNewY(float newY, int heightView) {
 
-        if (newY < 0) {
-            newY = 0;
-        }
-        else if (newY > heightView - movable.getHeight()) {
-            newY = heightView - movable.getHeight();
-        }
-        this.newY = newY;
+            if (newY < 0) {
+                newY = 0;
+            }
+            else if (newY > heightView - movable.getHeight()) {
+                newY = heightView - movable.getHeight();
+            }
+            this.newY = newY;
+
     }
 
 

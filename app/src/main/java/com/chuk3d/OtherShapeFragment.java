@@ -76,7 +76,7 @@ public class OtherShapeFragment extends Fragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onOtherBaseButtonClicked(v);
+                    callback.onBaseButtonClicked(v);
 
                 }
             });
@@ -97,7 +97,7 @@ public class OtherShapeFragment extends Fragment {
 
     public interface FragmentItemClickCallback {
 
-        int onOtherBaseButtonClicked(View view);
+        void onBaseButtonClicked(View view);
 }
 
 
