@@ -32,7 +32,7 @@ public abstract class Text extends Movable {
 
         setInitialColor(context);
 
-        textPaint.setTextSize(100);
+        textPaint.setTextSize(120);
         sl = new StaticLayout(text, textPaint,800,
                 Layout.Alignment.ALIGN_CENTER, 1f,0f,false);
         textPivotx = sl.getWidth()/2;

@@ -199,6 +199,7 @@
         android:layout_width="match_parent"
         android:layout_height="55dp">
         <Button
+            android:onClick="editText"
             android:textColor="#626066"
             android:id="@+id/edit_text_body"
             android:layout_marginRight="@dimen/edit_textbody_margin_right"

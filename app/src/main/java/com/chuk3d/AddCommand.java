@@ -3,6 +3,7 @@ package com.chuk3d;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 /**
@@ -42,9 +43,11 @@ public class AddCommand extends Command {
             case "tText":
             case "pText":
 
-                movable = ShapeFactory.getShape(text,x, y, type, context);
+                movable = ShapeFactory.getShape(text,x/3, y, type, context);
                 TouchView.shapes.add(movable);
                 Movable.setCurrent_movable(movable);
+                InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(DesignActivity.editText.getWindowToken(), 0);
 
                 break;
         }

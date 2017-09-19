@@ -26,8 +26,6 @@ public class TouchView extends View {
 
     private float mPosX;
     private float mPosY;
-    private float tPosX;
-    private float tPosY;
 
     private float mLastTouchX;
     private float mLastTouchY;
@@ -40,11 +38,6 @@ public class TouchView extends View {
 
     private ScaleGestureDetector mScaleDetector;
     private float mScaleFactor = 1.f;
-
-//    public static int CURRENT_SHAPE = -1;
-//    public static int CURRENT_TEXT = -1;
-
-    public static float textScaleFactor = 1.f;
 
     private MoveCommand moveCommand = null;
 
@@ -63,8 +56,6 @@ public class TouchView extends View {
         super(context, attrs, defStyle);
         init();
         setLayoutParams();
-
-
     }
 
     public void setLayoutParams(){
@@ -75,6 +66,8 @@ public class TouchView extends View {
 
         setLayoutParams(lp);
     }
+
+
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -85,54 +78,9 @@ public class TouchView extends View {
 
     }
 
-//    private boolean clickOnShape(Movable movable, MotionEvent event) {
-//
-//        float scaleFactor = movable.getScaleFactor();
-//        scaleFactor = Math.max(1f, Math.min(mScaleFactor, 1.3f));
-//
-//        float x = (movable.getPosX()*0.9f);
-//        float y = movable.getPosY();
-//        float xEnd = (movable.getPosX() + getResources().getDimension(R.dimen.punch_size))*scaleFactor;
-//        float yEnd = (movable.getPosY() + getResources().getDimension(R.dimen.punch_size))*scaleFactor;
-//
-//        if ((event.getX() >= x && event.getX() <= xEnd)
-//                && (event.getY() >= y && event.getY() <= yEnd)){
-//
-//            if (!(movable.getScaleFactor() == 0)) {
-//
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        }
-//
-//        return false;
-//    }
-
-//    private boolean clickOnText(Movable movable, MotionEvent event) {
-//
-//        float xEnd = movable.getPosX() + textScaleFactor*250;
-//        float yEnd = movable.getPosY() + textScaleFactor*150;
-//
-//        if ((event.getX() >= (movable.getPosX()) && event.getX() <= (xEnd))
-//                && (event.getY() >= (movable.getPosY()) && event.getY() <= yEnd)) {
-//
-//            if (!(movable.getScaleFactor() == 0)) {
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        }
-//        return false;
-//
-//    }
-
-
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-//        LinkedList<Integer>clickedShapes = new LinkedList<>();
-//        LinkedList<Integer>clickedTexts = new LinkedList<>();
 
         mScaleDetector.onTouchEvent(ev);
 
@@ -141,7 +89,6 @@ public class TouchView extends View {
         switch (action & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN: {
                 if(!shapes.isEmpty()){
-                    // do nothing
 
                     Movable movable = Movable.getCurrent_movable(ev, mScaleFactor, getContext());
 
@@ -158,12 +105,11 @@ public class TouchView extends View {
                         mActivePointerId = ev.getPointerId(0);
                     }
 
-                    }
+                }
 
                 break;
 
             }
-
 
             case MotionEvent.ACTION_MOVE: {
                 Movable movable = Movable.current_movable;
@@ -190,32 +136,6 @@ public class TouchView extends View {
                                 moveCommand.execute();
                                 invalidate();
                             }
-//                            if (DesignActivity.currentNumText.getText().equals("T")&& CURRENT_TEXT > -1) {
-//                                float xpos = texts.get(CURRENT_TEXT).getPosX();
-//                                float ypos = texts.get(CURRENT_TEXT).getPosY();
-//                                texts.get(CURRENT_TEXT).setPosX(xpos += dx);
-//                                texts.get(CURRENT_TEXT).setPosY(ypos += dy);
-//
-//                            } else {
-//                                try{
-//                                    float xpos = shapes.get(CURRENT_SHAPE).getPosX();
-//                                    float ypos = shapes.get(CURRENT_SHAPE).getPosY();
-//
-//                                    if(moveCommand != null){
-//                                        moveCommand.setNewX(xpos+dx);
-//                                        moveCommand.setNewY(ypos+dy);
-//                                        moveCommand.execute();
-//                                    }
-//
-//                                }catch (IndexOutOfBoundsException e){
-//
-//                                }catch (NoSuchElementException e){
-//
-//                                }
-//                            }
-
-//                            invalidate();
-
                         }
                         mLastTouchX = x;
                         mLastTouchY = y;
@@ -268,8 +188,6 @@ public class TouchView extends View {
         final int pointerIndex = MotionEventCompat.getActionIndex(ev);
         final int pointerId = MotionEventCompat.getPointerId(ev, pointerIndex);
         if (pointerId == mActivePointerId) {
-            // This was our active pointer going up. Choose a new
-            // active pointer and adjust accordingly.
             final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
             mLastTouchX = ev.getX(newPointerIndex);
             mLastTouchY = ev.getY(newPointerIndex);
@@ -286,64 +204,46 @@ public class TouchView extends View {
 
         @Override
         public boolean onScaleBegin(ScaleGestureDetector detector) {
-            if(DesignActivity.currentNumText.equals("T")){
 
-            }else{
-                if(Movable.current_movable != null){
-                    scaleCommand = new ScaleCommand(Movable.current_movable);
-                }
+            if(Movable.current_movable != null){
+                scaleCommand = new ScaleCommand(Movable.current_movable);
             }
+
             return true;
         }
 
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
-            if(DesignActivity.currentNumText.equals("T")){
 
-            }else{
-                if(scaleCommand != null){
-                    if (scaleCommand.isExecute()) {
-                        commandStack.push(scaleCommand);
-                        scaleCommand = null;
-                    }
+            if(scaleCommand != null){
+                if (scaleCommand.isExecute()) {
+                    commandStack.push(scaleCommand);
+                    scaleCommand = null;
                 }
             }
         }
+
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            if(DesignActivity.currentNumText.getText().equals("T") ) {
-                textScaleFactor *= detector.getScaleFactor();
 
-                textScaleFactor = Math.max(0.1f, Math.min(textScaleFactor, 5.0f));
-//                texts.get(CURRENT_TEXT).setScaleFactor(textScaleFactor);
-            }else {
-                try{
-                    mScaleFactor *= detector.getScaleFactor();
 
-                    mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
-                    if(scaleCommand!= null){
-                        scaleCommand.setNewScaleFactor(mScaleFactor);
-                        scaleCommand.execute();
-                    }
+            try{
+                mScaleFactor *= detector.getScaleFactor();
 
-                }catch (IndexOutOfBoundsException e){
-
+                mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
+                if(scaleCommand!= null){
+                    scaleCommand.setNewScaleFactor(mScaleFactor);
+                    scaleCommand.execute();
                 }
 
+            }catch (IndexOutOfBoundsException e){
+
             }
-            invalidate();
+
             return true;
         }
     }
 
-//    public void fillColorShapes(){
-//        DesignActivity.vButton.setVisibility(VISIBLE);
-//        DesignActivity.colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.editGrayBigShape),PorterDuff.Mode.SRC_IN);
-//        for(Movable movable:shapes){
-//            movable.setGrayColor(getContext());
-//        }
-//
-//    }
 
     public void executeAddCommand(Context context, int resourceId, String text, String type) {
         AddCommand addCommand = new AddCommand(context, resourceId, text, mPosX, mPosY, type);
@@ -377,10 +277,6 @@ public class TouchView extends View {
 
         mPosX = widthScreen / 2.5f;
         mPosY = heightScreen / 5.3f;
-
-        tPosX = widthScreen / 7f;
-        tPosY = heightScreen / 5.3f;
-
 
         mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
 

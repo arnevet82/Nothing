@@ -72,7 +72,7 @@ public class OtherPunchFragment extends Fragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onPunchButtonClicked(v);
+                    callback.onAddButtonClicked(v, "pShape");
 
                 }
             });
@@ -93,6 +93,6 @@ public class OtherPunchFragment extends Fragment {
 
     public interface PunchFragmentItemClickCallback {
 
-        void onPunchButtonClicked(View view);
+        void onAddButtonClicked(View view, String tag);
     }
 }

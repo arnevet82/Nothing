@@ -37,9 +37,7 @@ public class AngleCommand extends Command {
     @Override
     public boolean execute() {
         if (newAngle != lastAngle) {
-            if (DesignActivity.currentNumText.getText().equals("T")) {
-//                TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle(newAngle);
-            } else if (!TouchView.shapes.isEmpty()) {
+            if (!TouchView.shapes.isEmpty()) {
                 movable.setAngle(newAngle);
             }
             DesignActivity.touchView.invalidate();
@@ -51,13 +49,8 @@ public class AngleCommand extends Command {
 
     @Override
     public void undo() {
-        if (DesignActivity.currentNumText.getText().equals("T")) {
-            if(Movable.current_movable != null){
-//                TouchView.texts.get(TouchView.CURRENT_TEXT).setAngle(lastAngle);
-            }else{
-//                TouchView.texts.getLast().setAngle(lastAngle);
-            }
-        } else if (!TouchView.shapes.isEmpty()) {
+
+        if(!TouchView.shapes.isEmpty()) {
             movable.setAngle(lastAngle);
         }
         DesignActivity.touchView.invalidate();

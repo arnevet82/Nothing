@@ -13,7 +13,9 @@ public class ShapeFactory {
         if(tag.equals("pShape")){
             return new PunchShape(resourceId, posX, posY, context);
         } else if(tag.equals("tShape")){
-            return new ToppingShape(resourceId, posX, posY, context);
+            ToppingShape toppingShape = new ToppingShape(resourceId, posX, posY, context);
+            toppingShape.setColor(context, DesignActivity.currentColor);
+            return toppingShape;
         }
         return null;
     }

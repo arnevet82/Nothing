@@ -40,6 +40,9 @@ public abstract class Movable {
                         mMovable.setGrayColor(context);
                     }
                     movable.setClickColor(context);
+                    if(movable instanceof Text){
+                        DesignActivity.fontsBar.setVisibility(View.VISIBLE);
+                    }
 
                     return movable;
 

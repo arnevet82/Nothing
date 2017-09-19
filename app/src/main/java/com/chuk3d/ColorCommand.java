@@ -3,6 +3,7 @@ package com.chuk3d;
 import android.content.Context;
 import android.graphics.EmbossMaskFilter;
 import android.graphics.PorterDuff;
+import android.util.Log;
 import android.widget.ImageView;
 
 /**
@@ -14,6 +15,7 @@ public class ColorCommand extends Command {
     private ImageView colorImage;
     private int newColor;
     private int lastColor;
+    private boolean isExecute = false;
 
     public ColorCommand(Context context, ImageView colorImage, int newColor){
         this.context = context;
@@ -21,21 +23,28 @@ public class ColorCommand extends Command {
         this.newColor = newColor;
     }
 
+    public boolean isExecute() {
+        return isExecute;
+    }
+
+
     @Override
     public boolean execute() {
-        lastColor = DesignActivity.currentColor;
-        DesignActivity.currentColor = newColor;
 
+        lastColor = DesignActivity.currentColor;
+        if(lastColor != newColor){
+            DesignActivity.currentColor = newColor;
             colorImage.getDrawable().mutate().setColorFilter(newColor, PorterDuff.Mode.SRC_IN);
             if (!TouchView.shapes.isEmpty()) {
                 for (Movable movable : TouchView.shapes) {
                     movable.setColor(context, newColor);
                 }
+                DesignActivity.touchView.invalidate();
+            }
 
-            DesignActivity.touchView.invalidate();
-            return true;
+            isExecute = true;
         }
-        return false;
+        return isExecute;
     }
 
     @Override
@@ -46,11 +55,7 @@ public class ColorCommand extends Command {
                 movable.setColor(context, lastColor);
             }
         }
-//        if (!TouchView.texts.isEmpty()) {
-//            for (Movable movable : TouchView.texts) {
-//                movable.setColor(context, lastColor);
-//            }
-//        }
+
         DesignActivity.currentColor = lastColor;
         DesignActivity.touchView.invalidate();
     }

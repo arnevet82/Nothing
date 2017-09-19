@@ -25,8 +25,11 @@ public abstract class Shape extends Movable {
         Drawable drawable = ContextCompat.getDrawable(context, resourceId);
         Drawable colorDrawable = ContextCompat.getDrawable(context, resourceId);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        colorDrawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         this.drawable = drawable;
         this.colorDrawable = colorDrawable;
+        pivotx = drawable.getIntrinsicWidth()/2;
+        pivoty = drawable.getIntrinsicHeight()/2;
     }
 
     public float getWidth(){
@@ -43,14 +46,6 @@ public abstract class Shape extends Movable {
 
     public void setDrawable(Drawable drawable) {
         this.drawable = drawable;
-    }
-
-    public Drawable getColorDrawable() {
-        return colorDrawable;
-    }
-
-    public void setColorDrawable(Drawable colorDrawable) {
-        this.colorDrawable = colorDrawable;
     }
 
     @Override

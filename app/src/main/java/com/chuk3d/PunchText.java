@@ -24,7 +24,7 @@ public class PunchText extends Text{
 
     @Override
     public void setColor(Context context, int color) {
-        textPaint.setColor(color);
+        textPaint.setColor(context.getResources().getColor(R.color.almostWhite));
     }
 
     @Override
@@ -50,7 +50,7 @@ public class PunchText extends Text{
 
     @Override
     public void setGrayColor(Context context) {
-        textPaint.setColor(context.getResources().getColor(R.color.background));
+        textPaint.setColor(context.getResources().getColor(R.color.buttonGray));
     }
 
     public void setInitialFont(){
