@@ -17,8 +17,8 @@ import java.util.List;
 public abstract class Shape extends Movable {
     protected Drawable drawable;
     protected Drawable colorDrawable;
-    public static float pivotx;
-    public static float pivoty;
+    public float pivotx;
+    public float pivoty;
 
     public Shape(int resourceId, float posX, float posY, Context context) {
         super(posX, posY);

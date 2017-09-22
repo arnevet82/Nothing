@@ -55,7 +55,7 @@ public class ToppingText extends Text{
 
     @Override
     public void setGrayColor(Context context) {
-        textPaint.setColor(context.getResources().getColor(R.color.background));
+        textPaint.setColor(context.getResources().getColor(R.color.buttonGray));
     }
 
     public void setInitialFont(){

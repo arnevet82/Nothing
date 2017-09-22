@@ -11,7 +11,7 @@
     <color name="lightPrimary">#b3efe4</color>
     <color name="darkBlue">#115aaf</color>
     <color name="yellow">#f8e71c</color>
-    <color name="baseShapeFirstColor">#e8e7e5</color>
+    <color name="baseShapeFirstColor">#66e8e7e5</color>
 
 
 
@@ -33,17 +33,17 @@
 
 
 
-    <color name="yellowBtn">#f8e81c</color>
-    <color name="orangeBtn">#f6a623</color>
-    <color name="redBtn">#d0011b</color>
-    <color name="pinkBtn">#ff68a0</color>
-    <color name="purpleBtn">#9012fe</color>
-    <color name="darkeBlueBtn">#145aaf</color>
-    <color name="blueBtn">#00abff</color>
-    <color name="greenBtn">#4ab722</color>
-    <color name="blackBtn">#000000</color>
-    <color name="grayBtn">#9b9b9b</color>
-    <color name="whiteBtn">#ffffff</color>
+    <color name="yellowBtn">#E6f8e81c</color>
+    <color name="orangeBtn">#80f6a623</color>
+    <color name="redBtn">#80d0011b</color>
+    <color name="pinkBtn">#80ff68a0</color>
+    <color name="purpleBtn">#809012fe</color>
+    <color name="darkeBlueBtn">#80145aaf</color>
+    <color name="blueBtn">#8000abff</color>
+    <color name="greenBtn">#804ab722</color>
+    <color name="blackBtn">#80000000</color>
+    <color name="grayBtn">#809b9b9b</color>
+    <color name="whiteBtn">#80ffffff</color>
     <color name="transBtn">#1A9b9b9b</color>
 
 

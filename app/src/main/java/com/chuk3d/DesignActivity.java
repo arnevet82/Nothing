@@ -32,9 +32,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
-import android.text.StaticLayout;
-import android.text.TextPaint;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -54,7 +51,6 @@ import java.io.FileOutputStream;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -69,6 +65,8 @@ public class DesignActivity extends AppCompatActivity
 {
 
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 99;
+    public static final String CATEGORY_ID = "CATEGORY";
+    public static String category;
     public static final String RESOURCE_ID_KEY = "RESOURCE_ID";
     public static int resourceId = 0;
     public static final String MAIN_IMAGE_ROTATION = "ROTATION";
@@ -118,7 +116,9 @@ public class DesignActivity extends AppCompatActivity
         mainImageRotation = getIntent().getFloatExtra(MAIN_IMAGE_ROTATION, 0);
 
         init();
+
         setUpBaseShape(resourceId);
+
         touchView = new TouchView(this);
         designContainer.addView(touchView);
         currentColor = this.getResources().getColor(R.color.baseShapeFirstColor);
@@ -471,20 +471,16 @@ public class DesignActivity extends AppCompatActivity
         editText.setTypeface(typeface);
     }
 
-    public void initVButton() {
-        vButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                vButton.setVisibility(View.INVISIBLE);
-                clearGrayColor();
-                rotationBar.setVisibility(View.INVISIBLE);
-                fontsBar.setVisibility(View.INVISIBLE);
-                textPunchToppingChoice.setVisibility(View.INVISIBLE);
-                Movable.current_movable = null;
-                showGridAndUndo();
-                hideDeleteAndRotate();
-            }
-        });
+    public void onVButtonClicked(View v) {
+
+        vButton.setVisibility(View.INVISIBLE);
+        clearGrayColor();
+        rotationBar.setVisibility(View.INVISIBLE);
+        fontsBar.setVisibility(View.INVISIBLE);
+        textPunchToppingChoice.setVisibility(View.INVISIBLE);
+        Movable.current_movable = null;
+        showGridAndUndo();
+        hideDeleteAndRotate();
     }
 
     public void onGridBtnClicked(View v) {
@@ -498,7 +494,9 @@ public class DesignActivity extends AppCompatActivity
     }
 
     public void clearGrayColor(){
-        colorImage.getDrawable().mutate().setColorFilter(currentColor, PorterDuff.Mode.SRC_IN);
+        if(colorImage.getDrawable() != null) {
+            colorImage.getDrawable().mutate().setColorFilter(currentColor, PorterDuff.Mode.SRC_IN);
+        }
         if (!TouchView.shapes.isEmpty()) {
             for (Movable movable : TouchView.shapes) {
                 movable.setColor(this, currentColor);
@@ -544,13 +542,18 @@ public class DesignActivity extends AppCompatActivity
 
     public void setUpBaseShape(int resourceId){
 
-        Drawable drawable = ContextCompat.getDrawable(this, resourceId);
-        Drawable colorDrawable = ContextCompat.getDrawable(this, resourceId);
-        mainImage.setImageDrawable(drawable);
-        colorImage.setImageDrawable(colorDrawable);
-        colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
-        mainImage.setRotation(mainImageRotation);
-        colorImage.setRotation(mainImageRotation);
+        if(resourceId == 555){
+            mainImage.setImageDrawable(null);
+            colorImage.setImageDrawable(null);
+        }else {
+            Drawable drawable = ContextCompat.getDrawable(this, resourceId);
+            Drawable colorDrawable = ContextCompat.getDrawable(this, resourceId);
+            mainImage.setImageDrawable(drawable);
+            colorImage.setImageDrawable(colorDrawable);
+            colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor), PorterDuff.Mode.SRC_IN);
+            mainImage.setRotation(mainImageRotation);
+            colorImage.setRotation(mainImageRotation);
+        }
     }
 
     public void initDrawerAndNavigationView(){
@@ -647,6 +650,10 @@ public class DesignActivity extends AppCompatActivity
         showGridAndUndo();
         showDeleteAndRotate();
         vButton.setVisibility(View.VISIBLE);
+
+        Log.e("1st shape x","" + TouchView.shapes.get(0).getPosX());
+        Log.e("1st shape y","" + TouchView.shapes.get(0).getPosY());
+
     }
 
     public void onDeleteBtnClicked(View v) {
@@ -842,7 +849,9 @@ public class DesignActivity extends AppCompatActivity
     private void takeScreenshot() {
 
         designContainer.setBackgroundColor(Color.WHITE);
-        colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.blackBtn), PorterDuff.Mode.SRC_IN);
+        if(colorImage.getDrawable() != null){
+            colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.blackBtn), PorterDuff.Mode.SRC_IN);
+        }
         if (!TouchView.shapes.isEmpty()) {
             for (Movable movable : TouchView.shapes) {
                 movable.setColor(this, getResources().getColor(R.color.meduimGray));
@@ -880,7 +889,9 @@ public class DesignActivity extends AppCompatActivity
         }
 
         designContainer.setBackgroundColor(Color.TRANSPARENT);
-        colorImage.getDrawable().mutate().setColorFilter(currentColor, PorterDuff.Mode.SRC_IN);
+        if(colorImage.getDrawable() != null) {
+            colorImage.getDrawable().mutate().setColorFilter(currentColor, PorterDuff.Mode.SRC_IN);
+        }
         if (!TouchView.shapes.isEmpty()) {
             for (Movable movable : TouchView.shapes) {
                 movable.setColor(this, currentColor);
@@ -1094,8 +1105,6 @@ public class DesignActivity extends AppCompatActivity
     }
 
     public void initButtons(){
-
-        initVButton();
 
         degrees0 = (Button)findViewById(R.id.degrees_zero);
         degrees90 = (Button)findViewById(R.id.degrees_ninty);

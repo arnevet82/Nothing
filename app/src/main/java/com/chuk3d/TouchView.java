@@ -153,6 +153,9 @@ public class TouchView extends View {
                     moveCommand = null;
 
                 }
+
+                Log.e("1st shape x","" + shapes.get(0).getPosX());
+                Log.e("1st shape y","" + shapes.get(0).getPosY());
                 break;
             }
 
@@ -179,8 +182,6 @@ public class TouchView extends View {
                 break;
             }
         }
-
-
         return true;
     }
 

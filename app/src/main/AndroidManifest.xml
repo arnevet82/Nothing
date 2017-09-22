@@ -40,6 +40,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".CategoriesActivity"
+            android:supportsRtl="false"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"></activity>
+        
         <activity android:name=".BaseShapeActivity"
             android:supportsRtl="false"
             android:theme="@style/AppTheme.NoActionBar"

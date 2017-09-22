@@ -34,7 +34,11 @@ public class ColorCommand extends Command {
         lastColor = DesignActivity.currentColor;
         if(lastColor != newColor){
             DesignActivity.currentColor = newColor;
-            colorImage.getDrawable().mutate().setColorFilter(newColor, PorterDuff.Mode.SRC_IN);
+            try{
+                colorImage.getDrawable().mutate().setColorFilter(newColor, PorterDuff.Mode.SRC_IN);
+            }catch (NullPointerException e){
+
+            }
             if (!TouchView.shapes.isEmpty()) {
                 for (Movable movable : TouchView.shapes) {
                     movable.setColor(context, newColor);
@@ -49,7 +53,9 @@ public class ColorCommand extends Command {
 
     @Override
     public void undo() {
-        colorImage.getDrawable().mutate().setColorFilter(lastColor, PorterDuff.Mode.SRC_IN);
+        if(colorImage != null) {
+            colorImage.getDrawable().mutate().setColorFilter(lastColor, PorterDuff.Mode.SRC_IN);
+        }
         if (!TouchView.shapes.isEmpty()) {
             for (Movable movable : TouchView.shapes) {
                 movable.setColor(context, lastColor);

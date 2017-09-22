@@ -56,4 +56,7 @@
 
     <dimen name="rotate_limit">10dp</dimen>
 
+    <dimen name="categories_btn_width">180dp</dimen>
+    <dimen name="categories_btn_height">176dp</dimen>
+
 </resources>

@@ -33,8 +33,9 @@ public class StartActivity extends AppCompatActivity {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                Intent intent = new Intent(getApplication(), BaseShapeActivity.class);
+                Intent intent = new Intent(getApplication(), CategoriesActivity.class);
                 startActivity(intent);
+
             }
         }, 1500);
 

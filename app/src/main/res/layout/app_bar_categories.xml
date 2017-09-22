@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.chuk3d.CategoriesActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="63dp"
+            android:background="@color/almostWhite"
+            app:popupTheme="@style/AppTheme.PopupOverlay" >
+
+        <ImageView
+            android:background="@drawable/logo_aug_17_01_01"
+            android:id="@+id/logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center|center_horizontal"
+            android:layout_gravity="center"/>
+
+        <ImageButton
+            android:onClick="onNextButtonClicked"
+            android:id="@+id/next"
+            android:paddingLeft="27dp"
+            android:paddingRight="27dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="28dp"
+            android:tint="@color/darkGray"
+            android:layout_marginLeft="-7dp"
+            android:layout_marginRight="-7dp"
+            android:layout_width="67dp"
+            android:layout_height="72dp"
+            android:src="@drawable/next_arrow"
+            android:background="@color/almostWhite"
+            android:scaleType="fitXY"
+            android:layout_gravity="right"/>
+    </android.support.v7.widget.Toolbar>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.3dp"
+            android:background="@color/darkGray"
+            android:id="@+id/view_toolbar" />
+
+
+</android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/categories_layout" />
+
+
+</android.support.design.widget.CoordinatorLayout>

@@ -1,0 +1,59 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="nav_header_vertical_spacing">16dp</dimen>
+    <dimen name="nav_header_height">160dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="circle_margin">167dp</dimen>
+
+    <dimen name="punch_size">30dp</dimen>
+
+    <dimen name="button_width">62dp</dimen>
+    <dimen name="button_height">67dp</dimen>
+    <dimen name="button_margin">5.5dp</dimen>
+    <dimen name="button_marginTop">5.5dp</dimen>
+
+
+
+    <dimen name="text_punch_button_width">213dp</dimen>
+    <dimen name="text_punch_margin">70dp</dimen>
+
+
+    <dimen name="canvas_height">360dp</dimen>
+    <dimen name="canvas_marginTop">95dp</dimen>
+
+    <dimen name="main_image_width">186dp</dimen>
+    <dimen name="main_image_height">187dp</dimen>
+
+    <dimen name="scroll_height">152dp</dimen>
+    <dimen name="viewPager_height">485dp</dimen>
+
+    <dimen name="base_scroll_height">200dp</dimen>
+    <dimen name="base_viewPager_height">465dp</dimen>
+
+
+    <dimen name="lets_chuk_again_margin">410dp</dimen>
+
+    <dimen name="font_button_width">65dp</dimen>
+    <dimen name="font_margin">27dp</dimen>
+    <dimen name="edit_textbody_margin_right">15dp</dimen>
+
+
+
+    <dimen name="bottom_bar_text_padd_right">42dp</dimen>
+    <dimen name="bottom_bar_text_padd_left">38dp</dimen>
+
+    <dimen name="bottom_bar_button_width">118dp</dimen>
+    <dimen name="bottom_bar_button_height">85dp</dimen>
+
+
+    <dimen name="rotate_line_width">365dp</dimen>
+
+    <dimen name="rotate_btn_margin">100dp</dimen>
+
+    <dimen name="categories_btn_width">204dp</dimen>
+    <dimen name="categories_btn_height">197dp</dimen>
+
+
+</resources>
