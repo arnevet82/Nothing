@@ -154,8 +154,6 @@ public class TouchView extends View {
 
                 }
 
-                Log.e("1st shape x","" + shapes.get(0).getPosX());
-                Log.e("1st shape y","" + shapes.get(0).getPosY());
                 break;
             }
 
@@ -267,6 +265,7 @@ public class TouchView extends View {
         if (!commandStack.isEmpty()) {
             Command command = commandStack.pop();
             command.undo();
+            invalidate();
         }
 
     }

@@ -87,6 +87,7 @@ public class DesignActivity extends AppCompatActivity
     ImageButton next, color, topping, punch, text, punchText, toppingText, vText;
     Button color1, color2, color3, color4, color5, color6, color7, color8, color9, color10, color11, color12;
     public static int currentColor;
+    public static int baseCurrentColor;
     public static Button vButton;
     public static Button grid, undo, delete, rotate;
     static TouchView touchView;
@@ -122,6 +123,7 @@ public class DesignActivity extends AppCompatActivity
         touchView = new TouchView(this);
         designContainer.addView(touchView);
         currentColor = this.getResources().getColor(R.color.baseShapeFirstColor);
+        baseCurrentColor = this.getResources().getColor(R.color.transBaseShapeFirstColor);
         setRotationRuler();
     }
 
@@ -169,7 +171,7 @@ public class DesignActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 resetDesign();
-                Intent intent = new Intent(getApplication(), BaseShapeActivity.class);
+                Intent intent = new Intent(getApplication(), CategoriesActivity.class);
                 startActivity(intent);
             }
         });
@@ -312,10 +314,12 @@ public class DesignActivity extends AppCompatActivity
     }
 
     public void editText(View v){
+        vText.setVisibility(View.VISIBLE);
+
         if(Movable.current_movable!=null){
+
             editCommand = new EditCommand(Movable.current_movable, getApplicationContext());
         }
-        vText.setVisibility(View.VISIBLE);
 
         onVTextClicked("", "edit");
     }
@@ -495,7 +499,7 @@ public class DesignActivity extends AppCompatActivity
 
     public void clearGrayColor(){
         if(colorImage.getDrawable() != null) {
-            colorImage.getDrawable().mutate().setColorFilter(currentColor, PorterDuff.Mode.SRC_IN);
+            colorImage.getDrawable().mutate().setColorFilter(baseCurrentColor, PorterDuff.Mode.SRC_IN);
         }
         if (!TouchView.shapes.isEmpty()) {
             for (Movable movable : TouchView.shapes) {
@@ -528,12 +532,18 @@ public class DesignActivity extends AppCompatActivity
 
         color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.white),PorterDuff.Mode.SRC_IN);
         Button b = (Button) view;
-        int newColor = ((ColorDrawable)b.getBackground()).getColor();
-        ColorCommand colorCommand = new ColorCommand(this, colorImage, newColor);
+        int newColor;
+        if(b.getId() == R.id.color12){
+            newColor = -1513499;
+        }else{
+            newColor = ((ColorDrawable)b.getBackground()).getColor();
+        }
+        int baseNewColor = Integer.parseInt((String)b.getTag());
+
+        ColorCommand colorCommand = new ColorCommand(this, baseNewColor, newColor);
         boolean isExecute = colorCommand.execute();
         if (isExecute) {
             touchView.commandStack.push(colorCommand);
-            Log.e("command stack size", ""+touchView.commandStack.size());
         }
         colorBar.setVisibility(View.INVISIBLE);
         b.setVisibility(View.INVISIBLE);
@@ -550,7 +560,7 @@ public class DesignActivity extends AppCompatActivity
             Drawable colorDrawable = ContextCompat.getDrawable(this, resourceId);
             mainImage.setImageDrawable(drawable);
             colorImage.setImageDrawable(colorDrawable);
-            colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor), PorterDuff.Mode.SRC_IN);
+            colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.transBaseShapeFirstColor), PorterDuff.Mode.SRC_IN);
             mainImage.setRotation(mainImageRotation);
             colorImage.setRotation(mainImageRotation);
         }
@@ -650,9 +660,6 @@ public class DesignActivity extends AppCompatActivity
         showGridAndUndo();
         showDeleteAndRotate();
         vButton.setVisibility(View.VISIBLE);
-
-        Log.e("1st shape x","" + TouchView.shapes.get(0).getPosX());
-        Log.e("1st shape y","" + TouchView.shapes.get(0).getPosY());
 
     }
 

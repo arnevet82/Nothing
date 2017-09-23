@@ -241,7 +241,7 @@ public class BaseShapeActivity extends AppCompatActivity
         mainImage.setScaleY(1.1f);
         colorImage = (ImageView)findViewById(R.id.color_imageView);
         colorImage.setImageDrawable(getResources().getDrawable(R.drawable.g_base_shape_1));
-        colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
+        colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.transBaseShapeFirstColor),PorterDuff.Mode.SRC_IN);
         colorImage.setScaleX(1.1f);
         colorImage.setScaleY(1.1f);
 

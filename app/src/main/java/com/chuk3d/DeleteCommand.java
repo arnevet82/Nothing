@@ -46,5 +46,8 @@ public class DeleteCommand extends Command {
         movable.setColor(context, DesignActivity.currentColor);
         movable.setPosX(x);
         movable.setPosY(y);
+
+//        DesignActivity.touchView.invalidate();
+
     }
 }

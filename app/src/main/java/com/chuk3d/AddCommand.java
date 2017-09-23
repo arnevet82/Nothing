@@ -58,6 +58,6 @@ public class AddCommand extends Command {
     @Override
     public void undo() {
         TouchView.shapes.removeLast();
-        DesignActivity.touchView.invalidate();
+//        DesignActivity.touchView.invalidate();
     }
 }

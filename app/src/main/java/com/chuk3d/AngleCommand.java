@@ -53,6 +53,6 @@ public class AngleCommand extends Command {
         if(!TouchView.shapes.isEmpty()) {
             movable.setAngle(lastAngle);
         }
-        DesignActivity.touchView.invalidate();
+//        DesignActivity.touchView.invalidate();
     }
 }

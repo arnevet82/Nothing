@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <Button
-            android:tag="#fff8e81c"
+            android:tag="-1074206692"
             android:onClick="colorClick"
             android:layout_margin="5dp"
             android:id="@+id/color1"
@@ -22,6 +22,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:tag="-1074354653"
             android:onClick="colorClick"
             android:layout_margin="5dp"
             android:id="@+id/color2"
@@ -29,6 +30,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:tag="-1076887269"
             android:onClick="colorClick"
             android:layout_margin="5dp"
             android:id="@+id/color3"
@@ -36,6 +38,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:tag="-1073780576"
             android:onClick="colorClick"
             android:layout_margin="5dp"
             android:id="@+id/color4"
@@ -43,6 +46,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:tag="-1081076994"
             android:onClick="colorClick"
             android:layout_margin="5dp"
             android:id="@+id/color5"
@@ -50,6 +54,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:tag="-1089185105"
             android:onClick="colorClick"
             android:layout_margin="5dp"
             android:id="@+id/color6"
@@ -67,6 +72,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <Button
+            android:tag="-1090475009"
             android:onClick="colorClick"
             android:layout_margin="5dp"
             android:id="@+id/color7"
@@ -74,6 +80,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:tag="-1085622494"
             android:onClick="colorClick"
             android:layout_margin="5dp"
             android:id="@+id/color8"
@@ -81,6 +88,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:tag="-1090519040"
             android:onClick="colorClick"
             android:layout_margin="5dp"
             android:id="@+id/color9"
@@ -88,6 +96,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:tag="-1080321125"
             android:onClick="colorClick"
             android:layout_margin="5dp"
             android:id="@+id/color10"
@@ -95,6 +104,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:tag="-1073741825"
             android:onClick="colorClick"
             android:layout_margin="5dp"
             android:id="@+id/color11"
@@ -102,6 +112,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp" />
         <Button
+            android:tag="-1075255323"
             android:onClick="colorClick"
             android:layout_margin="5dp"
             android:id="@+id/color12"

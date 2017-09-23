@@ -11,7 +11,8 @@
     <color name="lightPrimary">#b3efe4</color>
     <color name="darkBlue">#115aaf</color>
     <color name="yellow">#f8e71c</color>
-    <color name="baseShapeFirstColor">#66e8e7e5</color>
+    <color name="baseShapeFirstColor">#e8e7e5</color>
+    <color name="transBaseShapeFirstColor">#66e8e7e5</color>
 
 
 

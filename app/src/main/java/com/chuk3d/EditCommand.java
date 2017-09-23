@@ -53,6 +53,11 @@ public class EditCommand extends Command {
             }
 
             isExecute = true;
+        }else{
+            text.setSl(new StaticLayout(lastText, text.getTextPaint(),800,
+                    Layout.Alignment.ALIGN_CENTER, 1f,0f,false));
+            isExecute = false;
+
         }
 
         DesignActivity.editText.setText("");

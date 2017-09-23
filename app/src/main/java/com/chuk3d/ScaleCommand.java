@@ -37,6 +37,6 @@ public class ScaleCommand extends Command {
     @Override
     public void undo() {
         movable.setScaleFactor(lastScaleFactor);
-        DesignActivity.touchView.invalidate();
+//        DesignActivity.touchView.invalidate();
     }
 }

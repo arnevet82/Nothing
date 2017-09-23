@@ -12,14 +12,16 @@ import android.widget.ImageView;
 
 public class ColorCommand extends Command {
     private Context context;
-    private ImageView colorImage;
+//    private ImageView colorImage;
+    private int baseNewColor;
+    private int baseLastColor;
     private int newColor;
     private int lastColor;
     private boolean isExecute = false;
 
-    public ColorCommand(Context context, ImageView colorImage, int newColor){
+    public ColorCommand(Context context, int baseNewColor, int newColor){
         this.context = context;
-        this.colorImage = colorImage;
+        this.baseNewColor = baseNewColor;
         this.newColor = newColor;
     }
 
@@ -32,10 +34,14 @@ public class ColorCommand extends Command {
     public boolean execute() {
 
         lastColor = DesignActivity.currentColor;
+        baseLastColor = DesignActivity.baseCurrentColor;
+
         if(lastColor != newColor){
             DesignActivity.currentColor = newColor;
+            DesignActivity.baseCurrentColor = baseNewColor;
+
             try{
-                colorImage.getDrawable().mutate().setColorFilter(newColor, PorterDuff.Mode.SRC_IN);
+                DesignActivity.colorImage.getDrawable().mutate().setColorFilter(baseNewColor, PorterDuff.Mode.SRC_IN);
             }catch (NullPointerException e){
 
             }
@@ -53,8 +59,10 @@ public class ColorCommand extends Command {
 
     @Override
     public void undo() {
-        if(colorImage != null) {
-            colorImage.getDrawable().mutate().setColorFilter(lastColor, PorterDuff.Mode.SRC_IN);
+        try{
+            DesignActivity.colorImage.getDrawable().mutate().setColorFilter(baseLastColor, PorterDuff.Mode.SRC_IN);
+        }catch (NullPointerException e){
+
         }
         if (!TouchView.shapes.isEmpty()) {
             for (Movable movable : TouchView.shapes) {
@@ -63,7 +71,8 @@ public class ColorCommand extends Command {
         }
 
         DesignActivity.currentColor = lastColor;
-        DesignActivity.touchView.invalidate();
+        DesignActivity.baseCurrentColor = baseLastColor;
+
     }
 }
 

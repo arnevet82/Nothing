@@ -72,6 +72,6 @@ public class MoveCommand extends Command {
     public void undo() {
         movable.setPosX(lastX);
         movable.setPosY(lastY);
-        DesignActivity.touchView.invalidate();
+//        DesignActivity.touchView.invalidate();
     }
 }
