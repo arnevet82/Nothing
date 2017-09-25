@@ -16,7 +16,7 @@
         android:layout_marginLeft="8dp"
         android:id="@+id/design_container"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/canvas_height">
+        android:layout_height="match_parent">
         <ImageView
             android:id="@+id/main_imageView"
             android:layout_centerHorizontal="true"
@@ -47,6 +47,7 @@
 
     <RelativeLayout
         android:id="@+id/grid_screen"
+        android:visibility="invisible"
         android:background="@drawable/grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -55,6 +56,7 @@
 
     <RelativeLayout
         android:id="@+id/rotation_kit"
+        android:visibility="invisible"
         android:layout_above="@+id/v"
         android:layout_width="match_parent"
         android:layout_height="90dp">
@@ -179,7 +181,12 @@
     <include layout="@layout/tab_pager_punch" />
 
 
-    <include layout="@layout/bottom_bar" />
+    <include layout="@layout/bottom_bar1" />
+    <include layout="@layout/bottom_bar2" />
+    <include layout="@layout/bottom_bar3" />
+    <include layout="@layout/bottom_bar4" />
+    <include layout="@layout/bottom_bar5" />
+    <include layout="@layout/bottom_bar6" />
 
 
     <Button
@@ -188,14 +195,16 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="84dp"
         android:background="@drawable/done"
+        android:visibility="invisible"
         android:id="@+id/v"
         android:layout_width="70dp"
         android:layout_height="70dp" />
 
     <LinearLayout
+        android:visibility="invisible"
         android:id="@+id/fonts_bar"
         android:gravity="left"
-        android:layout_marginLeft="@dimen/font_margin"
+        android:layout_marginLeft="15dp"
         android:layout_above="@+id/v"
         android:layout_width="match_parent"
         android:layout_height="55dp">
@@ -207,105 +216,183 @@
             android:background="@drawable/edit_button_gray"
             android:layout_width="44dp"
             android:layout_height="44dp" />
-        <Button
-            android:id="@+id/font_1"
-            android:paddingLeft="-7dp"
-            android:paddingRight="-7dp"
-            android:textSize="17sp"
-            android:textColor="#626066"
-            android:letterSpacing="0.06"
-            android:gravity="center_horizontal"
-            android:textAllCaps="false"
-            android:text="abc"
-            android:layout_width="@dimen/font_button_width"
-            android:layout_height="wrap_content"
-            style="?android:attr/borderlessButtonStyle"
-            android:background="@color/transparent"/>
-        <Button
-            android:id="@+id/font_2"
-            android:paddingLeft="-7dp"
-            android:paddingRight="-7dp"
-            android:textSize="17sp"
-            android:textColor="#626066"
-            android:letterSpacing="0.06"
-            android:gravity="center_horizontal"
-            android:textAllCaps="false"
-            android:text="abc"
-            android:layout_width="@dimen/font_button_width"
-            android:layout_height="wrap_content"
-            style="?android:attr/borderlessButtonStyle"
-            android:background="@color/transparent"/>
-        <Button
-            android:id="@+id/font_3"
-            android:paddingLeft="-7dp"
-            android:paddingRight="-7dp"
-            android:textSize="17sp"
-            android:textColor="#626066"
-            android:letterSpacing="0.06"
-            android:gravity="center_horizontal"
-            android:textAllCaps="false"
-            android:text="abc"
-            android:layout_width="@dimen/font_button_width"
-            android:layout_height="wrap_content"
-            style="?android:attr/borderlessButtonStyle"
-            android:background="@color/transparent"/>
-        <Button
-            android:id="@+id/font_4"
-            android:paddingLeft="-7dp"
-            android:paddingRight="-7dp"
-            android:textSize="17sp"
-            android:textColor="#626066"
-            android:letterSpacing="0.06"
-            android:gravity="center_horizontal"
-            android:textAllCaps="false"
-            android:text="abc"
-            android:layout_width="@dimen/font_button_width"
-            android:layout_height="wrap_content"
-            style="?android:attr/borderlessButtonStyle"
-            android:background="@color/transparent"/>
-        <Button
-            android:id="@+id/font_5"
-            android:paddingLeft="-7dp"
-            android:paddingRight="-7dp"
-            android:textSize="17sp"
-            android:textColor="#626066"
-            android:letterSpacing="0.06"
-            android:gravity="center_horizontal"
-            android:textAllCaps="false"
-            android:text="abc"
-            android:layout_width="@dimen/font_button_width"
-            android:layout_height="wrap_content"
-            style="?android:attr/borderlessButtonStyle"
-            android:background="@color/transparent"/>
-        <Button
-            android:id="@+id/font_6"
-            android:paddingLeft="-7dp"
-            android:paddingRight="-7dp"
-            android:textSize="17sp"
-            android:textColor="#626066"
-            android:letterSpacing="0.06"
-            android:gravity="center_horizontal"
-            android:textAllCaps="false"
-            android:text="abc"
-            android:layout_width="@dimen/font_button_width"
-            android:layout_height="wrap_content"
-            style="?android:attr/borderlessButtonStyle"
-            android:background="@color/transparent"/>
-        <Button
-            android:id="@+id/font_7"
-            android:paddingLeft="-7dp"
-            android:paddingRight="-7dp"
-            android:textSize="17sp"
-            android:textColor="#626066"
-            android:letterSpacing="0.06"
-            android:gravity="center_horizontal"
-            android:textAllCaps="false"
-            android:text="abc"
-            android:layout_width="@dimen/font_button_width"
-            android:layout_height="wrap_content"
-            style="?android:attr/borderlessButtonStyle"
-            android:background="@color/transparent"/>
 
+        <HorizontalScrollView
+            android:scrollbars="none"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <Button
+                    android:onClick="onFontButtonClicked"
+                    android:layout_marginLeft="15dp"
+                    android:id="@+id/font_1"
+                    android:paddingLeft="@dimen/font_padding"
+                    android:paddingRight="@dimen/font_padding"
+                    android:textSize="18sp"
+                    android:textColor="#626066"
+                    android:letterSpacing="0.06"
+                    android:gravity="center_horizontal"
+                    android:textAllCaps="false"
+                    android:text="abc"
+                    android:layout_width="@dimen/font_button_width"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@color/transparent"/>
+                <Button
+                    android:onClick="onFontButtonClicked"
+                    android:id="@+id/font_2"
+                    android:paddingLeft="@dimen/font_padding"
+                    android:paddingRight="@dimen/font_padding"
+                    android:textSize="18sp"
+                    android:textColor="#626066"
+                    android:letterSpacing="0.06"
+                    android:gravity="center_horizontal"
+                    android:textAllCaps="false"
+                    android:text="abc"
+                    android:layout_width="@dimen/font_button_width"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@color/transparent"/>
+                <Button
+                    android:onClick="onFontButtonClicked"
+                    android:id="@+id/font_3"
+                    android:paddingLeft="@dimen/font_padding"
+                    android:paddingRight="@dimen/font_padding"
+                    android:textSize="18sp"
+                    android:textColor="#626066"
+                    android:letterSpacing="0.06"
+                    android:gravity="center_horizontal"
+                    android:textAllCaps="false"
+                    android:text="abc"
+                    android:layout_width="@dimen/font_button_width"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@color/transparent"/>
+                <Button
+                    android:onClick="onFontButtonClicked"
+                    android:id="@+id/font_4"
+                    android:paddingLeft="@dimen/font_padding"
+                    android:paddingRight="@dimen/font_padding"
+                    android:textSize="18sp"
+                    android:textColor="#626066"
+                    android:letterSpacing="0.06"
+                    android:gravity="center_horizontal"
+                    android:textAllCaps="false"
+                    android:text="abc"
+                    android:layout_width="@dimen/font_button_width"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@color/transparent"/>
+                <Button
+                    android:onClick="onFontButtonClicked"
+                    android:id="@+id/font_5"
+                    android:paddingLeft="@dimen/font_padding"
+                    android:paddingRight="@dimen/font_padding"
+                    android:textSize="18sp"
+                    android:textColor="#626066"
+                    android:letterSpacing="0.06"
+                    android:gravity="center_horizontal"
+                    android:textAllCaps="false"
+                    android:text="abc"
+                    android:layout_width="@dimen/font_button_width"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@color/transparent"/>
+                <Button
+                    android:onClick="onFontButtonClicked"
+                    android:id="@+id/font_6"
+                    android:paddingLeft="@dimen/font_padding"
+                    android:paddingRight="@dimen/font_padding"
+                    android:textSize="18sp"
+                    android:textColor="#626066"
+                    android:letterSpacing="0.06"
+                    android:gravity="center_horizontal"
+                    android:textAllCaps="false"
+                    android:text="abc"
+                    android:layout_width="@dimen/font_button_width"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@color/transparent"/>
+                <Button
+                    android:onClick="onFontButtonClicked"
+                    android:id="@+id/font_7"
+                    android:paddingLeft="@dimen/font_padding"
+                    android:paddingRight="@dimen/font_padding"
+                    android:textSize="18sp"
+                    android:textColor="#626066"
+                    android:letterSpacing="0.06"
+                    android:gravity="center_horizontal"
+                    android:textAllCaps="false"
+                    android:text="abc"
+                    android:layout_width="@dimen/font_button_width"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@color/transparent"/>
+                <Button
+                    android:onClick="onFontButtonClicked"
+                    android:id="@+id/font_8"
+                    android:paddingLeft="@dimen/font_padding"
+                    android:paddingRight="@dimen/font_padding"
+                    android:textSize="18sp"
+                    android:textColor="#626066"
+                    android:letterSpacing="0.06"
+                    android:gravity="center_horizontal"
+                    android:textAllCaps="false"
+                    android:text="abc"
+                    android:layout_width="@dimen/font_button_width"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@color/transparent"/>
+                <Button
+                    android:onClick="onFontButtonClicked"
+                    android:id="@+id/font_9"
+                    android:paddingLeft="@dimen/font_padding"
+                    android:paddingRight="@dimen/font_padding"
+                    android:textSize="18sp"
+                    android:textColor="#626066"
+                    android:letterSpacing="0.06"
+                    android:gravity="center_horizontal"
+                    android:textAllCaps="false"
+                    android:text="abc"
+                    android:layout_width="@dimen/font_button_width"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@color/transparent"/>
+                <Button
+                    android:onClick="onFontButtonClicked"
+                    android:id="@+id/font_10"
+                    android:paddingLeft="@dimen/font_padding"
+                    android:paddingRight="@dimen/font_padding"
+                    android:textSize="18sp"
+                    android:textColor="#626066"
+                    android:letterSpacing="0.06"
+                    android:gravity="center_horizontal"
+                    android:textAllCaps="false"
+                    android:text="abc"
+                    android:layout_width="@dimen/font_button_width"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@color/transparent"/>
+                <Button
+                    android:onClick="onFontButtonClicked"
+                    android:id="@+id/font_11"
+                    android:paddingLeft="@dimen/font_padding"
+                    android:paddingRight="@dimen/font_padding"
+                    android:textSize="18sp"
+                    android:textColor="#626066"
+                    android:letterSpacing="0.06"
+                    android:gravity="center_horizontal"
+                    android:textAllCaps="false"
+                    android:text="abc"
+                    android:layout_width="@dimen/font_button_width"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@color/transparent"/>
+
+            </LinearLayout>
+        </HorizontalScrollView>
 
     </LinearLayout>
 
@@ -320,6 +407,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="84dp"
         android:background="@drawable/delete_button_gray"
+        android:visibility="invisible"
         android:id="@+id/delete"
         android:layout_width="42dp"
         android:layout_height="61dp" />
@@ -331,6 +419,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="84dp"
         android:background="@drawable/undo_button_gray"
+        android:visibility="invisible"
         android:id="@+id/undo"
         android:layout_width="42dp"
         android:layout_height="61dp" />
@@ -342,6 +431,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="84dp"
         android:background="@drawable/rotate_button_gray"
+        android:visibility="invisible"
         android:id="@+id/rotate"
         android:layout_width="42dp"
         android:layout_height="61dp" />
@@ -353,6 +443,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="84dp"
         android:background="@drawable/grid_button_gray"
+        android:visibility="invisible"
         android:id="@+id/grid"
         android:layout_width="42dp"
         android:layout_height="61dp" />
@@ -361,6 +452,7 @@
 
 
     <EditText
+        android:visibility="invisible"
         android:id="@+id/edit_text"
         android:layout_marginTop="175dp"
         android:layout_centerHorizontal="true"

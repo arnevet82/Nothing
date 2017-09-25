@@ -35,7 +35,8 @@ import java.util.concurrent.RunnableFuture;
 public class BaseShapeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GeometricShapeFragment.FragmentItemClickCallback,
         OtherShapeFragment.FragmentItemClickCallback{
-
+    public static final String CATEGORY_ID = "CATEGORY";
+    public static String category;
     TextView title;
     ImageButton next;
     TabLayout tabLayout;
@@ -55,6 +56,8 @@ public class BaseShapeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_layout);
 
+        category = getIntent().getStringExtra(CATEGORY_ID);
+
         init();
         setRotationRuler();
         onNextButtonClicked();
@@ -63,7 +66,6 @@ public class BaseShapeActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-
         resourceId = getResources().getIdentifier("@drawable/g_base_shape_1", "drawable", this.getPackageName());
         Drawable drawable = ContextCompat.getDrawable(this, resourceId);
         Drawable colorDrawable = ContextCompat.getDrawable(this, resourceId);
@@ -147,6 +149,7 @@ public class BaseShapeActivity extends AppCompatActivity
             public void onClick(View v) {
 
                 Intent intent = new Intent(getApplication(), DesignActivity.class);
+                intent.putExtra(DesignActivity.CATEGORY_ID, category);
                 intent.putExtra(DesignActivity.RESOURCE_ID_KEY, resourceId);
                 intent.putExtra(DesignActivity.MAIN_IMAGE_ROTATION, imageRotation);
                 startActivity(intent);

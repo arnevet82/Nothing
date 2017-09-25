@@ -35,7 +35,11 @@ public abstract class Movable {
                     setCurrent_movable(movable);
 
                     DesignActivity.vButton.setVisibility(View.VISIBLE);
-                    DesignActivity.colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.editGrayBigShape), PorterDuff.Mode.SRC_IN);
+                    try{
+                        DesignActivity.colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.editGrayBigShape), PorterDuff.Mode.SRC_IN);
+                    }catch (NullPointerException e){
+
+                    }
                     for(Movable mMovable:TouchView.shapes){
                         mMovable.setGrayColor(context);
                     }

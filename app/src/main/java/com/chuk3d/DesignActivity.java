@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -33,6 +34,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -78,13 +80,12 @@ public class DesignActivity extends AppCompatActivity
     ViewPager toppingViewPager, punchViewPager;
     ToppingTabPager toppingTabPager;
     PunchTabPager punchTabPager;
-    RelativeLayout colorBar, designContainer, gridScreen, textContainer, bottomBar, bPaymentScreen;
-    LinearLayout textPunchToppingChoice;
+    RelativeLayout colorBar, designContainer, gridScreen, textContainer, bPaymentScreen, bottomBar;
     static LinearLayout fontsBar;
     NestedScrollView toppingTabs, punchTabs;
     ImageView mainImage;
     static ImageView colorImage;
-    ImageButton next, color, topping, punch, text, punchText, toppingText, vText;
+    ImageButton next, color, topping, punch, text,vText;
     Button color1, color2, color3, color4, color5, color6, color7, color8, color9, color10, color11, color12;
     public static int currentColor;
     public static int baseCurrentColor;
@@ -94,9 +95,9 @@ public class DesignActivity extends AppCompatActivity
     ImageView rotateCircle, rotateRuler, rotateLine;
     RelativeLayout rotationBar, resizeBar;
     Button degrees0, degrees90, degrees180, degrees270, degrees360, cm, inch, letsChukAgain;
-    public static Button font1, font2, font3, font4, font5, font6, font7, editTextBody;
-    public static Typeface vampiro, montserrat, alef, hiraKaku, athelas, montserratItalic, baloo, pacifico;
-    public static Typeface PcurrentFont, TcurrentFont;
+    public static Button font1, font2, font3, font4, font5, font6, font7,font8,font9, font10,font11, editTextBody;
+    public static Typeface boogaloo, komika, montserrat, nautilus, orbitron, oswald, sourceSans1,sourceSans2, troika,pacifico, grandHotel,vampiroOne, WC_Wunderbach, loaded ;
+    public static Typeface currentFont;
     EditCommand editCommand = null;
     NestedScrollView punchScrollView, toppingScrollView;
     int heightScreen, widthScreen;
@@ -113,7 +114,7 @@ public class DesignActivity extends AppCompatActivity
         setContentView(R.layout.activity_design);
 
         resourceId = getIntent().getIntExtra(RESOURCE_ID_KEY, 0);
-
+        category = getIntent().getStringExtra(CATEGORY_ID);
         mainImageRotation = getIntent().getFloatExtra(MAIN_IMAGE_ROTATION, 0);
 
         init();
@@ -122,7 +123,7 @@ public class DesignActivity extends AppCompatActivity
 
         touchView = new TouchView(this);
         designContainer.addView(touchView);
-        currentColor = this.getResources().getColor(R.color.baseShapeFirstColor);
+        currentColor = this.getResources().getColor(R.color.transBaseShapeFirstColor);
         baseCurrentColor = this.getResources().getColor(R.color.transBaseShapeFirstColor);
         setRotationRuler();
     }
@@ -303,7 +304,6 @@ public class DesignActivity extends AppCompatActivity
         rotationBar.setVisibility(View.INVISIBLE);
         fontsBar.setVisibility(View.INVISIBLE);
         rotationBar.setVisibility(View.INVISIBLE);
-        textPunchToppingChoice.setVisibility(View.INVISIBLE);
     }
 
     public void cleanBarButtons(){
@@ -324,31 +324,6 @@ public class DesignActivity extends AppCompatActivity
         onVTextClicked("", "edit");
     }
 
-    public void designEditText(String tag){
-        switch (tag){
-            case "pText":
-                editText.setTextColor(getResources().getColor(R.color.almostWhite));
-                editText.setShadowLayer(1, 1, 1, Color.parseColor("#80000000"));
-                if(PcurrentFont != null){
-                    editText.setTypeface(PcurrentFont);
-                }else {
-                    editText.setTypeface(baloo);
-                }
-                break;
-            case "tText":
-                editText.setTextColor(getResources().getColor(R.color.baseShapeFirstColor));
-                editText.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
-                if(TcurrentFont != null){
-                    editText.setTypeface(TcurrentFont);
-                }else{
-                    editText.setTypeface(pacifico);
-                }
-                break;
-        }
-
-        editText.setVisibility(View.VISIBLE);
-    }
-
     public void onTextButtonClicked(View v){
         if(textContainer.getVisibility()==View.VISIBLE){
             textContainer.setVisibility(View.INVISIBLE);
@@ -360,19 +335,37 @@ public class DesignActivity extends AppCompatActivity
             hideAllUIElements();
             text.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.lightPrimary),PorterDuff.Mode.SRC_IN);
             textContainer.setVisibility(View.VISIBLE);
-            textPunchToppingChoice.setVisibility(View.VISIBLE);
+            onTextPunchTopClicked(v);
         }
     }
 
     public void onTextPunchTopClicked(View v){
-        String tag = (String)v.getTag();
+        String tag = getTextTag();
         designEditText(tag);
         editText.requestFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-        textPunchToppingChoice.setVisibility(View.INVISIBLE);
         vText.setVisibility(View.VISIBLE);
         onVTextClicked(tag, "normal");
+    }
+
+    public String getTextTag(){
+        String tag = null;
+        if(category.equals("coaster")||category.equals("bookmark")||category.equals("coffeeStencil")){
+            tag = "pText";
+        }else{
+            tag = "tText";
+        }
+        return tag;
+    }
+
+    public void designEditText(String tag){
+        if(currentFont != null){
+            editText.setTypeface(currentFont);
+        }else{
+            editText.setTypeface(font1.getTypeface());
+        }
+        editText.setVisibility(View.VISIBLE);
     }
 
     public void onVTextClicked(String tag, String state){
@@ -407,72 +400,18 @@ public class DesignActivity extends AppCompatActivity
                 vButton.setVisibility(View.VISIBLE);
                 showDeleteAndRotate();
                 showGridAndUndo();
-                initFonts(mTag);
+                fontsBar.setVisibility(View.VISIBLE);
                 touchView.invalidate();
             }
         });
     }
 
-    public static void onFontButtonClicked(View v)    {
-        int [] buttonId = {R.id.font_1, R.id.font_2, R.id.font_3, R.id.font_4, R.id.font_5, R.id.font_6, R.id.font_7};
-        Typeface []typefaces ={hiraKaku, montserratItalic, baloo, alef, athelas, pacifico, vampiro};
-
-        for(int i = 0; i < buttonId.length; i++){
-            if(v.getId() == buttonId[i]) {
-                changeFont(typefaces[i]);
-                if(!typefaces[i].equals(pacifico) && !typefaces[i].equals(vampiro)){
-                    PcurrentFont = typefaces[i];
-                }
-                if(!typefaces[i].equals(alef) && !typefaces[i].equals(athelas)){
-                    TcurrentFont = typefaces[i];
-                }
-
-                if(!TouchView.shapes.isEmpty()){
-
-                }
-            }
-
-        }
+    public void onFontButtonClicked(View v){
+        Button b = (Button)v;
+        Text text = (Text)Movable.current_movable;
+        text.setFont(b.getTypeface());
+        currentFont = b.getTypeface();
         touchView.invalidate();
-
-    }
-
-    public static void initFonts(String tag){
-
-        switch (tag){
-            case "punch":
-                font6.setVisibility(View.INVISIBLE);
-                font7.setVisibility(View.INVISIBLE);
-                font4.setVisibility(View.VISIBLE);
-                font4.setTypeface(alef);
-                font5.setVisibility(View.VISIBLE);
-                font5.setTypeface(athelas);
-                break;
-            case "topping":
-                font4.setVisibility(View.INVISIBLE);
-                font5.setVisibility(View.INVISIBLE);
-                font6.setVisibility(View.VISIBLE);
-                font7.setVisibility(View.VISIBLE);
-                font6.setX(font4.getX());
-                font6.setTypeface(pacifico);
-                font7.setX(font5.getX());
-                font7.setTypeface(vampiro);
-                break;
-        }
-        fontsBar.setVisibility(View.VISIBLE);
-        Button[]buttons={font1, font2, font3, font4, font5, font6, font7};
-        for(Button button: buttons){
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onFontButtonClicked(v);
-                }
-            });
-        }
-    }
-
-    public static void changeFont(Typeface typeface){
-        editText.setTypeface(typeface);
     }
 
     public void onVButtonClicked(View v) {
@@ -481,7 +420,6 @@ public class DesignActivity extends AppCompatActivity
         clearGrayColor();
         rotationBar.setVisibility(View.INVISIBLE);
         fontsBar.setVisibility(View.INVISIBLE);
-        textPunchToppingChoice.setVisibility(View.INVISIBLE);
         Movable.current_movable = null;
         showGridAndUndo();
         hideDeleteAndRotate();
@@ -509,16 +447,17 @@ public class DesignActivity extends AppCompatActivity
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void showColorBar(View v){
         if(colorBar.getVisibility() == View.VISIBLE){
             colorBar.setVisibility(View.INVISIBLE);
-            color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.almostWhite),PorterDuff.Mode.SRC_IN);
+
             if(!TouchView.shapes.isEmpty() || currentColor != 0){
                 showGridAndUndo();
             }
         }else{
             hideAllUIElements();
-            color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.lightPrimary),PorterDuff.Mode.SRC_IN);
+
             colorBar.setVisibility(View.VISIBLE);
             Button[]buttons = {color1, color2, color3, color4, color5, color6, color7, color8, color9, color10, color11, color12};
 
@@ -736,6 +675,113 @@ public class DesignActivity extends AppCompatActivity
             }
         });
     }
+
+    public void initBottomBar(){
+        switch (category){
+            case "sign":case "magnet":case "doorSign":case "bookmark":case "pictureFrame":
+                bottomBar = (RelativeLayout) findViewById(R.id.bottom_bar1);
+                break;
+            case "coffeeStencil":case "thinThing":case "coaster":
+                bottomBar = (RelativeLayout) findViewById(R.id.bottom_bar2);
+                break;
+            case "petTag":case "luggageTag":
+                bottomBar = (RelativeLayout) findViewById(R.id.bottom_bar3);
+                break;
+            case "businessCardStand":case "gyring":case "opener":
+                bottomBar = (RelativeLayout) findViewById(R.id.bottom_bar4);
+                break;
+            case "nameNecklace":
+                bottomBar = (RelativeLayout) findViewById(R.id.bottom_bar5);
+                break;
+            case "earrings":case "pendant":case "keychain":
+                bottomBar = (RelativeLayout) findViewById(R.id.bottom_bar6);
+                break;
+            default:
+                bottomBar = (RelativeLayout) findViewById(R.id.bottom_bar1);
+                break;
+        }
+        bottomBar.setVisibility(View.VISIBLE);
+
+    }
+
+    public void setFontsByCategory(){
+        switch (category){
+            case "coaster":case "coffeeStencil":case "bookmark":
+                font1.setTypeface(WC_Wunderbach);
+                font2.setTypeface(loaded);
+                font3.setVisibility(View.INVISIBLE);
+                font4.setVisibility(View.INVISIBLE);
+                font5.setVisibility(View.INVISIBLE);
+                font6.setVisibility(View.INVISIBLE);
+                font7.setVisibility(View.INVISIBLE);
+                font8.setVisibility(View.INVISIBLE);
+                font9.setVisibility(View.INVISIBLE);
+                font10.setVisibility(View.INVISIBLE);
+                font11.setVisibility(View.INVISIBLE);
+                break;
+            case "pendant":case "earrings":case "nameNecklace":case "doorSign":
+                font1.setTypeface(pacifico);
+                font2.setTypeface(grandHotel);
+                font3.setVisibility(View.INVISIBLE);
+                font4.setVisibility(View.INVISIBLE);
+                font5.setVisibility(View.INVISIBLE);
+                font6.setVisibility(View.INVISIBLE);
+                font7.setVisibility(View.INVISIBLE);
+                font8.setVisibility(View.INVISIBLE);
+                font9.setVisibility(View.INVISIBLE);
+                font10.setVisibility(View.INVISIBLE);
+                font11.setVisibility(View.INVISIBLE);
+                break;
+            case "businessCardStand":case "luggageTag":case "petTag":case "opener":
+                font1.setTypeface(boogaloo);
+                font2.setTypeface(komika);
+                font2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+                font3.setTypeface(montserrat);
+                font4.setTypeface(orbitron);
+                font5.setTypeface(oswald);
+                font6.setTypeface(sourceSans1);
+                font7.setTypeface(sourceSans2);
+                font8.setTypeface(troika);
+                font9.setTypeface(nautilus);
+                font10.setVisibility(View.INVISIBLE);
+                font11.setVisibility(View.INVISIBLE);
+                break;
+            case "thinThing":case "magnet":case "keychain":case "pictureFrame":
+                font1.setTypeface(boogaloo);
+                font2.setTypeface(komika);
+                font2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+                font3.setTypeface(montserrat);
+                font4.setTypeface(orbitron);
+                font5.setTypeface(oswald);
+                font6.setTypeface(sourceSans1);
+                font7.setTypeface(sourceSans2);
+                font8.setTypeface(troika);
+                font9.setTypeface(nautilus);
+                font10.setTypeface(pacifico);
+                font11.setTypeface(grandHotel);
+                break;
+            case "gyring":
+                font1.setTypeface(vampiroOne);
+                font1.setVisibility(View.INVISIBLE);
+                font2.setVisibility(View.INVISIBLE);
+                font3.setVisibility(View.INVISIBLE);
+                font4.setVisibility(View.INVISIBLE);
+                font5.setVisibility(View.INVISIBLE);
+                font6.setVisibility(View.INVISIBLE);
+                font7.setVisibility(View.INVISIBLE);
+                font8.setVisibility(View.INVISIBLE);
+                font9.setVisibility(View.INVISIBLE);
+                font10.setVisibility(View.INVISIBLE);
+                font11.setVisibility(View.INVISIBLE);
+                break;
+            default:
+
+                break;
+        }
+
+        currentFont = font1.getTypeface();
+    }
+
 
     public boolean checkPermissionREAD_EXTERNAL_STORAGE(
             final Context context) {
@@ -1015,32 +1061,44 @@ public class DesignActivity extends AppCompatActivity
         designContainer = (RelativeLayout)findViewById(R.id.design_container);
 
         mainImage = (ImageView)findViewById(R.id.main_imageView);
-        mainImage.setScaleX(1.62f);
-        mainImage.setScaleY(1.62f);
         colorImage = (ImageView)findViewById(R.id.color_imageView);
-        colorImage.setScaleX(1.62f);
-        colorImage.setScaleY(1.62f);
 
-        bottomBar = (RelativeLayout) findViewById(R.id.bottom_bar);
+        if(category.equals("coffeeStencil")) {
+            mainImage.setScaleX(2.5f);
+            mainImage.setScaleY(2.5f);
+            mainImage.setY(getResources().getDimension(R.dimen.canvas_coffe_marginTop));
+            colorImage.setScaleX(2.5f);
+            colorImage.setScaleY(2.5f);
+            colorImage.setY(getResources().getDimension(R.dimen.canvas_coffe_marginTop));
+        }else if(category.equals("bookmark")){
+            mainImage.setScaleX(1.62f);
+            mainImage.setScaleY(1.62f);
+            mainImage.setY(getResources().getDimension(R.dimen.canvas_bookmark_marginTop));
+            colorImage.setScaleX(1.62f);
+            colorImage.setScaleY(1.62f);
+            colorImage.setY(getResources().getDimension(R.dimen.canvas_bookmark_marginTop));
+        }else if(category.equals("opener")){
+            mainImage.setScaleX(1.7f);
+            mainImage.setScaleY(1.7f);
+            colorImage.setScaleX(1.7f);
+            colorImage.setScaleY(1.7f);
+        }else{
+            mainImage.setScaleX(1.62f);
+            mainImage.setScaleY(1.62f);
+            colorImage.setScaleX(1.62f);
+            colorImage.setScaleY(1.62f);
+        }
+
+        initBottomBar();
 
         colorBar = (RelativeLayout)findViewById(R.id.color_bar);
-        colorBar.setVisibility(View.INVISIBLE);
-
         textContainer = (RelativeLayout)findViewById(R.id.text_container);
-        textContainer.setVisibility(View.INVISIBLE);
 
         editText = (EditText)findViewById(R.id.edit_text);
-        editText.setVisibility(View.INVISIBLE);
-        montserrat = Typeface.createFromAsset(getAssets(), "Montserrat-ExtraBold.ttf");
-        editText.setTypeface(montserrat);
         editText.setText("");
         editText.setTextSize(30);
 
-        textPunchToppingChoice = (LinearLayout)findViewById(R.id.text_punch_topping_choice);
-        punchText = (ImageButton)findViewById(R.id.text_punch);
-        toppingText = (ImageButton)findViewById(R.id.text_topping);
         fontsBar = (LinearLayout)findViewById(R.id.fonts_bar);
-        fontsBar.setVisibility(View.INVISIBLE);
 
         color = (ImageButton)findViewById(R.id.color);
         topping = (ImageButton)findViewById(R.id.topping);
@@ -1048,30 +1106,21 @@ public class DesignActivity extends AppCompatActivity
         text = (ImageButton)findViewById(R.id.text);
 
         vButton = (Button)findViewById(R.id.v);
-        vButton.setVisibility(View.INVISIBLE);
 
         grid = (Button)findViewById(R.id.grid);
-        grid.setVisibility(View.INVISIBLE);
         undo = (Button)findViewById(R.id.undo);
-        undo.setVisibility(View.INVISIBLE);
         delete = (Button)findViewById(R.id.delete);
-        delete.setVisibility(View.INVISIBLE);
         rotate = (Button)findViewById(R.id.rotate);
-        rotate.setVisibility(View.INVISIBLE);
 
         rotateRuler = (ImageView)findViewById(R.id.rotate_ruler);
         rotateCircle = (ImageView)findViewById(R.id.rotate_circle);
         rotateLine = (ImageView)findViewById(R.id.line);
         rotationBar = (RelativeLayout)findViewById(R.id.rotation_kit);
-        rotationBar.setVisibility(View.INVISIBLE);
 
         gridScreen = (RelativeLayout) findViewById(R.id.grid_screen);
-        gridScreen.setVisibility(View.INVISIBLE);
 
         toppingTabs = (NestedScrollView)findViewById(R.id.topping_scrollView);
-        toppingTabs.setVisibility(View.INVISIBLE);
         punchTabs = (NestedScrollView)findViewById(R.id.scrollView_punch);
-        punchTabs.setVisibility(View.INVISIBLE);
 
         initDrawerAndNavigationView();
         toppingViewPager = (ViewPager) findViewById(R.id.topping_viewpager);
@@ -1079,14 +1128,6 @@ public class DesignActivity extends AppCompatActivity
 
         toppingTabLayout = (TabLayout) findViewById(R.id.topping_tabs);
         punchTabLayout = (TabLayout) findViewById(R.id.punch_tabs);
-
-        toppingTabLayout.setVisibility(View.INVISIBLE);
-        punchTabLayout.setVisibility(View.INVISIBLE);
-
-        toppingViewPager.setVisibility(View.INVISIBLE);
-        punchViewPager.setVisibility(View.INVISIBLE);
-
-
 
         FragmentManager fm = getSupportFragmentManager();
         toppingTabPager = new ToppingTabPager(toppingViewPager, toppingTabLayout, this, fm);
@@ -1140,23 +1181,30 @@ public class DesignActivity extends AppCompatActivity
         font5 = (Button)findViewById(R.id.font_5);
         font6 = (Button)findViewById(R.id.font_6);
         font7 = (Button)findViewById(R.id.font_7);
+        font8 = (Button)findViewById(R.id.font_8);
+        font9 = (Button)findViewById(R.id.font_9);
+        font10 = (Button)findViewById(R.id.font_10);
+        font11 = (Button)findViewById(R.id.font_11);
+
+
         editTextBody = (Button)findViewById(R.id.edit_text_body);
 
-        vampiro = Typeface.createFromAsset(getAssets(), "VampiroOne-Regular.ttf");
-        montserratItalic = Typeface.createFromAsset(getAssets(), "Montserrat-Italic.ttf");
-        athelas = Typeface.createFromAsset(getAssets(), "Athelas-Regular.ttf");
-        alef = Typeface.createFromAsset(getAssets(), "Alef-Regular.ttf");
-        hiraKaku = Typeface.createFromAsset(getAssets(), "copyfonts.com_hirakakustd-w8-opentype.otf");
-        baloo = Typeface.createFromAsset(getAssets(), "BalooBhaijaan-Regular.ttf");
-        pacifico = Typeface.createFromAsset(getAssets(), "Pacifico-Regular.ttf");
+        boogaloo = Typeface.createFromAsset(getAssets(), "Boogaloo-Regular.otf");
+        komika = Typeface.createFromAsset(getAssets(), "KomikaTitle-Wide.ttf");
+        montserrat = Typeface.createFromAsset(getAssets(), "Montserrat-Medium.otf");
+        nautilus = Typeface.createFromAsset(getAssets(), "Nautilus.otf");
+        orbitron = Typeface.createFromAsset(getAssets(), "orbitron-bold.otf");
+        oswald = Typeface.createFromAsset(getAssets(), "Oswald-Bold.ttf");
+        sourceSans1 = Typeface.createFromAsset(getAssets(), "SourceSansPro-Semibold.otf");
+        sourceSans2 = Typeface.createFromAsset(getAssets(), "SourceSansPro-SemiboldIt.otf");
+        troika = Typeface.createFromAsset(getAssets(), "troika.otf");
+        pacifico = Typeface.createFromAsset(getAssets(), "Pacifico.ttf");
+        grandHotel = Typeface.createFromAsset(getAssets(), "GrandHotel-Regular.otf");
+        vampiroOne = Typeface.createFromAsset(getAssets(), "VampiroOne-Regular.ttf");
+        WC_Wunderbach = Typeface.createFromAsset(getAssets(), "WC_Wunderbach.otf");
+        loaded = Typeface.createFromAsset(getAssets(), "loaded.ttf");
 
-        font1.setTypeface(alef);
-        font2.setTypeface(athelas);
-        font3.setTypeface(hiraKaku);
-        font4.setTypeface(montserratItalic);
-        font5.setTypeface(baloo);
-        font6.setTypeface(pacifico);
-        font7.setTypeface(vampiro);
+        setFontsByCategory();
 
         vText = (ImageButton)findViewById(R.id.v_text);
         vText.setVisibility(View.INVISIBLE);

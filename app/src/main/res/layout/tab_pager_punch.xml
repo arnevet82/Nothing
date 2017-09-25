@@ -11,6 +11,7 @@
     <android.support.design.widget.TabLayout
         android:layout_above="@+id/scrollView_punch"
         android:background="@color/colorPrimary"
+        android:visibility="invisible"
         android:id="@+id/punch_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,6 +19,7 @@
 
 
     <android.support.v4.widget.NestedScrollView
+        android:visibility="invisible"
         android:id="@+id/scrollView_punch"
         android:layout_width="match_parent"
         android:layout_height="@dimen/scroll_height"
@@ -37,6 +39,7 @@
 
 
             <android.support.v4.view.ViewPager
+                android:visibility="invisible"
                 android:layout_below="@+id/punch_tabs"
                 android:id="@+id/punch_viewpager"
                 android:layout_width="match_parent"

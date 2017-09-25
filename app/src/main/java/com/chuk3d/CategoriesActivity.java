@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +26,9 @@ import android.widget.TextView;
 public class CategoriesActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     public static int resourceId;
+    public static String category;
+    private int key;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +36,7 @@ public class CategoriesActivity extends AppCompatActivity implements NavigationV
         setContentView(R.layout.activity_categories);
 
         initDrawerAndNavigationView();
-
+        init();
     }
 
     public void initDrawerAndNavigationView(){
@@ -91,22 +95,38 @@ public class CategoriesActivity extends AppCompatActivity implements NavigationV
 
     public void onCategoryBtnClicked(View view){
         resourceId = getResources().getIdentifier("@" + view.getTag(), "drawable", this.getPackageName());
+        category = (String)view.getTag(view.getId());
+
         Intent intent = new Intent(getApplication(), DesignActivity.class);
         intent.putExtra(DesignActivity.RESOURCE_ID_KEY, resourceId);
+        intent.putExtra(DesignActivity.CATEGORY_ID, category);
+
         startActivity(intent);
 
     }
 
     public void onBaseCategoryClicked(View view){
+        category = (String)view.getTag(view.getId());
         Intent intent = new Intent(getApplication(), BaseShapeActivity.class);
+        intent.putExtra(DesignActivity.CATEGORY_ID, category);
         startActivity(intent);
     }
 
     public void onFreeCategoryClicked(View view){
         resourceId = 555;
+        category = (String)view.getTag(view.getId());
         Intent intent = new Intent(getApplication(), DesignActivity.class);
         intent.putExtra(DesignActivity.RESOURCE_ID_KEY, resourceId);
+        intent.putExtra(DesignActivity.CATEGORY_ID, category);
         startActivity(intent);
+
+    }
+
+    public void init(){
+        for(int i = 0; i < Helper.categoryButtons.length; i++){
+            Helper.categoryButtons[i] = (Button)findViewById(Helper.categoryButtonsId[i]);
+            Helper.categoryButtons[i].setTag(Helper.categoryButtonsId[i], Helper.categoryNames[i]);
+        }
 
     }
 

@@ -5,11 +5,49 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/white"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/app_bar_categories">
 
+
+    <TextView
+        android:layout_marginTop="25dp"
+        android:layout_centerHorizontal="true"
+        android:textStyle="italic|bold"
+        android:id="@+id/text_choose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:textColor="#626066"
+        android:letterSpacing="-0.01"
+        android:lineSpacingExtra="3sp"
+        android:text="Choose your unique 3D creation"
+        />
+    <TextView
+        android:textStyle="italic|bold"
+        android:layout_marginTop="12dp"
+        android:layout_alignLeft="@+id/text_choose"
+        android:layout_below="@+id/text_choose"
+        android:id="@+id/inspiration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="#28a0aa"
+        android:lineSpacingExtra="6sp"
+        android:text=" Inspiration Gallery"
+        />
+    <View
+        android:layout_marginLeft="2dp"
+        android:layout_alignLeft="@+id/inspiration"
+        android:layout_below="@+id/inspiration"
+        android:layout_width="130dp"
+        android:layout_height="1dp"
+        android:background="#28a0aa" />
+
 <android.support.v4.widget.NestedScrollView
+    android:layout_marginTop="26dp"
+    android:focusableInTouchMode="true"
+    android:layout_below="@+id/inspiration"
     android:layout_centerHorizontal="true"
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
@@ -27,6 +65,8 @@
 
 
     <ImageButton
+        android:onClick="onCategoryBtnClicked"
+        android:tag="drawable/opener_base_shape"
         android:id="@+id/btn1"
         android:background="@drawable/thumb_img_8903_1024"
         android:layout_width="@dimen/categories_btn_width"
@@ -62,6 +102,8 @@
         android:layout_column="0"
         android:layout_row="1"/>
     <ImageButton
+        android:onClick="onCategoryBtnClicked"
+        android:tag="drawable/gyring_base_shape"
         android:id="@+id/btn2"
         android:background="@drawable/thumb_img_8905_1024"
         android:layout_width="@dimen/categories_btn_width"
@@ -69,12 +111,15 @@
         android:layout_column="1"
         android:layout_row="1"/>
     <ImageButton
+        android:onClick="onFreeCategoryClicked"
+        android:tag="no_image"
         android:background="@drawable/img_8909"
         android:layout_width="@dimen/categories_btn_width"
         android:layout_height="@dimen/categories_btn_height"
         android:layout_column="0"
         android:layout_row="2"/>
     <Button
+        android:id="@+id/t_btn3"
         android:onClick="onFreeCategoryClicked"
         android:tag="no_image"
         android:textAllCaps="false"
@@ -88,6 +133,7 @@
         android:layout_column="1"
         android:layout_row="2"/>
     <Button
+        android:id="@+id/t_btn4"
         android:onClick="onBaseCategoryClicked"
         android:tag="base_shape"
         android:textAllCaps="false"
@@ -101,18 +147,23 @@
         android:layout_column="0"
         android:layout_row="3"/>
     <ImageButton
+        android:onClick="onBaseCategoryClicked"
+        android:tag="base_shape"
         android:background="@drawable/thumb_img_8905_1024_copy"
         android:layout_width="@dimen/categories_btn_width"
         android:layout_height="@dimen/categories_btn_height"
         android:layout_column="1"
         android:layout_row="3"/>
     <ImageButton
+        android:onClick="onFreeCategoryClicked"
+        android:tag="no_image"
         android:background="@drawable/img_8909_copy"
         android:layout_width="@dimen/categories_btn_width"
         android:layout_height="@dimen/categories_btn_height"
         android:layout_column="0"
         android:layout_row="4"/>
     <Button
+        android:id="@+id/t_btn5"
         android:onClick="onFreeCategoryClicked"
         android:tag="no_image"
         android:textAllCaps="false"
@@ -126,6 +177,7 @@
         android:layout_column="1"
         android:layout_row="4"/>
     <Button
+        android:id="@+id/t_btn6"
         android:onClick="onCategoryBtnClicked"
         android:tag="drawable/pet_tag_baseshape"
         android:textAllCaps="false"
@@ -139,18 +191,23 @@
         android:layout_column="0"
         android:layout_row="5"/>
     <ImageButton
+        android:onClick="onCategoryBtnClicked"
+        android:tag="drawable/pet_tag_baseshape"
         android:background="@drawable/thumb_img_8905_1024_copy_2"
         android:layout_width="@dimen/categories_btn_width"
         android:layout_height="@dimen/categories_btn_height"
         android:layout_column="1"
         android:layout_row="5"/>
     <ImageButton
+        android:onClick="onBaseCategoryClicked"
+        android:tag="base_shape"
         android:background="@drawable/img_8909_copy_2"
         android:layout_width="@dimen/categories_btn_width"
         android:layout_height="@dimen/categories_btn_height"
         android:layout_column="0"
         android:layout_row="6"/>
     <Button
+        android:id="@+id/t_btn7"
         android:onClick="onBaseCategoryClicked"
         android:tag="base_shape"
         android:textAllCaps="false"
@@ -164,6 +221,7 @@
         android:layout_column="1"
         android:layout_row="6"/>
     <Button
+        android:id="@+id/t_btn8"
         android:onClick="onCategoryBtnClicked"
         android:tag="drawable/stencil"
         android:textAllCaps="false"
@@ -177,18 +235,23 @@
         android:layout_column="0"
         android:layout_row="7"/>
     <ImageButton
+        android:onClick="onCategoryBtnClicked"
+        android:tag="drawable/stencil"
         android:background="@drawable/thumb_img_8905_1024_copy_3"
         android:layout_width="@dimen/categories_btn_width"
         android:layout_height="@dimen/categories_btn_height"
         android:layout_column="1"
         android:layout_row="7"/>
     <ImageButton
+        android:onClick="onCategoryBtnClicked"
+        android:tag="drawable/holder_base_shape"
         android:background="@drawable/img_8909_copy_3"
         android:layout_width="@dimen/categories_btn_width"
         android:layout_height="@dimen/categories_btn_height"
         android:layout_column="0"
         android:layout_row="8"/>
     <Button
+        android:id="@+id/t_btn9"
         android:onClick="onCategoryBtnClicked"
         android:tag="drawable/holder_base_shape"
         android:textAllCaps="false"
@@ -202,6 +265,7 @@
         android:layout_column="1"
         android:layout_row="8"/>
     <Button
+        android:id="@+id/t_btn10"
         android:onClick="onBaseCategoryClicked"
         android:tag="base_shape"
         android:textAllCaps="false"
@@ -215,18 +279,23 @@
         android:layout_column="0"
         android:layout_row="9"/>
     <ImageButton
+        android:onClick="onBaseCategoryClicked"
+        android:tag="base_shape"
         android:background="@drawable/thumb_img_8905_1024_copy_4"
         android:layout_width="@dimen/categories_btn_width"
         android:layout_height="@dimen/categories_btn_height"
         android:layout_column="1"
         android:layout_row="9"/>
     <ImageButton
+        android:onClick="onCategoryBtnClicked"
+        android:tag="drawable/combined_shape"
         android:background="@drawable/img_8909_copy_4"
         android:layout_width="@dimen/categories_btn_width"
         android:layout_height="@dimen/categories_btn_height"
         android:layout_column="0"
         android:layout_row="10"/>
     <Button
+        android:id="@+id/t_btn11"
         android:onClick="onCategoryBtnClicked"
         android:tag="drawable/combined_shape"
         android:textAllCaps="false"
@@ -239,7 +308,138 @@
         android:layout_height="@dimen/categories_btn_height"
         android:layout_column="1"
         android:layout_row="10"/>
-
+    <Button
+        android:id="@+id/t_btn12"
+        android:onClick="onBaseCategoryClicked"
+        android:tag="base_shape"
+        android:textAllCaps="false"
+        android:textSize="25sp"
+        android:textColor="#28a0aa"
+        android:lineSpacingExtra="2sp"
+        android:text="Keychain"
+        android:background="@color/white"
+        android:layout_width="@dimen/categories_btn_width"
+        android:layout_height="@dimen/categories_btn_height"
+        android:layout_column="0"
+        android:layout_row="11"/>
+    <ImageButton
+        android:onClick="onBaseCategoryClicked"
+        android:tag="base_shape"
+        android:background="@drawable/thumb_img_8905_1024_copy_5"
+        android:layout_width="@dimen/categories_btn_width"
+        android:layout_height="@dimen/categories_btn_height"
+        android:layout_column="1"
+        android:layout_row="11"/>
+    <ImageButton
+        android:onClick="onBaseCategoryClicked"
+        android:tag="base_shape"
+        android:background="@drawable/img_8909_copy_5"
+        android:layout_width="@dimen/categories_btn_width"
+        android:layout_height="@dimen/categories_btn_height"
+        android:layout_column="0"
+        android:layout_row="12"/>
+    <Button
+        android:id="@+id/t_btn13"
+        android:onClick="onBaseCategoryClicked"
+        android:tag="base_shape"
+        android:textAllCaps="false"
+        android:textSize="25sp"
+        android:textColor="#28a0aa"
+        android:lineSpacingExtra="2sp"
+        android:text="Magnet"
+        android:background="@color/white"
+        android:layout_width="@dimen/categories_btn_width"
+        android:layout_height="@dimen/categories_btn_height"
+        android:layout_column="1"
+        android:layout_row="12"/>
+    <Button
+        android:id="@+id/t_btn14"
+        android:onClick="onCategoryBtnClicked"
+        android:tag="drawable/luggage_tag_baseshape"
+        android:textAllCaps="false"
+        android:textSize="25sp"
+        android:textColor="#28a0aa"
+        android:lineSpacingExtra="2sp"
+        android:text="Luggage \nTag"
+        android:background="@color/white"
+        android:layout_width="@dimen/categories_btn_width"
+        android:layout_height="@dimen/categories_btn_height"
+        android:layout_column="0"
+        android:layout_row="13"/>
+    <ImageButton
+        android:onClick="onCategoryBtnClicked"
+        android:tag="drawable/luggage_tag_baseshape"
+        android:background="@drawable/thumb_img_8905_1024_copy_6"
+        android:layout_width="@dimen/categories_btn_width"
+        android:layout_height="@dimen/categories_btn_height"
+        android:layout_column="1"
+        android:layout_row="13"/>
+    <ImageButton
+        android:onClick="onCategoryBtnClicked"
+        android:tag="drawable/bookmarkbase"
+        android:background="@drawable/img_8909_copy_6"
+        android:layout_width="@dimen/categories_btn_width"
+        android:layout_height="@dimen/categories_btn_height"
+        android:layout_column="0"
+        android:layout_row="14"/>
+    <Button
+        android:id="@+id/t_btn15"
+        android:onClick="onCategoryBtnClicked"
+        android:tag="drawable/bookmarkbase"
+        android:textAllCaps="false"
+        android:textSize="25sp"
+        android:textColor="#28a0aa"
+        android:lineSpacingExtra="2sp"
+        android:text="Bookmark"
+        android:background="@color/white"
+        android:layout_width="@dimen/categories_btn_width"
+        android:layout_height="@dimen/categories_btn_height"
+        android:layout_column="1"
+        android:layout_row="14"/>
+    <Button
+        android:id="@+id/t_btn16"
+        android:onClick="onFreeCategoryClicked"
+        android:tag="no_image"
+        android:textAllCaps="false"
+        android:textSize="25sp"
+        android:textColor="#28a0aa"
+        android:lineSpacingExtra="2sp"
+        android:text="Thin \nThing"
+        android:background="@color/white"
+        android:layout_width="@dimen/categories_btn_width"
+        android:layout_height="@dimen/categories_btn_height"
+        android:layout_column="0"
+        android:layout_row="15"/>
+    <ImageButton
+        android:onClick="onFreeCategoryClicked"
+        android:tag="no_image"
+        android:background="@drawable/thumb_img_8905_1024_copy_7"
+        android:layout_width="@dimen/categories_btn_width"
+        android:layout_height="@dimen/categories_btn_height"
+        android:layout_column="1"
+        android:layout_row="15"/>
+    <ImageButton
+        android:onClick="onCategoryBtnClicked"
+        android:tag="drawable/stick"
+        android:background="@drawable/img_8909_copy_7"
+        android:layout_width="@dimen/categories_btn_width"
+        android:layout_height="@dimen/categories_btn_height"
+        android:layout_column="0"
+        android:layout_row="16"/>
+    <Button
+        android:id="@+id/t_btn17"
+        android:onClick="onCategoryBtnClicked"
+        android:tag="drawable/stick"
+        android:textAllCaps="false"
+        android:textSize="25sp"
+        android:textColor="#28a0aa"
+        android:lineSpacingExtra="2sp"
+        android:text="Signs"
+        android:background="@color/white"
+        android:layout_width="@dimen/categories_btn_width"
+        android:layout_height="@dimen/categories_btn_height"
+        android:layout_column="1"
+        android:layout_row="16"/>
 </GridLayout>
 
 </android.support.v4.widget.NestedScrollView>

@@ -2,6 +2,7 @@ package com.chuk3d;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.text.Layout;
@@ -70,6 +71,11 @@ public abstract class Text extends Movable {
     public void setTextPaint(TextPaint textPaint) {
         this.textPaint = textPaint;
     }
+
+    public void setFont(Typeface typeface){
+        textPaint.setTypeface(typeface);
+    }
+
 
     @Override
     public void draw(Canvas canvas) {

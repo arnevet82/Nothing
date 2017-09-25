@@ -2,6 +2,9 @@ package com.chuk3d;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 /**
  * Created by Admin on 06/09/2017.
@@ -36,4 +39,14 @@ public class Helper {
         }
         return deviceDensity;
     }
+
+
+    public static Button catBtn1, catBtn2, catBtn3, catBtn4, catBtn5, catBtn6, catBtn7, catBtn8, catBtn9, catBtn10, catBtn11, catBtn12, catBtn13, catBtn14, catBtn15, catBtn16, catBtn17;
+    public static Button[]categoryButtons = {catBtn1,catBtn2, catBtn3, catBtn4, catBtn5, catBtn6, catBtn7, catBtn8, catBtn9, catBtn10, catBtn11, catBtn12, catBtn13, catBtn14, catBtn15, catBtn16, catBtn17 };
+    public static int[]categoryButtonsId = {R.id.t_btn1,R.id.t_btn2, R.id.t_btn3, R.id.t_btn4, R.id.t_btn5, R.id.t_btn6, R.id.t_btn7, R.id.t_btn8, R.id.t_btn9, R.id.t_btn10, R.id.t_btn11, R.id.t_btn12, R.id.t_btn13, R.id.t_btn14, R.id.t_btn15, R.id.t_btn16, R.id.t_btn17};
+    public static String[]categoryNames = {"opener", "gyring","doorSign","earrings","nameNecklace","petTag","pendant","coffeeStencil","businessCardStand","coaster","pictureFrame","keychain","magnet","luggageTag","bookmark","thinThing","sign"};
+
+
+
+
 }

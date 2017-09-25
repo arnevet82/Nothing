@@ -27,7 +27,6 @@
             android:layout_gravity="center"/>
 
         <ImageButton
-            android:onClick="onNextButtonClicked"
             android:id="@+id/next"
             android:paddingLeft="27dp"
             android:paddingRight="27dp"

@@ -39,8 +39,8 @@ public class PunchText extends Text{
         textPaint.setMaskFilter(filter);
 
         textPaint.setColor(context.getResources().getColor(R.color.almostWhite));
-        Typeface punchTf = Typeface.createFromAsset(context.getAssets(), "BalooBhaijaan-Regular.ttf");
-        textPaint.setTypeface(punchTf);
+
+        textPaint.setTypeface(DesignActivity.currentFont);
 
         textPaint.setAntiAlias(true);
         textPaint.setColor(DesignActivity.currentColor);
@@ -51,12 +51,6 @@ public class PunchText extends Text{
     @Override
     public void setGrayColor(Context context) {
         textPaint.setColor(context.getResources().getColor(R.color.buttonGray));
-    }
-
-    public void setInitialFont(){
-        if(DesignActivity.PcurrentFont != null){
-            textPaint.setTypeface(DesignActivity.PcurrentFont);
-        }
     }
 
     public void setFont(Typeface typeface){

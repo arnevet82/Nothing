@@ -33,7 +33,12 @@ public class ToppingText extends Text{
 
     @Override
     public void setColor(Context context, int color) {
-        textPaint.setColor(color);
+        int baseColor = context.getResources().getColor(R.color.transBaseShapeFirstColor);
+        if(color == baseColor){
+            textPaint.setColor(context.getResources().getColor(R.color.baseShapeFirstColor));
+        }else{
+            textPaint.setColor(color);
+        }
     }
 
     @Override
@@ -44,24 +49,22 @@ public class ToppingText extends Text{
     @Override
     public void setInitialColor(Context context) {
         textPaint.setShadowLayer(7, 1, 3, Color.parseColor("#80000000"));
-        Typeface toppingTf = Typeface.createFromAsset(context.getAssets(), "Pacifico-Regular.ttf");
+        Typeface toppingTf = DesignActivity.currentFont;
         textPaint.setTypeface(toppingTf);
 
         textPaint.setAntiAlias(true);
-        textPaint.setColor(DesignActivity.currentColor);
-
+        int baseColor = context.getResources().getColor(R.color.transBaseShapeFirstColor);
+        if(DesignActivity.currentColor == baseColor){
+            textPaint.setColor(context.getResources().getColor(R.color.baseShapeFirstColor));
+        }else{
+            textPaint.setColor(DesignActivity.currentColor);
+        }
 
     }
 
     @Override
     public void setGrayColor(Context context) {
         textPaint.setColor(context.getResources().getColor(R.color.buttonGray));
-    }
-
-    public void setInitialFont(){
-        if(DesignActivity.TcurrentFont != null){
-            textPaint.setTypeface(DesignActivity.TcurrentFont);
-        }
     }
 
     public void setFont(Typeface typeface){

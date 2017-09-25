@@ -15,7 +15,6 @@ public class ToppingShape extends Shape {
 
     public ToppingShape(int resourceId, float posX, float posY, Context context) {
         super(resourceId, posX, posY, context);
-//        setInitialColor(context);
     }
 
 
@@ -31,7 +30,7 @@ public class ToppingShape extends Shape {
 
     @Override
     public void setInitialColor(Context context) {
-        colorDrawable.mutate().setColorFilter(context.getResources().getColor(R.color.baseShapeFirstColor),PorterDuff.Mode.SRC_IN);
+        colorDrawable.mutate().setColorFilter(context.getResources().getColor(R.color.transBaseShapeFirstColor),PorterDuff.Mode.SRC_IN);
     }
 
 }
