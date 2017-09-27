@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.EmbossMaskFilter;
 import android.graphics.PorterDuff;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 /**
@@ -30,6 +31,34 @@ public class ColorCommand extends Command {
     }
 
 
+    public static void setGrayColor(Context context){
+        DesignActivity.vButton.setVisibility(View.VISIBLE);
+        if(DesignActivity.colorImage.getDrawable()!=null){
+            DesignActivity.colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.editGrayBigShape), PorterDuff.Mode.SRC_IN);
+        }
+
+        for(Movable mMovable:TouchView.shapes){
+            mMovable.setGrayColor(context);
+        }
+        Movable.current_movable.setClickColor(context);
+        if(Movable.current_movable instanceof Text){
+            DesignActivity.fontsBar.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    public static void clearGrayColor(Context context){
+        if(DesignActivity.colorImage.getDrawable() != null) {
+            DesignActivity.colorImage.getDrawable().mutate().setColorFilter(DesignActivity.baseCurrentColor, PorterDuff.Mode.SRC_IN);
+        }
+        if (!TouchView.shapes.isEmpty()) {
+            for (Movable movable : TouchView.shapes) {
+                movable.setColor(context, DesignActivity.currentColor);
+            }
+            DesignActivity.touchView.invalidate();
+        }
+    }
+
     @Override
     public boolean execute() {
 
@@ -40,11 +69,10 @@ public class ColorCommand extends Command {
             DesignActivity.currentColor = newColor;
             DesignActivity.baseCurrentColor = baseNewColor;
 
-            try{
+            if (DesignActivity.colorImage.getDrawable()!=null) {
                 DesignActivity.colorImage.getDrawable().mutate().setColorFilter(baseNewColor, PorterDuff.Mode.SRC_IN);
-            }catch (NullPointerException e){
-
             }
+
             if (!TouchView.shapes.isEmpty()) {
                 for (Movable movable : TouchView.shapes) {
                     movable.setColor(context, newColor);
@@ -59,11 +87,10 @@ public class ColorCommand extends Command {
 
     @Override
     public void undo() {
-        try{
+        if(DesignActivity.colorImage.getDrawable()!=null){
             DesignActivity.colorImage.getDrawable().mutate().setColorFilter(baseLastColor, PorterDuff.Mode.SRC_IN);
-        }catch (NullPointerException e){
-
         }
+
         if (!TouchView.shapes.isEmpty()) {
             for (Movable movable : TouchView.shapes) {
                 movable.setColor(context, lastColor);

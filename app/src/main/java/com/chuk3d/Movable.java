@@ -11,15 +11,55 @@ import android.view.View;
  */
 
 public abstract class Movable {
+
+
+
     public static Movable current_movable = null;
 
     protected float posX, posY;
     protected float scaleFactor = 1.f;
     protected float angle = 0f;
 
+    public float deltaStartX;
+    public float deltaEndX;
+    public float deltaStartY;
+    public float deltaEndY;
+
     public Movable(float posX, float posY) {
         this.posX = posX;
         this.posY = posY;
+    }
+
+    public float getDeltaStartX() {
+        return deltaStartX;
+    }
+
+    public void setDeltaStartX(float deltaStartX) {
+        this.deltaStartX = deltaStartX;
+    }
+
+    public float getDeltaEndX() {
+        return deltaEndX;
+    }
+
+    public void setDeltaEndX(float deltaEndX) {
+        this.deltaEndX = deltaEndX;
+    }
+
+    public float getDeltaStartY() {
+        return deltaStartY;
+    }
+
+    public void setDeltaStartY(float deltaStartY) {
+        this.deltaStartY = deltaStartY;
+    }
+
+    public float getDeltaEndY() {
+        return deltaEndY;
+    }
+
+    public void setDeltaEndY(float deltaEndY) {
+        this.deltaEndY = deltaEndY;
     }
 
     public static Movable getCurrent_movable(MotionEvent event, float scaleFactor, Context context) {
@@ -34,19 +74,11 @@ public abstract class Movable {
                 if (movable.isClicked(event, scaleFactor, context)) {
                     setCurrent_movable(movable);
 
+                    //TODO change location
                     DesignActivity.vButton.setVisibility(View.VISIBLE);
-                    try{
-                        DesignActivity.colorImage.getDrawable().mutate().setColorFilter(context.getResources().getColor(R.color.editGrayBigShape), PorterDuff.Mode.SRC_IN);
-                    }catch (NullPointerException e){
+                    ColorCommand.setGrayColor(context);
 
-                    }
-                    for(Movable mMovable:TouchView.shapes){
-                        mMovable.setGrayColor(context);
-                    }
                     movable.setClickColor(context);
-                    if(movable instanceof Text){
-                        DesignActivity.fontsBar.setVisibility(View.VISIBLE);
-                    }
 
                     return movable;
 
@@ -56,8 +88,8 @@ public abstract class Movable {
         return current_movable;
     }
 
-    public static void setCurrent_movable(Movable current_movable) {
-        Movable.current_movable = current_movable;
+    public static void setCurrent_movable(Movable movable) {
+        current_movable = movable;
     }
 
     public float getWidth(){
@@ -109,6 +141,12 @@ public abstract class Movable {
     public abstract void setGrayColor(Context context);
 
     public abstract void draw(Canvas canvas);
+    public abstract void draw(Canvas canvas, int t);
+
 
     public abstract boolean isClicked(MotionEvent event, float scaleFactor, Context context);
+
+    public abstract float getPivotx();
+    public abstract float getPivoty();
+
 }

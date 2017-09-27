@@ -22,6 +22,7 @@ import java.util.NoSuchElementException;
 public class TouchView extends View {
 
     public static LinkedList<Movable> shapes = new LinkedList<>();
+    public static LinkedList<Movable> toppings = new LinkedList<>();
 
 
     private float mPosX;
@@ -72,10 +73,33 @@ public class TouchView extends View {
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        for(Movable movable:shapes){
-            movable.draw(canvas);
+        if(toppings.isEmpty()){
+            for(Movable movable:shapes){
+                movable.draw(canvas);
+            }
+        }else{
+            for (Movable movable: toppings){
+                movable.draw(canvas, 1);
+            }
         }
 
+    }
+
+    public View drawToppings(){
+        for (Movable movable:shapes){
+            if(movable instanceof ToppingShape || movable instanceof ToppingText){
+                toppings.add(movable);
+            }
+        }
+        invalidate();
+        return this;
+    }
+
+    public void removeToppings(){
+        while (!toppings.isEmpty()) {
+            toppings.remove(0);
+        }
+        invalidate();
     }
 
 
@@ -93,7 +117,7 @@ public class TouchView extends View {
                     Movable movable = Movable.getCurrent_movable(ev, mScaleFactor, getContext());
 
                     if (movable != null) {
-                        moveCommand = new MoveCommand(movable);
+                        moveCommand = new MoveCommand(movable, getWidth(), getHeight());
                         DesignActivity.vButton.setVisibility(VISIBLE);
                         DesignActivity.showDeleteAndRotate();
                         invalidate();
@@ -131,8 +155,8 @@ public class TouchView extends View {
                                 float xpos = movable.getPosX();
                                 float ypos = movable.getPosY();
 
-                                moveCommand.setNewX(xpos+dx, getWidth());
-                                moveCommand.setNewY(ypos+dy, getHeight());
+                                moveCommand.setNewX(xpos+dx);
+                                moveCommand.setNewY(ypos+dy);
                                 moveCommand.execute();
                                 invalidate();
                             }
@@ -218,6 +242,12 @@ public class TouchView extends View {
                 if (scaleCommand.isExecute()) {
                     commandStack.push(scaleCommand);
                     scaleCommand = null;
+
+                    //activate moveCommand for case x  y  exceed from borders of view after scale
+                    MoveCommand moveCommand = new MoveCommand(Movable.current_movable, getWidth(), getHeight());
+                    moveCommand.setNewX(Movable.current_movable.getPosX());
+                    moveCommand.setNewY(Movable.current_movable.getPosY());
+                    moveCommand.execute();
                 }
             }
         }
@@ -244,7 +274,7 @@ public class TouchView extends View {
     }
 
 
-    public void executeAddCommand(Context context, int resourceId, String text, String type) {
+    public void executeAddCommand(Context context, int resourceId, String text, MovableType type) {
         AddCommand addCommand = new AddCommand(context, resourceId, text, mPosX, mPosY, type);
         boolean isExecute = addCommand.execute();
         if (isExecute) {
@@ -258,6 +288,11 @@ public class TouchView extends View {
         boolean isExecute = angleCommand.execute();
         if (isExecute) {
             commandStack.push(angleCommand);
+            //activate moveCommand for case x  y  exceed from borders of view after rotation
+            MoveCommand moveCommand = new MoveCommand(Movable.current_movable, getWidth(), getHeight());
+            moveCommand.setNewX(Movable.current_movable.getPosX());
+            moveCommand.setNewY(Movable.current_movable.getPosY());
+            moveCommand.execute();
         }
     }
 

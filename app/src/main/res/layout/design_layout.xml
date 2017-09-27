@@ -9,7 +9,6 @@
     tools:showIn="@layout/app_bar_design">
 
     <include layout="@layout/before_payment_layout" />
-    <include layout="@layout/resize_layout" />
 
 
     <RelativeLayout
@@ -30,6 +29,9 @@
             android:layout_width="166dp"
             android:layout_height="167dp" />
     </RelativeLayout>
+
+    <include layout="@layout/resize_layout" />
+
 
     <TextView
         android:id="@+id/current_number"

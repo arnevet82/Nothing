@@ -16,11 +16,11 @@ public class AddCommand extends Command {
     private int resourceId;
     private float x;
     private float y;
-    private String type;
+    MovableType type;
     private String text;
 
 
-    public AddCommand(Context context, int resourceId, String text, float x, float y, String type){
+    public AddCommand(Context context, int resourceId, String text, float x, float y, MovableType type){
         this.context = context;
         this.resourceId = resourceId;
         this.text = text;
@@ -33,15 +33,14 @@ public class AddCommand extends Command {
     public boolean execute() {
 
         switch (type){
-            case "tShape":
-            case "pShape":
-
+            case T_SHAPE:
+            case P_SHAPE:
                 Movable movable = ShapeFactory.getShape(resourceId,x, y, type, context);
                 TouchView.shapes.add(movable);
                 Movable.setCurrent_movable(movable);
                 break;
-            case "tText":
-            case "pText":
+            case T_TEXT:
+            case P_TEXT:
 
                 movable = ShapeFactory.getShape(text,x/3, y, type, context);
                 TouchView.shapes.add(movable);
@@ -58,6 +57,5 @@ public class AddCommand extends Command {
     @Override
     public void undo() {
         TouchView.shapes.removeLast();
-//        DesignActivity.touchView.invalidate();
     }
 }

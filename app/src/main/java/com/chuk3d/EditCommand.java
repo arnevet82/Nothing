@@ -28,6 +28,7 @@ public class EditCommand extends Command {
 
         DesignActivity.editText.setVisibility(View.VISIBLE);
         DesignActivity.editText.setText(lastText);
+        DesignActivity.editText.setSelection(text.getSl().getText().length());
         text.setSl(new StaticLayout("", new TextPaint(),800,
                 Layout.Alignment.ALIGN_CENTER, 1f,0f,false));
         DesignActivity.touchView.invalidate();

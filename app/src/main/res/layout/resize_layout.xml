@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:visibility="invisible"
     android:orientation="vertical"
     android:layout_alignParentBottom="true"
     android:id="@+id/resize_container"
@@ -9,6 +10,7 @@
 
 
     <ImageView
+        android:visibility="invisible"
         android:id="@+id/resize_ruler"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="180dp"

@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -33,6 +34,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.StaticLayout;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
@@ -41,6 +43,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -49,7 +52,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Date;
@@ -63,8 +68,7 @@ import java.util.Locale;
 public class DesignActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GToppingFragment.ToppinfFragmentItemClickCallback, GPunchFragment.PunchFragmentItemClickCallback,
-        OtherToppingFragment.ToppinfFragmentItemClickCallback, OtherPunchFragment.PunchFragmentItemClickCallback
-{
+        OtherToppingFragment.ToppinfFragmentItemClickCallback, OtherPunchFragment.PunchFragmentItemClickCallback {
 
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 99;
     public static final String CATEGORY_ID = "CATEGORY";
@@ -85,18 +89,18 @@ public class DesignActivity extends AppCompatActivity
     NestedScrollView toppingTabs, punchTabs;
     ImageView mainImage;
     static ImageView colorImage;
-    ImageButton next, color, topping, punch, text,vText;
+    ImageButton next, color, topping, punch, text, vText;
     Button color1, color2, color3, color4, color5, color6, color7, color8, color9, color10, color11, color12;
     public static int currentColor;
     public static int baseCurrentColor;
     public static Button vButton;
     public static Button grid, undo, delete, rotate;
     static TouchView touchView;
-    ImageView rotateCircle, rotateRuler, rotateLine;
+    ImageView rotateCircle, rotateRuler, rotateLine, resizeRuler;
     RelativeLayout rotationBar, resizeBar;
     Button degrees0, degrees90, degrees180, degrees270, degrees360, cm, inch, letsChukAgain;
-    public static Button font1, font2, font3, font4, font5, font6, font7,font8,font9, font10,font11, editTextBody;
-    public static Typeface boogaloo, komika, montserrat, nautilus, orbitron, oswald, sourceSans1,sourceSans2, troika,pacifico, grandHotel,vampiroOne, WC_Wunderbach, loaded ;
+    public static Button font1, font2, font3, font4, font5, font6, font7, font8, font9, font10, font11, editTextBody;
+    public static Typeface boogaloo, komika, montserrat, nautilus, orbitron, oswald, sourceSans1, sourceSans2, troika, pacifico, grandHotel, vampiroOne, WC_Wunderbach, loaded;
     public static Typeface currentFont;
     EditCommand editCommand = null;
     NestedScrollView punchScrollView, toppingScrollView;
@@ -104,8 +108,8 @@ public class DesignActivity extends AppCompatActivity
     public static EditText editText;
     public static boolean isInches;
     public static String sizeTerm = "cm";
-    File imageFile, galleryImageFile;
-    public static String fileName, galleryFileName, formattedSize;
+    File galleryImageFile;
+    public static String galleryFileName, formattedSize, finalSize = "default ";
 
 
     @Override
@@ -128,33 +132,33 @@ public class DesignActivity extends AppCompatActivity
         setRotationRuler();
     }
 
-    public static void showGridAndUndo(){
+    public static void showGridAndUndo() {
         grid.setVisibility(View.VISIBLE);
         undo.setVisibility(View.VISIBLE);
     }
 
-    public static void showDeleteAndRotate(){
+    public static void showDeleteAndRotate() {
         delete.setVisibility(View.VISIBLE);
         rotate.setVisibility(View.VISIBLE);
     }
 
-    public void hideDeleteAndRotate(){
+    public void hideDeleteAndRotate() {
         delete.setVisibility(View.INVISIBLE);
         rotate.setVisibility(View.INVISIBLE);
     }
 
-    public void onNextButtonClicked(View v){
-        if(vText.getVisibility() == View.VISIBLE){
+    public void onNextButtonClicked(View v) {
+        if (vText.getVisibility() == View.VISIBLE) {
             Toast.makeText(this, "finished? click 'done' ", Toast.LENGTH_SHORT).show();
-        }else if(resizeBar.getVisibility() == View.INVISIBLE && bPaymentScreen.getVisibility() == View.INVISIBLE){
+        } else if (resizeBar.getVisibility() == View.INVISIBLE && bPaymentScreen.getVisibility() == View.INVISIBLE) {
             hideAllUIElements();
             bottomBar.setVisibility(View.INVISIBLE);
             vButton.setVisibility(View.INVISIBLE);
-            clearGrayColor();
+            ColorCommand.clearGrayColor(this);
             setResizeScreen();
-        }else if(resizeBar.getVisibility() == View.VISIBLE){
+        } else if (resizeBar.getVisibility() == View.VISIBLE) {
             setUpBeforePayment();
-        }else if(bPaymentScreen.getVisibility() == View.VISIBLE){
+        } else if (bPaymentScreen.getVisibility() == View.VISIBLE) {
             if (checkPermissionREAD_EXTERNAL_STORAGE(getApplicationContext())) {
                 takeScreenshot();
                 takeScreenshotForGallery();
@@ -162,7 +166,7 @@ public class DesignActivity extends AppCompatActivity
         }
     }
 
-    public void setUpBeforePayment(){
+    public void setUpBeforePayment() {
         resizeBar.setVisibility(View.INVISIBLE);
         designContainer.setVisibility(View.INVISIBLE);
         bPaymentScreen.setVisibility(View.VISIBLE);
@@ -178,7 +182,7 @@ public class DesignActivity extends AppCompatActivity
         });
     }
 
-    public void setResizeScreen(){
+    public void setResizeScreen() {
         resizeBar.setVisibility(View.VISIBLE);
         title.setText("Drag for requested size ");
         cm.setBackgroundColor(Color.parseColor("#626066"));
@@ -188,7 +192,7 @@ public class DesignActivity extends AppCompatActivity
         resize();
     }
 
-    public void initSizeBtns(){
+    public void initSizeBtns() {
         View.OnClickListener sizeListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -199,9 +203,9 @@ public class DesignActivity extends AppCompatActivity
         inch.setOnClickListener(sizeListener);
     }
 
-    public void onSizeBtnClicked(View v){
+    public void onSizeBtnClicked(View v) {
 
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.cm:
                 cm.setBackgroundColor(Color.parseColor("#626066"));
                 inch.setBackgroundColor(Color.parseColor("#d8d8d8"));
@@ -217,48 +221,53 @@ public class DesignActivity extends AppCompatActivity
         }
     }
 
-    public void resize(){
-
+    public void resize() {
+        resizeBar.bringToFront();
         resizeBar.setOnTouchListener(new View.OnTouchListener() {
-            TextView sizeText = (TextView)findViewById(R.id.size_text);
-            ImageView resizeBall = (ImageView)findViewById(R.id.resize_circle);
+            TextView sizeText = (TextView) findViewById(R.id.size_text);
+            ImageView resizeBall = (ImageView) findViewById(R.id.resize_circle);
 
             float x;
             float y;
             float newSize;
             float maxSize;
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
                 float sizeInSm = designContainer.getScaleX() * 5.73f;
-                float sizeInInch = designContainer.getScaleX()*2.2559f;
-
-                if(isInches){
-                    formattedSize = String.format("%.1f", sizeInInch );
-                }else{
+                float sizeInInch = designContainer.getScaleX() * 2.2559f;
+                String size = "";
+                if (isInches) {
+                    size = " inches";
+                    formattedSize = String.format("%.1f", sizeInInch);
+                } else {
+                    size = " cm";
                     formattedSize = String.format("%.0f", sizeInSm + 0.5);
                 }
+                finalSize = formattedSize + size;
+
                 newSize = sizeInSm + 0.5f;
                 maxSize = 8;
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
                     x = event.getX();
                     y = event.getY();
 
-                    if(event.getX() < rotateLine.getRight() && event.getX() > 100){
+                    if (event.getX() < rotateLine.getRight() && event.getX() > 100) {
                         resizeBall.setX(x);
                     }
 
 
                     float scaleFactor;
-                    switch (Helper.getDeviceDensity(getApplicationContext())){
+                    switch (Helper.getDeviceDensity(getApplicationContext())) {
                         case "3.0 xxhdpi":
-                            scaleFactor = x*0.0014f;
+                            scaleFactor = x * 0.0014f;
                             break;
                         case "4.0 xxxhdpi":
-                            scaleFactor = x*0.00105f;
+                            scaleFactor = x * 0.00105f;
                             break;
                         default:
-                            scaleFactor = x*0.00105f;
+                            scaleFactor = x * 0.00105f;
                             break;
                     }
 
@@ -279,14 +288,13 @@ public class DesignActivity extends AppCompatActivity
         });
     }
 
-    public void undo(View v){
-
-        if(!TouchView.commandStack.isEmpty()){
+    public void undo(View v) {
+        if (!TouchView.commandStack.isEmpty()) {
             touchView.undo();
         }
     }
 
-    public void hideAllUIElements(){
+    public void hideAllUIElements() {
         cleanBarButtons();
         colorBar.setVisibility(View.INVISIBLE);
         toppingTabs.setVisibility(View.INVISIBLE);
@@ -306,71 +314,53 @@ public class DesignActivity extends AppCompatActivity
         rotationBar.setVisibility(View.INVISIBLE);
     }
 
-    public void cleanBarButtons(){
-        text.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.white),PorterDuff.Mode.SRC_IN);
-        color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.white),PorterDuff.Mode.SRC_IN);
+    public void cleanBarButtons() {
+        text.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
+        color.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
         topping.setImageDrawable(getResources().getDrawable(R.drawable.topping_icon));
         punch.setImageDrawable(getResources().getDrawable(R.drawable.punch_icon));
     }
 
-    public void editText(View v){
-        vText.setVisibility(View.VISIBLE);
 
-        if(Movable.current_movable!=null){
-
-            editCommand = new EditCommand(Movable.current_movable, getApplicationContext());
-        }
-
-        onVTextClicked("", "edit");
-    }
-
-    public void onTextButtonClicked(View v){
-        if(textContainer.getVisibility()==View.VISIBLE){
+    public void onTextButtonClicked(View v) {
+        if (textContainer.getVisibility() == View.VISIBLE) {
             textContainer.setVisibility(View.INVISIBLE);
-            text.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.almostWhite),PorterDuff.Mode.SRC_IN);
-            if(!TouchView.shapes.isEmpty() || currentColor != 0){
+            text.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.almostWhite), PorterDuff.Mode.SRC_IN);
+            if (!TouchView.shapes.isEmpty() || currentColor != 0) {
                 showGridAndUndo();
             }
-        }else{
+        } else {
             hideAllUIElements();
-            text.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.lightPrimary),PorterDuff.Mode.SRC_IN);
+            text.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.lightPrimary), PorterDuff.Mode.SRC_IN);
             textContainer.setVisibility(View.VISIBLE);
             onTextPunchTopClicked(v);
         }
     }
 
-    public void onTextPunchTopClicked(View v){
-        String tag = getTextTag();
-        designEditText(tag);
+    public void onTextPunchTopClicked(View v) {
+        MovableType type = getTextType();
+        designEditText();
         editText.requestFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         vText.setVisibility(View.VISIBLE);
-        onVTextClicked(tag, "normal");
+        onVTextClicked(type, "normal");
     }
 
-    public String getTextTag(){
-        String tag = null;
-        if(category.equals("coaster")||category.equals("bookmark")||category.equals("coffeeStencil")){
-            tag = "pText";
-        }else{
-            tag = "tText";
+    public void editText(View v) {
+        vText.setVisibility(View.VISIBLE);
+
+        if (Movable.current_movable != null) {
+
+            editCommand = new EditCommand(Movable.current_movable, getApplicationContext());
         }
-        return tag;
+
+        onVTextClicked(null, "edit");
     }
 
-    public void designEditText(String tag){
-        if(currentFont != null){
-            editText.setTypeface(currentFont);
-        }else{
-            editText.setTypeface(font1.getTypeface());
-        }
-        editText.setVisibility(View.VISIBLE);
-    }
+    public void onVTextClicked(final MovableType type, String state) {
 
-    public void onVTextClicked(String tag, String state){
-
-        final String mTag = tag;
+        final MovableType movableType = type;
         final String mState = state;
 
         vText.setOnClickListener(new View.OnClickListener() {
@@ -380,16 +370,16 @@ public class DesignActivity extends AppCompatActivity
                 String text = editText.getText().toString();
                 vText.setVisibility(View.INVISIBLE);
 
-                switch (mState){
+                switch (mState) {
                     case "normal":
-                        touchView.executeAddCommand(getApplicationContext(), 0, text, mTag);
+                        touchView.executeAddCommand(getApplicationContext(), 0, text, type);
                         cleanBarButtons();
                         break;
                     case "edit":
-                        if(editCommand!=null){
+                        if (editCommand != null) {
                             editCommand.execute();
                         }
-                        if(editCommand.isExecute()){
+                        if (editCommand.isExecute()) {
                             TouchView.commandStack.push(editCommand);
                         }
 
@@ -406,20 +396,42 @@ public class DesignActivity extends AppCompatActivity
         });
     }
 
-    public void onFontButtonClicked(View v){
-        Button b = (Button)v;
-        Text text = (Text)Movable.current_movable;
+    public MovableType getTextType() {
+        MovableType movableType = null;
+        if (category.equals("coaster") || category.equals("bookmark") || category.equals("coffeeStencil")) {
+            movableType = MovableType.P_TEXT;
+        } else {
+            movableType = MovableType.T_TEXT;
+        }
+        return movableType;
+    }
+
+    public void designEditText() {
+        if (currentFont != null) {
+            editText.setTypeface(currentFont);
+        } else {
+            editText.setTypeface(font1.getTypeface());
+        }
+        editText.setVisibility(View.VISIBLE);
+    }
+
+    public void onFontButtonClicked(View v) {
+        Button b = (Button) v;
+        Text text = (Text) Movable.current_movable;
         text.setFont(b.getTypeface());
         currentFont = b.getTypeface();
         touchView.invalidate();
     }
 
+
     public void onVButtonClicked(View v) {
 
         vButton.setVisibility(View.INVISIBLE);
-        clearGrayColor();
+        ColorCommand.clearGrayColor(this);
         rotationBar.setVisibility(View.INVISIBLE);
         fontsBar.setVisibility(View.INVISIBLE);
+
+
         Movable.current_movable = null;
         showGridAndUndo();
         hideDeleteAndRotate();
@@ -427,27 +439,14 @@ public class DesignActivity extends AppCompatActivity
 
     public void onGridBtnClicked(View v) {
 
-        if(gridScreen.getVisibility()==View.INVISIBLE){
+        if (gridScreen.getVisibility() == View.INVISIBLE) {
             gridScreen.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             gridScreen.setVisibility(View.INVISIBLE);
         }
 
     }
 
-    public void clearGrayColor(){
-        if(colorImage.getDrawable() != null) {
-            colorImage.getDrawable().mutate().setColorFilter(baseCurrentColor, PorterDuff.Mode.SRC_IN);
-        }
-        if (!TouchView.shapes.isEmpty()) {
-            for (Movable movable : TouchView.shapes) {
-                movable.setColor(this, currentColor);
-            }
-            DesignActivity.touchView.invalidate();
-        }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void showColorBar(View v){
         if(colorBar.getVisibility() == View.VISIBLE){
             colorBar.setVisibility(View.INVISIBLE);
@@ -587,14 +586,15 @@ public class DesignActivity extends AppCompatActivity
     }
 
     @Override
-    public void onAddButtonClicked(View view, String tag) {
+    public void onAddButtonClicked(View view, MovableType type) {
         punchTabs.setVisibility(View.VISIBLE);
         punchViewPager.setVisibility(View.VISIBLE);
         punchTabLayout.setVisibility(View.VISIBLE);
 
         int resourceId = getResources().getIdentifier("@" + view.getTag(), "drawable", this.getPackageName());
-        touchView.executeAddCommand(this, resourceId, "", tag);
+        touchView.executeAddCommand(this, resourceId, "", type);
 
+        ColorCommand.clearGrayColor(this);
         hideAllUIElements();
         showGridAndUndo();
         showDeleteAndRotate();
@@ -610,7 +610,7 @@ public class DesignActivity extends AppCompatActivity
                 TouchView.commandStack.push(deleteCommand);
                 touchView.invalidate();
             }
-            clearGrayColor();
+            ColorCommand.clearGrayColor(this);
             hideDeleteAndRotate();
         }
     }
@@ -663,6 +663,11 @@ public class DesignActivity extends AppCompatActivity
 
                         angleCommand.setNewAngle(newAngle);
                         angleCommand.execute();
+                        //activate moveCommand for case x  y  exceed from borders of view after rotation
+                        MoveCommand moveCommand = new MoveCommand(Movable.current_movable, touchView.getWidth(), touchView.getHeight());
+                        moveCommand.setNewX(Movable.current_movable.getPosX());
+                        moveCommand.setNewY(Movable.current_movable.getPosY());
+                        moveCommand.execute();
 
                         break;
                     case MotionEvent.ACTION_UP:
@@ -900,62 +905,33 @@ public class DesignActivity extends AppCompatActivity
     }
 
     private void takeScreenshot() {
-
-        designContainer.setBackgroundColor(Color.WHITE);
-        if(colorImage.getDrawable() != null){
-            colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.blackBtn), PorterDuff.Mode.SRC_IN);
-        }
-        if (!TouchView.shapes.isEmpty()) {
-            for (Movable movable : TouchView.shapes) {
-                movable.setColor(this, getResources().getColor(R.color.meduimGray));
-            }
-            DesignActivity.touchView.invalidate();
-        }
-
+        File file1 = null, file2 = null, file3 = null, file4 = null;
+        String fileName1 = "", fileName2 = "", fileName3 = "", fileName4 = "";
 
         Date now = new Date();
         android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
 
-        try {
 /////////////// directory
             File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-//////////////path
-            String mPath = "Chuk"+now+".jpg";
-
-            View v1 = getWindow().getDecorView().findViewById(R.id.design_container);
-            v1.setDrawingCacheEnabled(true);
-            Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
-            v1.setDrawingCacheEnabled(false);
-
 //////////// file with directory and path
-            imageFile = new File(dir, mPath);
+            file1 = getImageFile(dir, "mainImage");
+            file2 = getImageFile(dir, "tShape");
+            file3 = getImageFile(dir, "pShape");
+            file4 = getImageFile(dir, "bShape");
 
-            FileOutputStream outputStream = new FileOutputStream(imageFile);
-            int quality = 100;
-            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
-            outputStream.flush();
-            outputStream.close();
-
-        } catch (Throwable e) {
-            Log.e("couldnt send email", "");
-            e.printStackTrace();
-        }
-
-        designContainer.setBackgroundColor(Color.TRANSPARENT);
-        if(colorImage.getDrawable() != null) {
-            colorImage.getDrawable().mutate().setColorFilter(currentColor, PorterDuff.Mode.SRC_IN);
-        }
-        if (!TouchView.shapes.isEmpty()) {
-            for (Movable movable : TouchView.shapes) {
-                movable.setColor(this, currentColor);
-            }
-            DesignActivity.touchView.invalidate();
-        }
 
         try {
 
-            Uri uri= Uri.fromFile(imageFile);
-            fileName = PathUtil.getPath(getApplicationContext(), uri);
+            Uri uri= Uri.fromFile(file1);
+            Uri tUri = Uri.fromFile(file2);
+            Uri pUri = Uri.fromFile(file3);
+            Uri bUri = Uri.fromFile(file4);
+
+            fileName1 = PathUtil.getPath(getApplicationContext(), uri);
+            fileName2 = PathUtil.getPath(getApplicationContext(), tUri);
+            fileName3 = PathUtil.getPath(getApplicationContext(), pUri);
+            fileName4 = PathUtil.getPath(getApplicationContext(), bUri);
+
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }catch (NullPointerException e) {
@@ -973,20 +949,130 @@ public class DesignActivity extends AppCompatActivity
         List toEmailList = Arrays.asList(toEmails
                 .split("\\s*,\\s*"));
         Log.i("SendMailActivity", "To List: " + toEmailList);
-        String emailSubject = "My creation";
+        String emailSubject = "My "+ category;
 
         String colorStr = "#"+Integer.toHexString(currentColor);
-        String size = "";
-        if(isInches){
-            size = "inch";
-        }else{
-            size = "cm";
+
+        String font = getCurrentFontString();
+        String emailBody = "design size: " + finalSize +", color: " + colorStr + " font: " + font;
+        new SendMailTask(DesignActivity.this).execute(fromEmail,
+                fromPassword, toEmailList, emailSubject, "", fileName1, fileName2, fileName3,fileName4, emailBody);
+
+    }
+
+    public String getCurrentFontString(){
+        Typeface[] typefaces = {boogaloo, komika, montserrat, nautilus, orbitron, oswald, sourceSans1, sourceSans2, troika, pacifico, grandHotel, vampiroOne, WC_Wunderbach, loaded};
+        String font = Helper.fontNames[0];
+        for(int i = 0; i < typefaces.length; i++){
+            if(currentFont.equals(typefaces[i])){
+                font = Helper.fontNames[i];
+            }
         }
 
-        String emailBody = "design size: " + formattedSize + size +", color: " + colorStr;
-        new SendMailTask(DesignActivity.this).execute(fromEmail,
-                fromPassword, toEmailList, emailSubject, "", fileName, emailBody);
+        return font;
+    }
 
+    public File getImageFile(File dir, String name){
+        Date now = new Date();
+        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
+
+        File imageFile = null;
+
+        String mPath = name+now+".jpg";
+        Bitmap mainBitmap = null;
+        designContainer.setBackgroundColor(Color.WHITE);
+
+        switch (name){
+            case "mainImage":
+
+                View v1 = getWindow().getDecorView().findViewById(R.id.design_container);
+                v1.setDrawingCacheEnabled(true);
+                mainBitmap = Bitmap.createBitmap(v1.getDrawingCache());
+                v1.setDrawingCacheEnabled(false);
+
+                break;
+            case "tShape":
+
+                if(mainImage.getDrawable()!=null){
+                    mainImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.transparent), PorterDuff.Mode.SRC_IN);
+                    colorImage.getDrawable().mutate().setColorFilter(getResources().getColor(R.color.transparent), PorterDuff.Mode.SRC_IN);
+                }
+                if(!TouchView.shapes.isEmpty()){
+                    for (Movable movable : TouchView.shapes) {
+                        movable.setColor(this, Color.BLACK);
+                    }
+                    touchView.drawToppings();
+                }
+
+                View v2 = getWindow().getDecorView().findViewById(R.id.design_container);
+                v2.setDrawingCacheEnabled(true);
+                mainBitmap = Bitmap.createBitmap(v2.getDrawingCache());
+                v2.setDrawingCacheEnabled(false);
+                touchView.removeToppings();
+
+                break;
+            case "pShape":
+                if(colorImage.getDrawable() != null){
+                    colorImage.getDrawable().mutate().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN);
+                }
+                if (!TouchView.shapes.isEmpty()) {
+                    for (Movable movable : TouchView.shapes) {
+                        movable.setColor(this, Color.BLACK);
+                    }
+                    DesignActivity.touchView.invalidate();
+                }
+
+                View v3 = getWindow().getDecorView().findViewById(R.id.design_container);
+                v3.setDrawingCacheEnabled(true);
+                mainBitmap = Bitmap.createBitmap(v3.getDrawingCache());
+                v3.setDrawingCacheEnabled(false);
+                break;
+            case "bShape":
+                if(colorImage.getDrawable() != null){
+                    colorImage.getDrawable().mutate().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN);
+                }
+
+                designContainer.removeView(touchView);
+                View v4 = getWindow().getDecorView().findViewById(R.id.design_container);
+                v4.setDrawingCacheEnabled(true);
+                mainBitmap = Bitmap.createBitmap(v4.getDrawingCache());
+                v4.setDrawingCacheEnabled(false);
+                designContainer.addView(touchView);
+                break;
+            default:
+                break;
+        }
+
+        designContainer.setBackgroundColor(Color.TRANSPARENT);
+
+        if (!TouchView.shapes.isEmpty()) {
+            for (Movable movable : TouchView.shapes) {
+                movable.setColor(this, currentColor);
+            }
+            DesignActivity.touchView.invalidate();
+        }
+        setUpBaseShape(resourceId);
+        if(colorImage.getDrawable() != null) {
+            colorImage.getDrawable().mutate().setColorFilter(baseCurrentColor, PorterDuff.Mode.SRC_IN);
+        }
+
+//////////// file with directory and path
+        imageFile = new File(dir, mPath);
+
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(imageFile);
+
+        int quality = 100;
+        mainBitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+        outputStream.flush();
+        outputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return imageFile;
     }
 
     @Override
@@ -1211,7 +1297,7 @@ public class DesignActivity extends AppCompatActivity
 
         next = (ImageButton)findViewById(R.id.next);
         resizeBar = (RelativeLayout)findViewById(R.id.resize_container);
-        resizeBar.setVisibility(View.INVISIBLE);
+        resizeRuler = (ImageView)findViewById(R.id.resize_ruler);
 
         cm = (Button)findViewById(R.id.cm);
         inch = (Button)findViewById(R.id.inch);

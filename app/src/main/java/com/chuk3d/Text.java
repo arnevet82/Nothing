@@ -20,8 +20,8 @@ import android.widget.Toast;
 public abstract class Text extends Movable {
 
     protected StaticLayout sl;
-    protected float textPivotx;
-    protected float textPivoty;
+    protected float pivotx;
+    protected float pivoty;
     protected TextPaint textPaint;
     protected String text;
 
@@ -36,8 +36,14 @@ public abstract class Text extends Movable {
         textPaint.setTextSize(120);
         sl = new StaticLayout(text, textPaint,800,
                 Layout.Alignment.ALIGN_CENTER, 1f,0f,false);
-        textPivotx = sl.getWidth()/2;
-        textPivoty = sl.getHeight()/2;
+        pivotx = sl.getWidth()/2;
+        pivoty = sl.getHeight()/2;
+
+        deltaStartX = 0;
+        deltaEndX = sl.getWidth();
+        deltaStartY = 0;
+        deltaEndY = sl.getHeight();
+
     }
 
     public StaticLayout getSl() {
@@ -47,21 +53,21 @@ public abstract class Text extends Movable {
     public void setSl(StaticLayout sl) {
         this.sl = sl;
     }
-
-    public float getTextPivotx() {
-        return textPivotx;
+    @Override
+    public float getPivotx() {
+        return pivotx;
     }
 
-    public void setTextPivotx(float textPivotx) {
-        this.textPivotx = textPivotx;
+    public void setPivotx(float pivotx) {
+        this.pivotx = pivotx;
+    }
+    @Override
+    public float getPivoty() {
+        return pivoty;
     }
 
-    public float getTextPivoty() {
-        return textPivoty;
-    }
-
-    public void setTextPivoty(float textPivoty) {
-        this.textPivoty = textPivoty;
+    public void setPivoty(float pivoty) {
+        this.pivoty = pivoty;
     }
 
     public TextPaint getTextPaint() {
@@ -81,22 +87,38 @@ public abstract class Text extends Movable {
     public void draw(Canvas canvas) {
         canvas.save();
         canvas.translate(posX, posY);
-        canvas.scale(scaleFactor, scaleFactor, textPivotx, textPivoty);
-        canvas.rotate(angle,textPivotx, textPivoty);
+        canvas.scale(scaleFactor, scaleFactor, pivotx, pivoty);
+        canvas.rotate(angle,pivotx, pivoty);
         sl.draw(canvas);
         canvas.restore();
     }
 
     @Override
+    public void draw(Canvas canvas, int t) {
+        canvas.save();
+        canvas.translate(posX, posY);
+        canvas.scale(scaleFactor, scaleFactor, pivotx, pivoty);
+        canvas.rotate(angle,pivotx, pivoty);
+        sl.draw(canvas);
+        canvas.restore();
+    }
+
+
+    @Override
     public boolean isClicked(MotionEvent event, float mScaleFactor, Context context) {
 
-        float currentScaleFactor = Math.max(1f, Math.min(mScaleFactor, 1.3f));
+        float x = posX - deltaStartX;
+        float y = posY - deltaStartY;
+        float xEnd = posX + deltaEndX;
+        float yEnd = posY + deltaEndY;
 
-        float xEnd = posX + currentScaleFactor*600;
-        float yEnd = posY + currentScaleFactor*300;
+//        float currentScaleFactor = Math.max(1f, Math.min(mScaleFactor, 1.3f));
 
-        if ((event.getX() >= posX && event.getX() <= (xEnd))
-                && (event.getY() >= posY && event.getY() <= yEnd)) {
+//        float xEnd = posX + currentScaleFactor*600;
+//        float yEnd = posY + currentScaleFactor*300;
+
+        if ((event.getX() >= x && event.getX() <= (xEnd))
+                && (event.getY() >= y && event.getY() <= yEnd)) {
 
             if (scaleFactor != 0) {
                 return true;

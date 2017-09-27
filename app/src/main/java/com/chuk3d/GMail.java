@@ -40,6 +40,11 @@ public class GMail {
     String emailBody;
 
     String filePath;
+    String toppingFilePath;
+    String punchFilePath;
+    String baseFilePath;
+
+
     String photoSubject;
 
     Properties emailProperties;
@@ -54,7 +59,7 @@ public class GMail {
     }
 
     public GMail(String fromEmail, String fromPassword,
-                 List toEmailList, String emailSubject, String emailBody, String filePath, String photoSubject) {
+                 List toEmailList, String emailSubject, String emailBody, String filePath, String toppingFilePath,String punchFilePath,String baseFilePath, String photoSubject) {
         _multipart = new MimeMultipart();
         this.fromEmail = fromEmail;
         this.fromPassword = fromPassword;
@@ -63,6 +68,10 @@ public class GMail {
         this.emailBody = emailBody;
 
         this.filePath = filePath;
+        this.toppingFilePath = toppingFilePath;
+        this.punchFilePath = punchFilePath;
+        this.baseFilePath = baseFilePath;
+
         this.photoSubject = photoSubject;
 
         emailProperties = System.getProperties();
@@ -87,10 +96,13 @@ public class GMail {
 
         emailMessage.setSubject(emailSubject);
         emailMessage.setContent(emailBody, "text/html");// for a html email
-        // emailMessage.setText(emailBody);// for a text email
 
         try {
             emailMessage.setContent(addAttachment(filePath, photoSubject));
+            emailMessage.setContent(addAttachment(toppingFilePath, "."));
+            emailMessage.setContent(addAttachment(punchFilePath, ""));
+            emailMessage.setContent(addAttachment(baseFilePath, "."));
+
         } catch (Exception e) {
             e.printStackTrace();
         }

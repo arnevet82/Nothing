@@ -72,7 +72,7 @@ public class OtherToppingFragment extends Fragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onAddButtonClicked(v, "tShape");
+                    callback.onAddButtonClicked(v, MovableType.T_SHAPE);
 
                 }
             });
@@ -93,6 +93,6 @@ public class OtherToppingFragment extends Fragment {
 
     public interface ToppinfFragmentItemClickCallback {
 
-        void onAddButtonClicked(View view, String tag);
+        void onAddButtonClicked(View view, MovableType tag);
     }
 }

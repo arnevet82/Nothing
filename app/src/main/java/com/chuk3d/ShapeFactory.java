@@ -9,23 +9,33 @@ import android.graphics.drawable.Drawable;
 
 public class ShapeFactory {
 
-    public static Shape getShape(int resourceId, float posX, float posY, String tag, Context context){
-        if(tag.equals("pShape")){
-            return new PunchShape(resourceId, posX, posY, context);
-        } else if(tag.equals("tShape")){
-            ToppingShape toppingShape = new ToppingShape(resourceId, posX, posY, context);
-            toppingShape.setColor(context, DesignActivity.currentColor);
-            return toppingShape;
+    public static Shape getShape(int resourceId, float posX, float posY, MovableType movableType, Context context){
+        Shape shape = null;
+        switch (movableType) {
+            case P_SHAPE: {
+                shape = new PunchShape(resourceId, posX, posY, context);
+                break;
+            }
+            case T_SHAPE: {
+                shape = new ToppingShape(resourceId, posX, posY, context);
+                break;
+            }
         }
-        return null;
+        return shape;
     }
 
-    public static Text getShape(String text, float posX, float posY,  String tag, Context context){
-        if(tag.equals("pText")){
-            return new PunchText(text, posX, posY, context);
-        } else if(tag.equals("tText")){
-            return new ToppingText(text, posX, posY, context);
+    public static Text getShape(String text, float posX, float posY, MovableType movableType, Context context){
+        Text textObject = null;
+        switch (movableType) {
+            case P_TEXT: {
+                textObject = new PunchText(text, posX, posY, context);
+                break;
+            }
+            case T_TEXT: {
+                textObject = new ToppingText(text, posX, posY, context);
+                break;
+            }
         }
-        return null;
+        return textObject;
     }
 }
