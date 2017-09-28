@@ -68,7 +68,8 @@ import java.util.Locale;
 public class DesignActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GToppingFragment.ToppinfFragmentItemClickCallback, GPunchFragment.PunchFragmentItemClickCallback,
-        OtherToppingFragment.ToppinfFragmentItemClickCallback, OtherPunchFragment.PunchFragmentItemClickCallback {
+        OtherToppingFragment.ToppinfFragmentItemClickCallback, OtherPunchFragment.PunchFragmentItemClickCallback,
+        PlantToppingFragment.ToppinfFragmentItemClickCallback, PlantPunchFragment.PunchFragmentItemClickCallback{
 
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 99;
     public static final String CATEGORY_ID = "CATEGORY";
@@ -84,12 +85,12 @@ public class DesignActivity extends AppCompatActivity
     ViewPager toppingViewPager, punchViewPager;
     ToppingTabPager toppingTabPager;
     PunchTabPager punchTabPager;
-    RelativeLayout colorBar, designContainer, gridScreen, textContainer, bPaymentScreen, bottomBar;
+    RelativeLayout colorBar, designContainer, gridScreen, textContainer, bPaymentScreen, bottomBar, holesBar;
     static LinearLayout fontsBar;
     NestedScrollView toppingTabs, punchTabs;
     ImageView mainImage;
     static ImageView colorImage;
-    ImageButton next, color, topping, punch, text, vText;
+    ImageButton next, color, topping, punch, text, vText, holes;
     Button color1, color2, color3, color4, color5, color6, color7, color8, color9, color10, color11, color12;
     public static int currentColor;
     public static int baseCurrentColor;
@@ -139,7 +140,9 @@ public class DesignActivity extends AppCompatActivity
 
     public static void showDeleteAndRotate() {
         delete.setVisibility(View.VISIBLE);
-        rotate.setVisibility(View.VISIBLE);
+        if(Movable.current_movable instanceof Shape ||Movable.current_movable instanceof Text ){
+            rotate.setVisibility(View.VISIBLE);
+        }
     }
 
     public void hideDeleteAndRotate() {
@@ -304,6 +307,7 @@ public class DesignActivity extends AppCompatActivity
         punchViewPager.setVisibility(View.INVISIBLE);
         punchTabLayout.setVisibility(View.INVISIBLE);
         textContainer.setVisibility(View.INVISIBLE);
+        holesBar.setVisibility(View.INVISIBLE);
         vButton.setVisibility(View.INVISIBLE);
         rotate.setVisibility(View.INVISIBLE);
         grid.setVisibility(View.INVISIBLE);
@@ -430,8 +434,6 @@ public class DesignActivity extends AppCompatActivity
         ColorCommand.clearGrayColor(this);
         rotationBar.setVisibility(View.INVISIBLE);
         fontsBar.setVisibility(View.INVISIBLE);
-
-
         Movable.current_movable = null;
         showGridAndUndo();
         hideDeleteAndRotate();
@@ -584,15 +586,39 @@ public class DesignActivity extends AppCompatActivity
             punch.setImageDrawable(getResources().getDrawable(R.drawable.topping_icon_green));
         }
     }
+    public void onHolesBarClicked(View view) {
+        if(holesBar.getVisibility() == View.VISIBLE){
+            holesBar.setVisibility(View.INVISIBLE);
+            if(!TouchView.shapes.isEmpty() || currentColor != 0){
+                showGridAndUndo();
+            }
+        }else{
+            hideAllUIElements();
+            holesBar.setVisibility(View.VISIBLE);
+        }
+    }
 
     @Override
     public void onAddButtonClicked(View view, MovableType type) {
-        punchTabs.setVisibility(View.VISIBLE);
-        punchViewPager.setVisibility(View.VISIBLE);
-        punchTabLayout.setVisibility(View.VISIBLE);
 
         int resourceId = getResources().getIdentifier("@" + view.getTag(), "drawable", this.getPackageName());
         touchView.executeAddCommand(this, resourceId, "", type);
+
+        ColorCommand.clearGrayColor(this);
+        hideAllUIElements();
+        showGridAndUndo();
+        showDeleteAndRotate();
+        vButton.setVisibility(View.VISIBLE);
+
+    }
+    public void onAddButtonClicked(View view) {
+
+        int resourceId = getResources().getIdentifier("@" + view.getTag(), "drawable", this.getPackageName());
+        if(view.getTag(view.getId()).equals("punch")){
+            touchView.executeAddCommand(this, resourceId, "", MovableType.P_HOLE);
+        }else{
+            touchView.executeAddCommand(this, resourceId, "", MovableType.T_HOLE);
+        }
 
         ColorCommand.clearGrayColor(this);
         hideAllUIElements();
@@ -1179,6 +1205,7 @@ public class DesignActivity extends AppCompatActivity
 
         colorBar = (RelativeLayout)findViewById(R.id.color_bar);
         textContainer = (RelativeLayout)findViewById(R.id.text_container);
+        holesBar = (RelativeLayout)findViewById(R.id.holes_bar);
 
         editText = (EditText)findViewById(R.id.edit_text);
         editText.setText("");
@@ -1190,10 +1217,12 @@ public class DesignActivity extends AppCompatActivity
         topping = (ImageButton)findViewById(R.id.topping);
         punch = (ImageButton)findViewById(R.id.punch);
         text = (ImageButton)findViewById(R.id.text);
+        holes = (ImageButton)findViewById(R.id.hole);
+
 
         vButton = (Button)findViewById(R.id.v);
 
-        grid = (Button)findViewById(R.id.grid);
+        grid = (Button)findViewById(R.id.gridBtn);
         undo = (Button)findViewById(R.id.undo);
         delete = (Button)findViewById(R.id.delete);
         rotate = (Button)findViewById(R.id.rotate);
@@ -1298,6 +1327,15 @@ public class DesignActivity extends AppCompatActivity
         next = (ImageButton)findViewById(R.id.next);
         resizeBar = (RelativeLayout)findViewById(R.id.resize_container);
         resizeRuler = (ImageView)findViewById(R.id.resize_ruler);
+
+        for(int i = 0; i < 8; i++){
+            Helper.holeBtns[i] = (ImageButton)findViewById(Helper.holeBtnsId[i]);
+            Helper.holeBtns[i].setTag(Helper.holeBtnsId[i], "punch");
+        }
+        for(int i = 8; i < Helper.holeBtnsId.length; i++){
+            Helper.holeBtns[i] = (ImageButton)findViewById(Helper.holeBtnsId[i]);
+            Helper.holeBtns[i].setTag(Helper.holeBtnsId[i], "topping");
+        }
 
         cm = (Button)findViewById(R.id.cm);
         inch = (Button)findViewById(R.id.inch);

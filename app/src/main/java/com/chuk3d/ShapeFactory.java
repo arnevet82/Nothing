@@ -38,4 +38,19 @@ public class ShapeFactory {
         }
         return textObject;
     }
+
+    public static Hole getHole(int resourceId, float posX, float posY, MovableType movableType, Context context){
+        Hole hole = null;
+        switch (movableType) {
+            case P_HOLE: {
+                hole = new PunchHole(resourceId, posX, posY, context);
+                break;
+            }
+            case T_HOLE: {
+                hole = new ToppingHole(resourceId, posX, posY, context);
+                break;
+            }
+        }
+        return hole;
+    }
 }

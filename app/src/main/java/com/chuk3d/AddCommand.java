@@ -49,6 +49,13 @@ public class AddCommand extends Command {
                 imm.hideSoftInputFromWindow(DesignActivity.editText.getWindowToken(), 0);
 
                 break;
+
+            case T_HOLE:
+            case P_HOLE:
+                movable = ShapeFactory.getHole(resourceId,x, y, type, context);
+                TouchView.shapes.add(movable);
+                Movable.setCurrent_movable(movable);
+                break;
         }
 
         return true;

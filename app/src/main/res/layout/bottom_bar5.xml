@@ -55,7 +55,7 @@
         android:background="@color/darkGray"
         android:scaleType="fitXY" />
     <ImageButton
-        android:onClick="onTextButtonClicked"
+        android:onClick="onHolesBarClicked"
         android:id="@+id/hole"
         android:paddingLeft="28dp"
         android:paddingRight="32dp"

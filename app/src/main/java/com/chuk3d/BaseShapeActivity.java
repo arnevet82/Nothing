@@ -34,7 +34,7 @@ import java.util.concurrent.RunnableFuture;
 
 public class BaseShapeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GeometricShapeFragment.FragmentItemClickCallback,
-        OtherShapeFragment.FragmentItemClickCallback{
+        OtherShapeFragment.FragmentItemClickCallback, PlantBaseShapeFragment.FragmentItemClickCallback{
     public static final String CATEGORY_ID = "CATEGORY";
     public static String category;
     TextView title;

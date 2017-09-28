@@ -26,11 +26,17 @@ public class ScaleCommand extends Command {
 
     @Override
     public boolean execute() {
-        if (newScaleFactor != lastScaleFactor) {
-            movable.setScaleFactor(newScaleFactor);
-            DesignActivity.touchView.invalidate();
-            isExecute = true;
+
+        if(movable instanceof Hole){
+            //do nothing
+        }else {
+            if (newScaleFactor != lastScaleFactor) {
+                movable.setScaleFactor(newScaleFactor);
+                DesignActivity.touchView.invalidate();
+                isExecute = true;
+            }
         }
+
         return isExecute;
     }
 

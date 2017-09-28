@@ -40,7 +40,7 @@ public class PunchTabPager extends TabPager {
                 case 1:
                     return new OtherPunchFragment();
                 case 2:
-                    return new GPunchFragment();
+                    return new PlantPunchFragment();
                 case 3:
                     return new GPunchFragment();
                 case 4:

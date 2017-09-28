@@ -87,7 +87,7 @@ public class TouchView extends View {
 
     public View drawToppings(){
         for (Movable movable:shapes){
-            if(movable instanceof ToppingShape || movable instanceof ToppingText){
+            if(movable instanceof ToppingShape || movable instanceof ToppingText|| movable instanceof ToppingHole){
                 toppings.add(movable);
             }
         }

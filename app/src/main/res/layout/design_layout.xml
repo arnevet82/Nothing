@@ -181,6 +181,7 @@
 
     <include layout="@layout/tab_pager_topping" />
     <include layout="@layout/tab_pager_punch" />
+    <include layout="@layout/holes" />
 
 
     <include layout="@layout/bottom_bar1" />
@@ -446,7 +447,7 @@
         android:layout_marginBottom="84dp"
         android:background="@drawable/grid_button_gray"
         android:visibility="invisible"
-        android:id="@+id/grid"
+        android:id="@+id/gridBtn"
         android:layout_width="42dp"
         android:layout_height="61dp" />
 

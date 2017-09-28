@@ -36,12 +36,17 @@ public class AngleCommand extends Command {
 
     @Override
     public boolean execute() {
-        if (newAngle != lastAngle) {
-            if (!TouchView.shapes.isEmpty()) {
-                movable.setAngle(newAngle);
+        if(movable instanceof Hole){
+            //do nothing
+        }else{
+            if (newAngle != lastAngle) {
+                if (!TouchView.shapes.isEmpty()) {
+                    movable.setAngle(newAngle);
+                }
+                DesignActivity.touchView.invalidate();
+                isExecute = true;
             }
-            DesignActivity.touchView.invalidate();
-            isExecute = true;
+
         }
 
         return isExecute;

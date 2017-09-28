@@ -28,23 +28,23 @@ public class MoveCommand extends Command {
 
     private boolean isExecute = false;
 
-        public MoveCommand(Movable movable, int widthView, int heightView) {
-            this.movable = movable;
-            this.lastX = movable.getPosX();
-            this.lastY = movable.getPosY();
+    public MoveCommand(Movable movable, int widthView, int heightView) {
+        this.movable = movable;
+        this.lastX = movable.getPosX();
+        this.lastY = movable.getPosY();
 
-            this.heightView = heightView;
-            this.widthView = widthView;
+        this.heightView = heightView;
+        this.widthView = widthView;
 
-            if(movable instanceof Shape){
-                calculateDeltaPosition();
+        if(movable instanceof Shape){
+            calculateDeltaPosition();
 
-                this.minX = movable.getDeltaStartX();
-                this.maxX = widthView - movable.getDeltaEndX();
-                this.minY = movable.getDeltaStartY();
-                this.maxY = heightView - movable.getDeltaEndY();
-            }
+            this.minX = movable.getDeltaStartX();
+            this.maxX = widthView - movable.getDeltaEndX();
+            this.minY = movable.getDeltaStartY();
+            this.maxY = heightView - movable.getDeltaEndY();
         }
+    }
 
     public void setNewX(float newX) {
 
@@ -77,26 +77,26 @@ public class MoveCommand extends Command {
     }
 
 
-        public boolean isExecute() {
-            return isExecute;
-        }
+    public boolean isExecute() {
+        return isExecute;
+    }
 
-        @Override
-        public boolean execute() {
-            if (newX != lastX || newY != lastY) {
-                movable.setPosX(newX);
-                movable.setPosY(newY);
-                DesignActivity.touchView.invalidate();
-                isExecute = true;
-            }
-            return isExecute;
+    @Override
+    public boolean execute() {
+        if (newX != lastX || newY != lastY) {
+            movable.setPosX(newX);
+            movable.setPosY(newY);
+            DesignActivity.touchView.invalidate();
+            isExecute = true;
         }
+        return isExecute;
+    }
 
-        @Override
-        public void undo() {
-            movable.setPosX(lastX);
-            movable.setPosY(lastY);
-        }
+    @Override
+    public void undo() {
+        movable.setPosX(lastX);
+        movable.setPosY(lastY);
+    }
 
 
 

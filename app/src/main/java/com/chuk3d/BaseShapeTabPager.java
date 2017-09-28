@@ -50,7 +50,7 @@ public class BaseShapeTabPager extends TabPager {
                 case 1:
                     return new OtherShapeFragment();
                 case 2:
-                    return new GeometricShapeFragment();
+                    return new PlantBaseShapeFragment();
                 case 3:
                     return new GeometricShapeFragment();
                 case 4:

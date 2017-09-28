@@ -40,7 +40,7 @@ public class ToppingTabPager extends TabPager {
                 case 1:
                     return new OtherToppingFragment();
                 case 2:
-                    return new GToppingFragment();
+                    return new PlantToppingFragment();
                 case 3:
                     return new GToppingFragment();
                 case 4:

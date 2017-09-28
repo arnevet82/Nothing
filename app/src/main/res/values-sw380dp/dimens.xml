@@ -32,6 +32,7 @@
 
     <dimen name="scroll_height">152dp</dimen>
     <dimen name="viewPager_height">485dp</dimen>
+    <dimen name="holes_height">300dp</dimen>
 
     <dimen name="base_scroll_height">200dp</dimen>
     <dimen name="base_viewPager_height">465dp</dimen>
